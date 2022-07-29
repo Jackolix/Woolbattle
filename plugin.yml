@@ -1,0 +1,8 @@
+main: codes.Elix.Woolbattle.main.Woolbattle
+version: 0.5
+name: Woolbattle
+author: Elix
+
+commands:
+   setup:
+   start:

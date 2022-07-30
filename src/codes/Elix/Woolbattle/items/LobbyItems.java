@@ -55,6 +55,7 @@ public class LobbyItems implements Listener {
         Inventory inventory = Bukkit.createInventory(null, 9*4, title);
         Items.create(inventory, Material.TRIPWIRE_HOOK, null, 5, "§3Booster", 0);
         Items.create(inventory, Material.FISHING_ROD, null, 5, "§3Enterhaken", 1);
+        Items.create(inventory, Material.PACKED_ICE, null, 5, "§3Freezer", 2);
         Items.create(inventory, Material.WATCH, null, 5, "§3Großvaters Uhr", 3);
         Items.create(inventory, Material.STICK, null, 5, "§3Linebuilder", 4);
         Items.create(inventory, Material.DIAMOND_BARDING, null, 5, "§3Minigun", 5);
@@ -129,7 +130,7 @@ public class LobbyItems implements Listener {
         }
         if (event.getClickedInventory().getTitle().equals("§3Erstes Perk:")) {
             event.setCancelled(true);
-            FileConfiguration config = Woolbattle.getPlugin().getCustomConfig();
+            FileConfiguration config = Woolbattle.getPlugin().getConfig();
             switch (event.getCurrentItem().getType()) {
                 case TRIPWIRE_HOOK -> {
                     config.set(event.getWhoClicked().getName() + ".1Perk", "booster");
@@ -137,37 +138,160 @@ public class LobbyItems implements Listener {
                     Woolbattle.getPlugin().saveConfig();
                 }
                 case FISHING_ROD -> {
-                    config.set(event.getWhoClicked().getName() + ".1Perk", "Enterhaken");
+                    config.set(event.getWhoClicked().getName() + ".1Perk", "enterhaken");
                     System.out.println("Enterhaken safed");
                     Woolbattle.getPlugin().saveConfig();
                 }
                 case PACKED_ICE -> {
-                    config.set(event.getWhoClicked().getName() + ".1Perk", "Freezer");
+                    config.set(event.getWhoClicked().getName() + ".1Perk", "freezer");
                     System.out.println("Freezer safed");
                     Woolbattle.getPlugin().saveConfig();
                 }
+                case WATCH -> {
+                    config.set(event.getWhoClicked().getName() + ".1Perk", "großvatersuhr");
+                    Woolbattle.getPlugin().saveConfig();
+                }
+                case STICK -> {
+                    config.set(event.getWhoClicked().getName() + ".1Perk", "linebuilder");
+                    Woolbattle.getPlugin().saveConfig();
+                }
+                case DIAMOND_BARDING -> {
+                    config.set(event.getWhoClicked().getName() + ".1Perk", "minigun");
+                    Woolbattle.getPlugin().saveConfig();
+                }
+                case FIREBALL -> {
+                    config.set(event.getWhoClicked().getName() + ".1Perk", "pfeilbombe");
+                    Woolbattle.getPlugin().saveConfig();
+                }
+                case OBSIDIAN -> {
+                    config.set(event.getWhoClicked().getName() + ".1Perk", "portal");
+                    Woolbattle.getPlugin().saveConfig();
+                }
+                case STAINED_GLASS -> {
+                    config.set(event.getWhoClicked().getName() + ".1Perk", "rettungskapsel");
+                    Woolbattle.getPlugin().saveConfig();
+                }
+                case BLAZE_ROD -> {
+                    config.set(event.getWhoClicked().getName() + ".1Perk", "rettungsplattform");
+                    Woolbattle.getPlugin().saveConfig();
+                }
+                case VINE -> {
+                    config.set(event.getWhoClicked().getName() + ".1Perk", "rope");
+                    Woolbattle.getPlugin().saveConfig();
+                }
+                case EMERALD -> {
+                    config.set(event.getWhoClicked().getName() + ".1Perk", "schutzschild");
+                    Woolbattle.getPlugin().saveConfig();
+                }
+                case SLIME_BALL -> {
+                    config.set(event.getWhoClicked().getName() + ".1Perk", "slimeplattform");
+                    Woolbattle.getPlugin().saveConfig();
+                }
+                case STONE_PLATE -> {
+                    config.set(event.getWhoClicked().getName() + ".1Perk", "sprengsatz");
+                    Woolbattle.getPlugin().saveConfig();
+                }
+                case SNOW_BALL -> {
+                    config.set(event.getWhoClicked().getName() + ".1Perk", "tauscher");
+                    Woolbattle.getPlugin().saveConfig();
+                }
+                case GLASS_BOTTLE -> {
+                    config.set(event.getWhoClicked().getName() + ".1Perk", "klospülung");
+                    Woolbattle.getPlugin().saveConfig();
+                }
+                case STAINED_GLASS_PANE -> {
+                    config.set(event.getWhoClicked().getName() + ".1Perk", "wandgenerator");
+                    Woolbattle.getPlugin().saveConfig();
+                }
+                case TNT -> {
+                    config.set(event.getWhoClicked().getName() + ".1Perk", "woolbombe");
+                    Woolbattle.getPlugin().saveConfig();
+                }
+                // THE GRABBER
 
             }
+
         }
         if (event.getClickedInventory().getTitle().equals("§3Zweites Perk:")) {
             event.setCancelled(true);
-            FileConfiguration config = Woolbattle.getPlugin().getCustomConfig();
+            FileConfiguration config = Woolbattle.getPlugin().getConfig();
             switch (event.getCurrentItem().getType()) {
                 case TRIPWIRE_HOOK -> {
-                    config.set(event.getWhoClicked().getName() + ".2Perk", "booster");
-                    System.out.println("booster as 2Perk safed");
+                    config.set(event.getWhoClicked().getName() + ".2erk", "booster");
+                    System.out.println("booster safed");
                     Woolbattle.getPlugin().saveConfig();
                 }
                 case FISHING_ROD -> {
-                    config.set(event.getWhoClicked().getName() + ".2Perk", "Enterhaken");
-                    System.out.println("Enterhaken as 2Perk safed");
+                    config.set(event.getWhoClicked().getName() + ".2Perk", "enterhaken");
+                    System.out.println("Enterhaken safed");
                     Woolbattle.getPlugin().saveConfig();
                 }
                 case PACKED_ICE -> {
-                    config.set(event.getWhoClicked().getName() + ".2Perk", "Freezer");
-                    System.out.println("Freezer as 2Perk safed");
+                    config.set(event.getWhoClicked().getName() + ".2Perk", "freezer");
+                    System.out.println("Freezer safed");
                     Woolbattle.getPlugin().saveConfig();
                 }
+                case WATCH -> {
+                    config.set(event.getWhoClicked().getName() + ".2Perk", "großvatersuhr");
+                    Woolbattle.getPlugin().saveConfig();
+                }
+                case STICK -> {
+                    config.set(event.getWhoClicked().getName() + ".2Perk", "linebuilder");
+                    Woolbattle.getPlugin().saveConfig();
+                }
+                case DIAMOND_BARDING -> {
+                    config.set(event.getWhoClicked().getName() + ".2Perk", "minigun");
+                    Woolbattle.getPlugin().saveConfig();
+                }
+                case FIREBALL -> {
+                    config.set(event.getWhoClicked().getName() + ".2Perk", "pfeilbombe");
+                    Woolbattle.getPlugin().saveConfig();
+                }
+                case OBSIDIAN -> {
+                    config.set(event.getWhoClicked().getName() + ".2Perk", "portal");
+                    Woolbattle.getPlugin().saveConfig();
+                }
+                case STAINED_GLASS -> {
+                    config.set(event.getWhoClicked().getName() + ".2Perk", "rettungskapsel");
+                    Woolbattle.getPlugin().saveConfig();
+                }
+                case BLAZE_ROD -> {
+                    config.set(event.getWhoClicked().getName() + ".2Perk", "rettungsplattform");
+                    Woolbattle.getPlugin().saveConfig();
+                }
+                case VINE -> {
+                    config.set(event.getWhoClicked().getName() + ".2Perk", "rope");
+                    Woolbattle.getPlugin().saveConfig();
+                }
+                case EMERALD -> {
+                    config.set(event.getWhoClicked().getName() + ".2Perk", "schutzschild");
+                    Woolbattle.getPlugin().saveConfig();
+                }
+                case SLIME_BALL -> {
+                    config.set(event.getWhoClicked().getName() + ".2Perk", "slimeplattform");
+                    Woolbattle.getPlugin().saveConfig();
+                }
+                case STONE_PLATE -> {
+                    config.set(event.getWhoClicked().getName() + ".2Perk", "sprengsatz");
+                    Woolbattle.getPlugin().saveConfig();
+                }
+                case SNOW_BALL -> {
+                    config.set(event.getWhoClicked().getName() + ".2Perk", "tauscher");
+                    Woolbattle.getPlugin().saveConfig();
+                }
+                case GLASS_BOTTLE -> {
+                    config.set(event.getWhoClicked().getName() + ".2Perk", "klospülung");
+                    Woolbattle.getPlugin().saveConfig();
+                }
+                case STAINED_GLASS_PANE -> {
+                    config.set(event.getWhoClicked().getName() + ".2Perk", "wandgenerator");
+                    Woolbattle.getPlugin().saveConfig();
+                }
+                case TNT -> {
+                    config.set(event.getWhoClicked().getName() + ".2Perk", "woolbombe");
+                    Woolbattle.getPlugin().saveConfig();
+                }
+                // THE GRABBER
 
             }
         }
@@ -175,11 +299,132 @@ public class LobbyItems implements Listener {
 
     public void checkSeclectet(Player player, Inventory inventory) {
         FileConfiguration config = Woolbattle.getPlugin().getCustomConfig();
-        Object o = config.get(player.getName() + ".1Perk");
-        if ("booster".equals(o)) {
-            Items.create(player.getInventory(), Material.TRIPWIRE_HOOK, Enchantment.KNOCKBACK, 5, "§3Booster", 0);
-            player.openInventory(inventory);
-        }
+        Object Fperk = config.get(player.getName() + ".1Perk");
+        Object Sperk = config.get(player.getName() + ".2Perk");
+        if (inventory.getTitle().equals("§3Erstes Perk:")) {
+            if ("booster".equals(Fperk)) {
+                Items.create(inventory, Material.TRIPWIRE_HOOK, Enchantment.KNOCKBACK, 5, "§3Booster", 0);
+                player.openInventory(inventory);
+            } else if ("enterhaken".equals(Fperk)) {
+                Items.create(inventory, Material.FISHING_ROD, Enchantment.KNOCKBACK, 5, "§3Enterhaken", 1);
+                player.openInventory(inventory);
+            } else if ("freezer".equals(Fperk)) {
+                Items.create(inventory, Material.PACKED_ICE, Enchantment.KNOCKBACK, 5, "§3Freezer", 2);
+                player.openInventory(inventory);
+            } else if ("großvatersuhr".equals(Fperk)) {
+                Items.create(inventory, Material.WATCH, Enchantment.KNOCKBACK, 5, "§3Großvaters Uhr", 3);
+                player.openInventory(inventory);
+            } else if ("linebuilder".equals(Fperk)) {
+                Items.create(inventory, Material.STICK, Enchantment.KNOCKBACK, 5, "§3Linebuilder", 4);
+                player.openInventory(inventory);
+            } else if ("minigun".equals(Fperk)) {
+                Items.create(inventory, Material.DIAMOND_BARDING, Enchantment.KNOCKBACK, 5, "§3Minigun", 5);
+                player.openInventory(inventory);
+            } else if ("pfeilbombe".equals(Fperk)) {
+                Items.create(inventory, Material.FIREBALL, Enchantment.KNOCKBACK, 5, "§3Pfeilbombe", 6);
+                player.openInventory(inventory);
+            } else if ("portal".equals(Fperk)) {
+                Items.create(inventory, Material.OBSIDIAN, Enchantment.KNOCKBACK, 5, "§3Portal", 7);
+                player.openInventory(inventory);
+            } else if ("rettungskapsel".equals(Fperk)) {
+                Items.create(inventory, Material.STAINED_GLASS, 14, Enchantment.KNOCKBACK, 5, "§3Rettungskapsel", 8);
+                player.openInventory(inventory);
+            } else if ("rettungsplattform".equals(Fperk)) {
+                Items.create(inventory, Material.BLAZE_ROD, Enchantment.KNOCKBACK, 5, "§3Rettungsplattform", 9);
+                player.openInventory(inventory);
+            } else if ("rope".equals(Fperk)) {
+                Items.create(inventory, Material.VINE, Enchantment.KNOCKBACK, 5, "§3Rope", 10);
+                player.openInventory(inventory);
+            } else if ("schutzschild".equals(Fperk)) {
+                Items.create(inventory, Material.EMERALD, Enchantment.KNOCKBACK, 5, "§3Schuztschild", 11);
+                player.openInventory(inventory);
+            } else if ("slimeplattform".equals(Fperk)) {
+                Items.create(inventory, Material.SLIME_BALL, Enchantment.KNOCKBACK, 5, "§3SlimePlattform", 12);
+                player.openInventory(inventory);
+            } else if ("sprengsatz".equals(Fperk)) {
+                Items.create(inventory, Material.STONE_PLATE, Enchantment.KNOCKBACK, 5, "§3Sprengsatz", 13);
+                player.openInventory(inventory);
+            } else if ("tauscher".equals(Fperk)) {
+                Items.create(inventory, Material.SNOW_BALL, Enchantment.KNOCKBACK, 5, "§3Tauscher", 14);
+                player.openInventory(inventory);
+            } else if ("klospülung".equals(Fperk)) {
+                Items.create(inventory, Material.GLASS_BOTTLE, Enchantment.KNOCKBACK, 5, "§3Klospülung", 15);
+                player.openInventory(inventory);
+            } else if ("wandgenerator".equals(Fperk)) {
+                Items.create(inventory, Material.STAINED_GLASS_PANE, 14, Enchantment.KNOCKBACK, 5, "§3Wandgenerator", 16);
+                player.openInventory(inventory);
+            } else if ("woolbombe".equals(Fperk)) {
+                Items.create(inventory, Material.TNT, Enchantment.KNOCKBACK, 5, "§3WoolBombe", 17);
+                player.openInventory(inventory);
+            } else if ("thegrabber".equals(Fperk)) {
+                Items.create(inventory, Material.FISHING_ROD, Enchantment.KNOCKBACK, 5, "§3The Grabber", 18);
+                player.openInventory(inventory);
+            } else
+                System.out.println("[NO_PERK]: " + player.getName());
 
+
+
+        } else if (inventory.getTitle().equals("§3Zweites Perk:")) {
+            if ("booster".equals(Sperk)) {
+                Items.create(inventory, Material.TRIPWIRE_HOOK, Enchantment.KNOCKBACK, 5, "§3Booster", 0);
+                player.openInventory(inventory);
+            } else if ("enterhaken".equals(Sperk)) {
+                Items.create(inventory, Material.FISHING_ROD, Enchantment.KNOCKBACK, 5, "§3Enterhaken", 1);
+                player.openInventory(inventory);
+            } else if ("freezer".equals(Sperk)) {
+                Items.create(inventory, Material.PACKED_ICE, Enchantment.KNOCKBACK, 5, "§3Freezer", 2);
+                player.openInventory(inventory);
+            } else if ("großvatersuhr".equals(Sperk)) {
+                Items.create(inventory, Material.WATCH, Enchantment.KNOCKBACK, 5, "§3Großvaters Uhr", 3);
+                player.openInventory(inventory);
+            } else if ("linebuilder".equals(Sperk)) {
+                Items.create(inventory, Material.STICK, Enchantment.KNOCKBACK, 5, "§3Linebuilder", 4);
+                player.openInventory(inventory);
+            } else if ("minigun".equals(Sperk)) {
+                Items.create(inventory, Material.DIAMOND_BARDING, Enchantment.KNOCKBACK, 5, "§3Minigun", 5);
+                player.openInventory(inventory);
+            } else if ("pfeilbombe".equals(Sperk)) {
+                Items.create(inventory, Material.FIREBALL, Enchantment.KNOCKBACK, 5, "§3Pfeilbombe", 6);
+                player.openInventory(inventory);
+            } else if ("portal".equals(Sperk)) {
+                Items.create(inventory, Material.OBSIDIAN, Enchantment.KNOCKBACK, 5, "§3Portal", 7);
+                player.openInventory(inventory);
+            } else if ("rettungskapsel".equals(Sperk)) {
+                Items.create(inventory, Material.STAINED_GLASS, 14, Enchantment.KNOCKBACK, 5, "§3Rettungskapsel", 8);
+                player.openInventory(inventory);
+            } else if ("rettungsplattform".equals(Sperk)) {
+                Items.create(inventory, Material.BLAZE_ROD, Enchantment.KNOCKBACK, 5, "§3Rettungsplattform", 9);
+                player.openInventory(inventory);
+            } else if ("rope".equals(Sperk)) {
+                Items.create(inventory, Material.VINE, Enchantment.KNOCKBACK, 5, "§3Rope", 10);
+                player.openInventory(inventory);
+            } else if ("schutzschild".equals(Sperk)) {
+                Items.create(inventory, Material.EMERALD, Enchantment.KNOCKBACK, 5, "§3Schuztschild", 11);
+                player.openInventory(inventory);
+            } else if ("slimeplattform".equals(Sperk)) {
+                Items.create(inventory, Material.SLIME_BALL, Enchantment.KNOCKBACK, 5, "§3SlimePlattform", 12);
+                player.openInventory(inventory);
+            } else if ("sprengsatz".equals(Sperk)) {
+                Items.create(inventory, Material.STONE_PLATE, Enchantment.KNOCKBACK, 5, "§3Sprengsatz", 13);
+                player.openInventory(inventory);
+            } else if ("tauscher".equals(Sperk)) {
+                Items.create(inventory, Material.SNOW_BALL, Enchantment.KNOCKBACK, 5, "§3Tauscher", 14);
+                player.openInventory(inventory);
+            } else if ("klospülung".equals(Sperk)) {
+                Items.create(inventory, Material.GLASS_BOTTLE, Enchantment.KNOCKBACK, 5, "§3Klospülung", 15);
+                player.openInventory(inventory);
+            } else if ("wandgenerator".equals(Sperk)) {
+                Items.create(inventory, Material.STAINED_GLASS_PANE, 14, Enchantment.KNOCKBACK, 5, "§3Wandgenerator", 16);
+                player.openInventory(inventory);
+            } else if ("woolbombe".equals(Sperk)) {
+                Items.create(inventory, Material.TNT, Enchantment.KNOCKBACK, 5, "§3WoolBombe", 17);
+                player.openInventory(inventory);
+            } else if ("thegrabber".equals(Sperk)) {
+                Items.create(inventory, Material.FISHING_ROD, Enchantment.KNOCKBACK, 5, "§3The Grabber", 18);
+                player.openInventory(inventory);
+            } else
+                System.out.println("[NO_PERK]: " + player.getName());
+        } else
+            System.out.println("NO_INVENTORY FOUND");
     }
 }

@@ -34,7 +34,7 @@ public class PlayerLobbyConnectionListener implements Listener {
         event.setJoinMessage(Woolbattle.PREFIX + "§a" + player.getDisplayName() + " §7ist dem Spiel beigetreten. [" +
                 plugin.getPlayers().size() + "/" + LobbyState.MAX_PLAYERS + "]");
 
-        ConfigLocationUtil locationUtil = new ConfigLocationUtil(plugin, "Lobby");
+        ConfigLocationUtil locationUtil = new ConfigLocationUtil(plugin, "world");
         if (locationUtil.loadLocation() != null) {
             player.teleport(locationUtil.loadLocation());
         } else

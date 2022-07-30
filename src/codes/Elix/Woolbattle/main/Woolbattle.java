@@ -71,7 +71,7 @@ public class Woolbattle extends JavaPlugin {
 
     }
     private void safewool() {
-        World w = Bukkit.getWorld("Lobby");
+        World w = Bukkit.getWorld("world");
         for (Chunk c : w.getLoadedChunks()) {
             int cx = c.getX() << 4;
             int cz = c.getZ() << 4;

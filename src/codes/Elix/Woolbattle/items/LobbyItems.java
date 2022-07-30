@@ -136,76 +136,94 @@ public class LobbyItems implements Listener {
                     config.set(event.getWhoClicked().getName() + ".1Perk", "booster");
                     System.out.println("booster safed");
                     Woolbattle.getPlugin().saveConfig();
+                    PerkInventory(player, "§3Erstes Perk:");
                 }
                 case FISHING_ROD -> {
                     config.set(event.getWhoClicked().getName() + ".1Perk", "enterhaken");
                     System.out.println("Enterhaken safed");
                     Woolbattle.getPlugin().saveConfig();
+                    PerkInventory(player, "§3Erstes Perk:");
                 }
                 case PACKED_ICE -> {
                     config.set(event.getWhoClicked().getName() + ".1Perk", "freezer");
                     System.out.println("Freezer safed");
                     Woolbattle.getPlugin().saveConfig();
+                    PerkInventory(player, "§3Erstes Perk:");
                 }
                 case WATCH -> {
                     config.set(event.getWhoClicked().getName() + ".1Perk", "großvatersuhr");
                     Woolbattle.getPlugin().saveConfig();
+                    PerkInventory(player, "§3Erstes Perk:");
                 }
                 case STICK -> {
                     config.set(event.getWhoClicked().getName() + ".1Perk", "linebuilder");
                     Woolbattle.getPlugin().saveConfig();
+                    PerkInventory(player, "§3Erstes Perk:");
                 }
                 case DIAMOND_BARDING -> {
                     config.set(event.getWhoClicked().getName() + ".1Perk", "minigun");
                     Woolbattle.getPlugin().saveConfig();
+                    PerkInventory(player, "§3Erstes Perk:");
                 }
                 case FIREBALL -> {
                     config.set(event.getWhoClicked().getName() + ".1Perk", "pfeilbombe");
                     Woolbattle.getPlugin().saveConfig();
+                    PerkInventory(player, "§3Erstes Perk:");
                 }
                 case OBSIDIAN -> {
                     config.set(event.getWhoClicked().getName() + ".1Perk", "portal");
                     Woolbattle.getPlugin().saveConfig();
+                    PerkInventory(player, "§3Erstes Perk:");
                 }
                 case STAINED_GLASS -> {
                     config.set(event.getWhoClicked().getName() + ".1Perk", "rettungskapsel");
                     Woolbattle.getPlugin().saveConfig();
+                    PerkInventory(player, "§3Erstes Perk:");
                 }
                 case BLAZE_ROD -> {
                     config.set(event.getWhoClicked().getName() + ".1Perk", "rettungsplattform");
                     Woolbattle.getPlugin().saveConfig();
+                    PerkInventory(player, "§3Erstes Perk:");
                 }
                 case VINE -> {
                     config.set(event.getWhoClicked().getName() + ".1Perk", "rope");
                     Woolbattle.getPlugin().saveConfig();
+                    PerkInventory(player, "§3Erstes Perk:");
                 }
                 case EMERALD -> {
                     config.set(event.getWhoClicked().getName() + ".1Perk", "schutzschild");
                     Woolbattle.getPlugin().saveConfig();
+                    PerkInventory(player, "§3Erstes Perk:");
                 }
                 case SLIME_BALL -> {
                     config.set(event.getWhoClicked().getName() + ".1Perk", "slimeplattform");
                     Woolbattle.getPlugin().saveConfig();
+                    PerkInventory(player, "§3Erstes Perk:");
                 }
                 case STONE_PLATE -> {
                     config.set(event.getWhoClicked().getName() + ".1Perk", "sprengsatz");
                     Woolbattle.getPlugin().saveConfig();
+                    PerkInventory(player, "§3Erstes Perk:");
                 }
                 case SNOW_BALL -> {
                     config.set(event.getWhoClicked().getName() + ".1Perk", "tauscher");
                     Woolbattle.getPlugin().saveConfig();
+                    PerkInventory(player, "§3Erstes Perk:");
                 }
                 case GLASS_BOTTLE -> {
                     config.set(event.getWhoClicked().getName() + ".1Perk", "klospülung");
                     Woolbattle.getPlugin().saveConfig();
+                    PerkInventory(player, "§3Erstes Perk:");
                 }
                 case STAINED_GLASS_PANE -> {
                     config.set(event.getWhoClicked().getName() + ".1Perk", "wandgenerator");
                     Woolbattle.getPlugin().saveConfig();
+                    PerkInventory(player, "§3Erstes Perk:");
                 }
                 case TNT -> {
                     config.set(event.getWhoClicked().getName() + ".1Perk", "woolbombe");
                     Woolbattle.getPlugin().saveConfig();
+                    PerkInventory(player, "§3Erstes Perk:");
                 }
                 // THE GRABBER
 
@@ -220,76 +238,94 @@ public class LobbyItems implements Listener {
                     config.set(event.getWhoClicked().getName() + ".2erk", "booster");
                     System.out.println("booster safed");
                     Woolbattle.getPlugin().saveConfig();
+                    PerkInventory(player,"§3Zweites Perk:");
                 }
                 case FISHING_ROD -> {
                     config.set(event.getWhoClicked().getName() + ".2Perk", "enterhaken");
                     System.out.println("Enterhaken safed");
                     Woolbattle.getPlugin().saveConfig();
+                    PerkInventory(player,"§3Zweites Perk:");
                 }
                 case PACKED_ICE -> {
                     config.set(event.getWhoClicked().getName() + ".2Perk", "freezer");
                     System.out.println("Freezer safed");
                     Woolbattle.getPlugin().saveConfig();
+                    PerkInventory(player,"§3Zweites Perk:");
                 }
                 case WATCH -> {
                     config.set(event.getWhoClicked().getName() + ".2Perk", "großvatersuhr");
                     Woolbattle.getPlugin().saveConfig();
+                    PerkInventory(player,"§3Zweites Perk:");
                 }
                 case STICK -> {
                     config.set(event.getWhoClicked().getName() + ".2Perk", "linebuilder");
                     Woolbattle.getPlugin().saveConfig();
+                    PerkInventory(player,"§3Zweites Perk:");
                 }
                 case DIAMOND_BARDING -> {
                     config.set(event.getWhoClicked().getName() + ".2Perk", "minigun");
                     Woolbattle.getPlugin().saveConfig();
+                    PerkInventory(player,"§3Zweites Perk:");
                 }
                 case FIREBALL -> {
                     config.set(event.getWhoClicked().getName() + ".2Perk", "pfeilbombe");
                     Woolbattle.getPlugin().saveConfig();
+                    PerkInventory(player,"§3Zweites Perk:");
                 }
                 case OBSIDIAN -> {
                     config.set(event.getWhoClicked().getName() + ".2Perk", "portal");
                     Woolbattle.getPlugin().saveConfig();
+                    PerkInventory(player,"§3Zweites Perk:");
                 }
                 case STAINED_GLASS -> {
                     config.set(event.getWhoClicked().getName() + ".2Perk", "rettungskapsel");
                     Woolbattle.getPlugin().saveConfig();
+                    PerkInventory(player,"§3Zweites Perk:");
                 }
                 case BLAZE_ROD -> {
                     config.set(event.getWhoClicked().getName() + ".2Perk", "rettungsplattform");
                     Woolbattle.getPlugin().saveConfig();
+                    PerkInventory(player,"§3Zweites Perk:");
                 }
                 case VINE -> {
                     config.set(event.getWhoClicked().getName() + ".2Perk", "rope");
                     Woolbattle.getPlugin().saveConfig();
+                    PerkInventory(player,"§3Zweites Perk:");
                 }
                 case EMERALD -> {
                     config.set(event.getWhoClicked().getName() + ".2Perk", "schutzschild");
                     Woolbattle.getPlugin().saveConfig();
+                    PerkInventory(player,"§3Zweites Perk:");
                 }
                 case SLIME_BALL -> {
                     config.set(event.getWhoClicked().getName() + ".2Perk", "slimeplattform");
                     Woolbattle.getPlugin().saveConfig();
+                    PerkInventory(player,"§3Zweites Perk:");
                 }
                 case STONE_PLATE -> {
                     config.set(event.getWhoClicked().getName() + ".2Perk", "sprengsatz");
                     Woolbattle.getPlugin().saveConfig();
+                    PerkInventory(player,"§3Zweites Perk:");
                 }
                 case SNOW_BALL -> {
                     config.set(event.getWhoClicked().getName() + ".2Perk", "tauscher");
                     Woolbattle.getPlugin().saveConfig();
+                    PerkInventory(player,"§3Zweites Perk:");
                 }
                 case GLASS_BOTTLE -> {
                     config.set(event.getWhoClicked().getName() + ".2Perk", "klospülung");
                     Woolbattle.getPlugin().saveConfig();
+                    PerkInventory(player,"§3Zweites Perk:");
                 }
                 case STAINED_GLASS_PANE -> {
                     config.set(event.getWhoClicked().getName() + ".2Perk", "wandgenerator");
                     Woolbattle.getPlugin().saveConfig();
+                    PerkInventory(player,"§3Zweites Perk:");
                 }
                 case TNT -> {
                     config.set(event.getWhoClicked().getName() + ".2Perk", "woolbombe");
                     Woolbattle.getPlugin().saveConfig();
+                    PerkInventory(player,"§3Zweites Perk:");
                 }
                 // THE GRABBER
 
@@ -298,11 +334,12 @@ public class LobbyItems implements Listener {
     }
 
     public void checkSeclectet(Player player, Inventory inventory) {
-        FileConfiguration config = Woolbattle.getPlugin().getCustomConfig();
+        FileConfiguration config = Woolbattle.getPlugin().getConfig();
         Object Fperk = config.get(player.getName() + ".1Perk");
         Object Sperk = config.get(player.getName() + ".2Perk");
         if (inventory.getTitle().equals("§3Erstes Perk:")) {
             if ("booster".equals(Fperk)) {
+                System.out.println("Booster selectet");
                 Items.create(inventory, Material.TRIPWIRE_HOOK, Enchantment.KNOCKBACK, 5, "§3Booster", 0);
                 player.openInventory(inventory);
             } else if ("enterhaken".equals(Fperk)) {
@@ -359,13 +396,16 @@ public class LobbyItems implements Listener {
             } else if ("thegrabber".equals(Fperk)) {
                 Items.create(inventory, Material.FISHING_ROD, Enchantment.KNOCKBACK, 5, "§3The Grabber", 18);
                 player.openInventory(inventory);
-            } else
+            } else {
+                player.openInventory(inventory);
                 System.out.println("[NO_PERK]: " + player.getName());
+            }
 
 
 
         } else if (inventory.getTitle().equals("§3Zweites Perk:")) {
             if ("booster".equals(Sperk)) {
+                System.out.println("Booster 2perk selectet");
                 Items.create(inventory, Material.TRIPWIRE_HOOK, Enchantment.KNOCKBACK, 5, "§3Booster", 0);
                 player.openInventory(inventory);
             } else if ("enterhaken".equals(Sperk)) {
@@ -422,8 +462,10 @@ public class LobbyItems implements Listener {
             } else if ("thegrabber".equals(Sperk)) {
                 Items.create(inventory, Material.FISHING_ROD, Enchantment.KNOCKBACK, 5, "§3The Grabber", 18);
                 player.openInventory(inventory);
-            } else
+            } else {
+                player.openInventory(inventory);
                 System.out.println("[NO_PERK]: " + player.getName());
+            }
         } else
             System.out.println("NO_INVENTORY FOUND");
     }

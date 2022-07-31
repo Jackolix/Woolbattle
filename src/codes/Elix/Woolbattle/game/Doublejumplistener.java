@@ -13,7 +13,9 @@ import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.util.Vector;
 
 public class Doublejumplistener implements Listener {
-//TODO: change how the food level is implemented
+    //TODO: change how the food level is implemented
+    //TODO: change how player velocity is implemented
+
     //delay between double jumps
     private long delay = 5L;
     //strength of the double jumps

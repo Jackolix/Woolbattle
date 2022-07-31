@@ -6,6 +6,7 @@
 ### Generell
 - [ ] Buildprotection for Lobby
 - [ ] Foodlevelchange mit Doublejump
+- [ ] Doublejump based on walk vector
 - [ ] Void Death System
     - [ ] LebenSystem
     - [ ] VoidTeleport

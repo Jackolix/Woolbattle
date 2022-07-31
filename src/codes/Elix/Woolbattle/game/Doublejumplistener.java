@@ -13,7 +13,11 @@ import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.util.Vector;
 
 public class Doublejumplistener implements Listener {
-
+//TODO: change how the food level is implemented
+    //delay between double jumps
+    private long delay = 5L;
+    //strength of the double jumps
+    private float strength = 1.0f;
 
     @EventHandler
     public void onFly(PlayerToggleFlightEvent event) {
@@ -22,11 +26,30 @@ public class Doublejumplistener implements Listener {
 
             Vector vector = new Vector(0, 0, 0);
             vector.setY(1.25D);
+            //Vector view_direction = event.getPlayer().getEyeLocation().getDirection().normalize();
+            Vector walk_vector = event.getPlayer().getVelocity().normalize();
+            vector.setX(walk_vector.getX());
+            vector.setZ(walk_vector.getZ());
+            vector.multiply(strength);
             event.getPlayer().setVelocity(vector);
             event.getPlayer().setAllowFlight(false);
+
+            event.getPlayer().setFoodLevel(10);
+
+            for (int i = 1; i <= 10; i++)
+            {
+                setFood(i, event);
+            }
+
             Woolbattle.getPlugin().getServer().getScheduler().scheduleSyncDelayedTask(Woolbattle.getPlugin(),
-                    () -> event.getPlayer().setAllowFlight(true), 20 * 8L);
+                    () -> event.getPlayer().setAllowFlight(true), 20 * delay);
         }
+    }
+
+    private void setFood(int i, PlayerToggleFlightEvent event)
+    {
+        Woolbattle.getPlugin().getServer().getScheduler().scheduleSyncDelayedTask(Woolbattle.getPlugin(),
+                () -> event.getPlayer().setFoodLevel(10 + i), 20 * i * delay/10);
     }
 
     @EventHandler

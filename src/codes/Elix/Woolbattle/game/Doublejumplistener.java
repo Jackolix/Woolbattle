@@ -17,9 +17,9 @@ public class Doublejumplistener implements Listener {
     //TODO: change how player velocity is implemented
 
     //delay between double jumps
-    private long delay = 5L;
+    private long delay = 6L;
     //strength of the double jumps
-    private float strength = 1.0f;
+    private float strength = 0.75f;
 
     @EventHandler
     public void onFly(PlayerToggleFlightEvent event) {
@@ -36,9 +36,9 @@ public class Doublejumplistener implements Listener {
             event.getPlayer().setVelocity(vector);
             event.getPlayer().setAllowFlight(false);
 
-            event.getPlayer().setFoodLevel(10);
+            event.getPlayer().setFoodLevel(0);
 
-            for (int i = 1; i <= 10; i++)
+            for (int i = 1; i <= 20; i++)
             {
                 setFood(i, event);
             }
@@ -51,7 +51,7 @@ public class Doublejumplistener implements Listener {
     private void setFood(int i, PlayerToggleFlightEvent event)
     {
         Woolbattle.getPlugin().getServer().getScheduler().scheduleSyncDelayedTask(Woolbattle.getPlugin(),
-                () -> event.getPlayer().setFoodLevel(10 + i), 20 * i * delay/10);
+                () -> event.getPlayer().setFoodLevel(i), 20 * i * delay/20);
     }
 
     @EventHandler

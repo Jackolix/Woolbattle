@@ -4,6 +4,7 @@
 package codes.Elix.Woolbattle.gamestates;
 
 import codes.Elix.Woolbattle.game.Doublejumplistener;
+import codes.Elix.Woolbattle.game.perks.switcher;
 import codes.Elix.Woolbattle.items.Items;
 import codes.Elix.Woolbattle.main.Woolbattle;
 import org.bukkit.Bukkit;
@@ -20,10 +21,12 @@ public class IngameState extends GameState {
 
     @Override
     public void start() {
-        Doublejumplistener.enable();
         for (Player current : Bukkit.getOnlinePlayers()) {
             Items.standartitems(current);
         }
+        Doublejumplistener.enable();
+        switcher.enable();
+
     }
 
     @Override

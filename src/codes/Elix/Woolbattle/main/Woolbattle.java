@@ -4,6 +4,7 @@ package codes.Elix.Woolbattle.main;
 import codes.Elix.Woolbattle.commands.SetupCommand;
 import codes.Elix.Woolbattle.commands.StartCommand;
 import codes.Elix.Woolbattle.game.Doublejumplistener;
+import codes.Elix.Woolbattle.game.perks.switcher;
 import codes.Elix.Woolbattle.gamestates.GameState;
 import codes.Elix.Woolbattle.gamestates.GameStateManager;
 import codes.Elix.Woolbattle.items.LobbyItems;

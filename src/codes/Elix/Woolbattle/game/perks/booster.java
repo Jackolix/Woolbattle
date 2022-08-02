@@ -17,6 +17,7 @@ public class booster implements Listener {
 
     @EventHandler
     public void onBoosterInteract(PlayerInteractEvent event) {
+        if (event.getItem() == null)    return;
         if (event.getItem().getType() == Material.TRIPWIRE_HOOK) {
             Player player = event.getPlayer();
 

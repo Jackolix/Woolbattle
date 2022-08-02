@@ -18,13 +18,13 @@ public class switcher implements Listener {
 
 
     @EventHandler
-    public void onswitch(EntityDamageByEntityEvent event) {
-        if(event.getDamager() instanceof Projectile) {
+    public void onSwitch(EntityDamageByEntityEvent event) {
+        if(event.getDamager() instanceof Snowball) {
             System.out.println("Projectile damage");
             Projectile projectile = (Projectile) event.getDamager();
             Player shooter = (Player) projectile.getShooter();
             Player hitted = (Player) event.getEntity();
-            if (!(projectile instanceof Snowball)) return;
+
             Location location1 = shooter.getLocation();
             Location location2 = hitted.getLocation();
             shooter.teleport(location2);

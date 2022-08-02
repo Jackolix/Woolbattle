@@ -331,6 +331,79 @@ public class LobbyItems implements Listener {
 
             }
         }
+
+        if (event.getClickedInventory().getTitle().equals("§3Verfügbare Perks:")) {
+            event.setCancelled(true);
+            FileConfiguration config = Woolbattle.getPlugin().getConfig();
+            switch (event.getCurrentItem().getType()) {
+                case LADDER -> {
+                    config.set(event.getWhoClicked().getName() + ".passive", "aufzug");
+                    Woolbattle.getPlugin().saveConfig();
+                    PassivePerkInventory(player);
+                }
+                case TNT -> {
+                    config.set(event.getWhoClicked().getName() + ".passive", "explodierender_pfeil");
+                    Woolbattle.getPlugin().saveConfig();
+                    PassivePerkInventory(player);
+                }
+                case FISHING_ROD -> {
+                    config.set(event.getWhoClicked().getName() + ".passive", "IDK");
+                    Woolbattle.getPlugin().saveConfig();
+                    PassivePerkInventory(player);
+                }
+                case DISPENSER -> {
+                    config.set(event.getWhoClicked().getName() + ".passive", "pfeilregen");
+                    Woolbattle.getPlugin().saveConfig();
+                    PassivePerkInventory(player);
+                }
+                case IRON_CHESTPLATE -> {
+                    config.set(event.getWhoClicked().getName() + ".passive", "recharger");
+                    Woolbattle.getPlugin().saveConfig();
+                    PassivePerkInventory(player);
+                }
+                case CACTUS -> {
+                    config.set(event.getWhoClicked().getName() + ".passive", "reflector");
+                    Woolbattle.getPlugin().saveConfig();
+                    PassivePerkInventory(player);
+                }
+                case RABBIT_FOOT -> {
+                    config.set(event.getWhoClicked().getName() + ".passive", "rocket_jump");
+                    Woolbattle.getPlugin().saveConfig();
+                    PassivePerkInventory(player);
+                }
+                case GOLD_INGOT -> {
+                    config.set(event.getWhoClicked().getName() + ".passive", "portal");
+                    Woolbattle.getPlugin().saveConfig();
+                    PassivePerkInventory(player);
+                }
+                case BLAZE_ROD -> {
+                    config.set(event.getWhoClicked().getName() + ".passive", "schock:_pfeil");
+                    Woolbattle.getPlugin().saveConfig();
+                    PassivePerkInventory(player);
+                }
+                case ARROW -> {
+                    config.set(event.getWhoClicked().getName() + ".passive", "slowarrow");
+                    Woolbattle.getPlugin().saveConfig();
+                    PassivePerkInventory(player);
+                }
+                case MONSTER_EGG -> {
+                    config.set(event.getWhoClicked().getName() + ".passive", "spinne");
+                    Woolbattle.getPlugin().saveConfig();
+                    PassivePerkInventory(player);
+                }
+                case DIAMOND_BOOTS -> {
+                    config.set(event.getWhoClicked().getName() + ".passive", "stomper");
+                    Woolbattle.getPlugin().saveConfig();
+                    PassivePerkInventory(player);
+                }
+                case GOLD_HOE -> {
+                    config.set(event.getWhoClicked().getName() + ".passive", "slimeplattform");
+                    Woolbattle.getPlugin().saveConfig();
+                    PassivePerkInventory(player);
+                }
+
+            }
+        }
     }
 
     public void checkSeclectet(Player player, Inventory inventory) {

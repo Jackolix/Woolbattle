@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -68,6 +69,7 @@ public class GameProtectionListener implements Listener {
                     if (Woolbattle.blocks.contains(event.getBlock())) {
                         event.setCancelled(true);
                         ItemStack item = new ItemStack(Material.WOOL);
+                        item.setAmount(2);
                         player.getInventory().addItem(item);
                     }
                 } else event.setCancelled(true);
@@ -76,5 +78,15 @@ public class GameProtectionListener implements Listener {
 
         } else
             event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onBlockBuild(BlockPlaceEvent event) {
+        if (event instanceof Player) return;
+        if (!(GameStateManager.getCurrentGameState() instanceof LobbyState)) return;
+        Player player = event.getPlayer();
+        if (!(player.hasPermission("Woolbattle.build"))) {
+            event.setCancelled(true);
+        }
     }
 }

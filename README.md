@@ -1,12 +1,12 @@
 # Woolbattle
-## 45% Done
+## 50% Done
 
 ---------------
 ## TODO
 ### Generell
 - [ ] Buildprotection for Lobby
-- [ ] Foodlevelchange mit Doublejump
-- [ ] Doublejump based on walk vector
+- [x] Foodlevelchange mit Doublejump
+- [x] Doublejump based on walk vector
 - [ ] Void Death System
     - [ ] LebenSystem
     - [ ] VoidTeleport
@@ -16,7 +16,7 @@
 
 ### GAMEPLAY
 #### LobbyItems
-- [ ] Bow (Perks)
+- [x] Bow (Perks)
 - [ ] Book (Team Wählen)
 - [ ] Lohenrute (Partikel sind an)
 - [ ] Chest (Inventarsortierung)
@@ -24,7 +24,7 @@
 - [ ] Paper (Maps)
 
 #### PERKS
-- [ ] Tauscher
+- [x] Tauscher
 - [ ] Booster
 - [ ] Enterhaken
 - [ ] Freezer

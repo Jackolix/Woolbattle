@@ -4,6 +4,7 @@
 package codes.Elix.Woolbattle.gamestates;
 
 import codes.Elix.Woolbattle.game.Doublejumplistener;
+import codes.Elix.Woolbattle.game.perks.booster;
 import codes.Elix.Woolbattle.game.perks.switcher;
 import codes.Elix.Woolbattle.items.Items;
 import codes.Elix.Woolbattle.main.Woolbattle;
@@ -26,6 +27,7 @@ public class IngameState extends GameState {
         }
         Doublejumplistener.enable();
         switcher.enable();
+        booster.enable();
 
     }
 

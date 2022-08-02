@@ -3,10 +3,12 @@ package codes.Elix.Woolbattle.main;
 
 import codes.Elix.Woolbattle.commands.SetupCommand;
 import codes.Elix.Woolbattle.commands.StartCommand;
+import codes.Elix.Woolbattle.countdowns.LobbyCountdown;
 import codes.Elix.Woolbattle.game.Doublejumplistener;
 import codes.Elix.Woolbattle.game.perks.switcher;
 import codes.Elix.Woolbattle.gamestates.GameState;
 import codes.Elix.Woolbattle.gamestates.GameStateManager;
+import codes.Elix.Woolbattle.gamestates.LobbyState;
 import codes.Elix.Woolbattle.items.LobbyItems;
 import codes.Elix.Woolbattle.listeners.GameProtectionListener;
 import codes.Elix.Woolbattle.listeners.PlayerLobbyConnectionListener;
@@ -48,6 +50,7 @@ public class Woolbattle extends JavaPlugin {
 
         gameStateManager.setGameState(GameState.LOBBY_STATE);
         safewool();
+        addplayers();
 
         init(Bukkit.getPluginManager());
         System.out.println("Safed all Woolblocks!");
@@ -85,6 +88,21 @@ public class Woolbattle extends JavaPlugin {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private void addplayers() {
+        for (Player current : Bukkit.getOnlinePlayers()) {
+            players.add(current);
+            LobbyItems.Lobby(current);
+        }
+        LobbyState lobbyState = (LobbyState) GameStateManager.getCurrentGameState();
+        LobbyCountdown countdown = lobbyState.getCountdown();
+        if (players.size() >= LobbyState.MIN_PLAYERS) {
+            if (!countdown.isRunning()) {
+                countdown.stopIdle();
+                countdown.start();
             }
         }
     }

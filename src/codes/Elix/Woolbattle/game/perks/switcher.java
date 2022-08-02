@@ -24,7 +24,7 @@ public class switcher implements Listener {
             Projectile projectile = (Projectile) event.getDamager();
             Player shooter = (Player) projectile.getShooter();
             Player hitted = (Player) event.getEntity();
-            //if (projectile != Snowball) return;
+            if (!(projectile instanceof Snowball)) return;
             Location location1 = shooter.getLocation();
             Location location2 = hitted.getLocation();
             shooter.teleport(location2);

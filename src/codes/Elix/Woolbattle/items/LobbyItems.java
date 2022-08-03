@@ -3,6 +3,9 @@
 
 package codes.Elix.Woolbattle.items;
 
+import codes.Elix.Woolbattle.game.LiveSystem;
+import codes.Elix.Woolbattle.gamestates.GameStateManager;
+import codes.Elix.Woolbattle.gamestates.LobbyState;
 import codes.Elix.Woolbattle.main.Woolbattle;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -16,9 +19,11 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class LobbyItems implements Listener {
 
+    public static int VotedLives;
 
     public static void Lobby(Player player) {
         Items.create(player, Material.BOW, null, 5, "§3Perks", 0);
@@ -31,6 +36,7 @@ public class LobbyItems implements Listener {
 
     @EventHandler
     public void onItemClick(PlayerInteractEvent event) {
+        if (!(GameStateManager.getCurrentGameState() instanceof LobbyState)) return;
         if (event.getItem() == null) return;
         switch (event.getItem().getType()) {
             case BOW -> PerkvorInventory(event.getPlayer());
@@ -97,7 +103,13 @@ public class LobbyItems implements Listener {
     }
 
     private void TeamsInventory(Player player) {
-
+        //TODO: Material stimmt nicht + Itemnamen sind nicht farbig
+        Inventory inventory = Bukkit.createInventory(null, 9*1, "§bWähle den Team!");
+        Items.create(inventory, Material.REDSTONE, null, 5, "&cTeam Rot", 1);
+        Items.create(inventory, Material.LAPIS_ORE, null, 5, "&bTeam Blau", 3);
+        Items.create(inventory, Material.YELLOW_FLOWER, null, 5, "&eTeam Gelb", 5);
+        Items.create(inventory, Material.GREEN_RECORD, null, 5, "&aTeam Grün", 7);
+        player.openInventory(inventory);
     }
 
     private void PartikelAction() {
@@ -109,7 +121,9 @@ public class LobbyItems implements Listener {
     }
 
     private void Lifes() {
-
+        //TODO: Voting System
+        //Festlegen der Lebensanzahl
+        VotedLives = 6;
     }
 
     private void Maps() {
@@ -404,6 +418,16 @@ public class LobbyItems implements Listener {
 
             }
         }
+        if (event.getClickedInventory().getTitle().equals("§bWähle den Team!")) {
+            event.setCancelled(true);
+            switch (event.getCurrentItem().getType()) {
+                case REDSTONE -> addToTeam(LiveSystem.TeamRed, player);
+                case LAPIS_ORE -> addToTeam(LiveSystem.TeamBlue, player);
+                case YELLOW_FLOWER -> addToTeam(LiveSystem.TeamYellow, player);
+                case GREEN_RECORD -> addToTeam(LiveSystem.TeamGreen, player);
+            }
+
+        }
     }
 
     public void checkSeclectet(Player player, Inventory inventory) {
@@ -541,5 +565,12 @@ public class LobbyItems implements Listener {
             }
         } else
             System.out.println("NO_INVENTORY FOUND");
+    }
+
+    private void addToTeam(ArrayList<Player> arrayList, Player player) {
+        if (arrayList.size() < 2) {
+            arrayList.add(player);
+        } else System.out.println("Team is full");
+
     }
 }

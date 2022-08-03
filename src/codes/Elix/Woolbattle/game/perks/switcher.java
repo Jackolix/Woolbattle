@@ -6,6 +6,7 @@ package codes.Elix.Woolbattle.game.perks;
 import codes.Elix.Woolbattle.main.Woolbattle;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Snowball;
@@ -29,6 +30,8 @@ public class switcher implements Listener {
             Location location2 = hitted.getLocation();
             shooter.teleport(location2);
             hitted.teleport(location1);
+            shooter.playSound(shooter.getLocation(), Sound.BURP, 1F, 1F);
+            hitted.playSound(hitted.getLocation(), Sound.BURP, 1F, 1F);
 
         }
     }

@@ -12,14 +12,14 @@ import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.util.Vector;
 
-public class Doublejumplistener implements Listener {
+public class DoubleJump implements Listener {
     //TODO: change how the food level is implemented
     //TODO: change how player velocity is implemented
 
     //delay between double jumps
-    private long delay = 6L;
+    private long delay = 4L;
     //strength of the double jumps
-    private float strength = 0.75f;
+    private float strength = 0.5f;
 
     @EventHandler
     public void onFly(PlayerToggleFlightEvent event) {
@@ -27,7 +27,7 @@ public class Doublejumplistener implements Listener {
             event.setCancelled(true);
 
             Vector vector = new Vector(0, 0, 0);
-            vector.setY(1.25D);
+            vector.setY(2D);
             //Vector view_direction = event.getPlayer().getEyeLocation().getDirection().normalize();
             Vector walk_vector = event.getPlayer().getVelocity().normalize();
             vector.setX(walk_vector.getX());

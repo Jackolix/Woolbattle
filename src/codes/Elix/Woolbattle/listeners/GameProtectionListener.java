@@ -20,6 +20,7 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.Wool;
 
 public class GameProtectionListener implements Listener {
 
@@ -83,8 +84,12 @@ public class GameProtectionListener implements Listener {
     @EventHandler
     public void onBlockBuild(BlockPlaceEvent event) {
         if (event instanceof Player) return;
-        if (!(GameStateManager.getCurrentGameState() instanceof LobbyState)) return;
+        if (GameStateManager.getCurrentGameState() instanceof LobbyState) {
+            event.setCancelled(true);
+            return;
+        }
         Player player = event.getPlayer();
+        if (event.getBlock().getType() == Material.WOOL) return;
         if (!(player.hasPermission("Woolbattle.build"))) {
             event.setCancelled(true);
         }

@@ -4,7 +4,7 @@
 ---------------
 ## TODO
 ### Generell
-- [ ] Buildprotection for Lobby
+- [x] Buildprotection for Lobby
 - [x] Foodlevelchange mit Doublejump
 - [x] Doublejump based on walk vector
 - [ ] Void Death System
@@ -25,7 +25,7 @@
 
 #### PERKS
 - [x] Tauscher
-- [ ] Booster
+- [x] Booster
 - [ ] Enterhaken
 - [ ] Freezer
 - [ ] Großvaters Uhr

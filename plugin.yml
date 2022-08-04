@@ -1,7 +1,8 @@
 main: codes.Elix.Woolbattle.main.Woolbattle
 version: 0.5
 name: Woolbattle
-author: Elix
+description: This plugin is cool i guess?
+authors: [Elix, N4med]
 
 commands:
    setup:

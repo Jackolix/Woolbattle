@@ -10,7 +10,6 @@ import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 
 public class IngameScoreboard {
-
     private static int Team1 = LobbyItems.VotedLives;
     private static int Team2 = LobbyItems.VotedLives;
     private static Integer Team3 = LobbyItems.VotedLives;
@@ -25,10 +24,10 @@ public class IngameScoreboard {
         Objective objective = scoreboard.registerNewObjective("abcd", "abcd");
         objective.setDisplayName("§f§lWOOLBATTLE");
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-        if (Team4 != null){
+        if (LobbyItems.Teams >= 4){
             objective.getScore("§6» §4❤ " + Team4 + " §4❤" + " §6« " + Colorname4).setScore(4);
         }
-        if (Team3 != null){
+        if (LobbyItems.Teams >= 3){
             objective.getScore("§6» §4❤ " + Team3 + " §4❤" + " §6« " + Colorname3).setScore(3);
         }
         objective.getScore("§6» §4❤ " + Team1 + " §4❤" + " §6« " + Colorname1).setScore(2);

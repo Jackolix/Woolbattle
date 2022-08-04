@@ -46,6 +46,7 @@ public class Woolbattle extends JavaPlugin {
         gameStateManager = new GameStateManager(this);
         players = new ArrayList<>();
         createCustomConfig();
+        PluginMessage();
 
         gameStateManager.setGameState(GameState.LOBBY_STATE);
         safewool();
@@ -133,6 +134,23 @@ public class Woolbattle extends JavaPlugin {
     }
     public static Woolbattle getPlugin() { return plugin; }
     public FileConfiguration getCustomConfig() { return this.customConfig; }
+
+    private void PluginMessage() {
+        Bukkit.getServer().getConsoleSender().sendMessage("\n" +
+                "\n __          __         _             \n" +
+                " \\ \\        / /        | |            \n" +
+                "  \\ \\  /\\  / /__   ___ | |            \n" +
+                "   \\ \\/  \\/ / _ \\ / _ \\| |            \n" +
+                "    \\  /\\  / (_) | (_) | |            \n" +
+                "     \\/  \\/_\\___/ \\___/|_| _   _      \n" +
+                "          | |         | | | | | |     \n" +
+                "          | |__   __ _| |_| |_| | ___ \n" +
+                "          | '_ \\ / _` | __| __| |/ _ \\\n" +
+                "          | |_) | (_| | |_| |_| |  __/\n" +
+                "          |_.__/ \\__,_|\\__|\\__|_|\\___|\n" +
+                "                                      \n" +
+                "                                      \n");
+    }
 
 
 }

@@ -9,10 +9,15 @@ import java.util.ArrayList;
 
 public class LiveSystem {
 
+    private int votes;
+    public static int TeamSize;
     public static ArrayList<Player> TeamRed = new ArrayList<>();
     public static ArrayList<Player> TeamBlue = new ArrayList<>();
     public static ArrayList<Player> TeamGreen = new ArrayList<>();
     public static ArrayList<Player> TeamYellow = new ArrayList<>();
 
 
+    public int getVotes() {
+        return votes;
+    }
 }

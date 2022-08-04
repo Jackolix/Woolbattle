@@ -18,7 +18,6 @@ public class LobbyState extends GameState {
     @Override
     public void start() {
         countdown.startIdle();
-        Bukkit.broadcastMessage("Gestartet");
     }
 
     @Override

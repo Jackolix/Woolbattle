@@ -13,46 +13,49 @@ import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.util.Vector;
 
 public class DoubleJump implements Listener {
-    //TODO: change how the food level is implemented
-    //TODO: change how player velocity is implemented
 
-    //delay between double jumps
-    private long delay = 4L;
+    //TODO: can be changed from rocket jump
+    private double dj_height = 1.25D;
+    //cooldown between double jumps
+    private long cooldown = 4L;
     //strength of the double jumps
     private float strength = 0.5f;
 
     @EventHandler
     public void onFly(PlayerToggleFlightEvent event) {
-        if (event.getPlayer().getGameMode() == GameMode.SURVIVAL || event.getPlayer().getGameMode() == GameMode.ADVENTURE) {
+        Player player = event.getPlayer();
+
+        if (player.getGameMode() == GameMode.SURVIVAL || player.getGameMode() == GameMode.ADVENTURE) {
             event.setCancelled(true);
 
-            Vector vector = new Vector(0, 0, 0);
-            vector.setY(2D);
-            //Vector view_direction = event.getPlayer().getEyeLocation().getDirection().normalize();
-            Vector walk_vector = event.getPlayer().getVelocity().normalize();
-            vector.setX(walk_vector.getX());
-            vector.setZ(walk_vector.getZ());
+            //give player the velocity
+            Vector walk_vector = player.getVelocity().normalize();
+            Vector vector = new Vector(walk_vector.getX(), dj_height, walk_vector.getZ());
             vector.multiply(strength);
-            event.getPlayer().setVelocity(vector);
-            event.getPlayer().setAllowFlight(false);
+            player.setVelocity(vector);
 
-            event.getPlayer().setFoodLevel(0);
+            player.setAllowFlight(false);
 
-            for (int i = 1; i <= 20; i++)
-            {
-                setFood(i, event);
+            //player.setFoodLevel(0);
+
+            //change xp for the cooldown
+            for (int i = 0; i <= 10; i++) {
+                setEXP(i, player);
             }
 
+            //cooldown
             Woolbattle.getPlugin().getServer().getScheduler().scheduleSyncDelayedTask(Woolbattle.getPlugin(),
-                    () -> event.getPlayer().setAllowFlight(true), 20 * delay);
+                    () -> player.setAllowFlight(true), 20 * cooldown);
+
         }
     }
-
-    private void setFood(int i, PlayerToggleFlightEvent event)
+    private void setEXP(int i, Player player)
     {
         Woolbattle.getPlugin().getServer().getScheduler().scheduleSyncDelayedTask(Woolbattle.getPlugin(),
-                () -> event.getPlayer().setFoodLevel(i), 20 * i * delay/20);
+                //() -> player.setFoodLevel(i), 20 * i * delay/20);
+                () -> player.setExp((float)i/10), 20 * i * cooldown/10);
     }
+
 
     @EventHandler
     public void onGamemodeChange(PlayerGameModeChangeEvent event) {

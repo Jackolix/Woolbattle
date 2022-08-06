@@ -102,10 +102,10 @@ public class LobbyItems implements Listener {
     private void TeamsInventory(Player player) {
         //TODO: Material stimmt nicht
         Inventory inventory = Bukkit.createInventory(null, 9, "§bWähle den Team!");
-        Items.create(inventory, Material.REDSTONE, null, 5, "§cTeam Rot", 1);
-        Items.create(inventory, Material.LAPIS_ORE, null, 5, "§bTeam Blau", 3);
-        Items.create(inventory, Material.YELLOW_FLOWER, null, 5, "§eTeam Gelb", 5);
-        Items.create(inventory, Material.GREEN_RECORD, null, 5, "§aTeam Grün", 7);
+        Items.create(inventory, Material.INK_SACK, 1, false, "§cTeam Rot", 1);
+        Items.create(inventory, Material.INK_SACK, 12, false, "§bTeam Blau", 3);
+        Items.create(inventory, Material.INK_SACK, 11, false, "§eTeam Gelb", 5);
+        Items.create(inventory, Material.INK_SACK, 10, false, "§aTeam Grün", 7);
         player.openInventory(inventory);
     }
 

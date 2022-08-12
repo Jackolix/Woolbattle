@@ -7,8 +7,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+import java.util.ArrayList;
+
 public class clock implements Listener {
 
+    private ArrayList<Player> available = new ArrayList<>();
     //time of teleportation after activation
     private long teleportTime = 4;
     private long cooldown = 15;
@@ -17,10 +20,11 @@ public class clock implements Listener {
     @EventHandler
     public void onClockInteract(PlayerInteractEvent event) {
         if (event.getItem() == null)    return;
-        if (!ready)                     return;
+        if (available.contains(event.getPlayer()))  return;
         if (event.getItem().getType() == Material.WATCH) {
             Player player = event.getPlayer();
-            ready = false;
+            //ready = false;
+            available.add(player);
 
             Location location = player.getLocation();
             Woolbattle.getPlugin().getServer().getScheduler().scheduleSyncDelayedTask(Woolbattle.getPlugin(),
@@ -32,7 +36,7 @@ public class clock implements Listener {
             //TODO: Add sounds
             //TODO: Cooldown for clock (visual representation)
             Woolbattle.getPlugin().getServer().getScheduler().scheduleSyncDelayedTask(Woolbattle.getPlugin(),
-                    () -> setReady(true), 20 * cooldown);
+                    () -> available.remove(player), 20 * cooldown);
         }
     }
 

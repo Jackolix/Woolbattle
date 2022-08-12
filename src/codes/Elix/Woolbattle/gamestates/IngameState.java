@@ -26,6 +26,7 @@ public class IngameState extends GameState {
     @Override
     public void start() {
         for (Player current : Bukkit.getOnlinePlayers()) {
+            current.closeInventory();
             current.getInventory().clear();
             Items.standartitems(current);
             IngameScoreboard.setup(current);

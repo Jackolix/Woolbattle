@@ -5,13 +5,19 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.ArrayList;
 
 public class platform implements Listener {
 
+    private ArrayList<Player> available = new ArrayList<>();
     private long cooldown = 15;
 
     //number of blocks under the player where the platform should be spawned
@@ -20,10 +26,11 @@ public class platform implements Listener {
     private boolean ready = true;
     @EventHandler
     public void onClockInteract(PlayerInteractEvent event) {
-        if (event.getItem() == null)    return;
-        if (!ready)                     return;
+        if (event.getItem() == null)            return;
+        if (available.contains(event.getPlayer()))  return;
         if (event.getItem().getType() == Material.BLAZE_ROD) {
-            ready = false;
+            //ready = false;
+            available.add(event.getPlayer());
             for(Enchantment ench: event.getItem().getEnchantments().keySet()){
                 event.getItem().removeEnchantment(ench);
             }
@@ -33,13 +40,17 @@ public class platform implements Listener {
 
             //TODO: Cooldown for platform (visual representation)
             Woolbattle.getPlugin().getServer().getScheduler().scheduleSyncDelayedTask(Woolbattle.getPlugin(),
-                    () -> activate(true, event.getItem()), 20 * cooldown);
+                    () -> activate(event.getPlayer(), event.getItem()), 20 * cooldown);
         }
     }
 
-    private void activate(boolean rdy, ItemStack item) {
-        ready = rdy;
-        item.addEnchantment(Enchantment.DIG_SPEED, 1);
+    private void activate(Player player, ItemStack item) {
+        available.remove(player);
+        //item.addEnchantment(Enchantment.KNOCKBACK, 1); //Specified enchantment cannot be applied to this itemstack
+        ItemMeta itemmeta = item.getItemMeta();
+        itemmeta.addEnchant(Enchantment.KNOCKBACK, 1, true);
+        itemmeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        item.setItemMeta(itemmeta);
     }
 
     private void placeBlocks(Location location) {

@@ -10,7 +10,6 @@ import java.util.HashMap;
 
 public class LiveSystem {
 
-    private int votes;
     public static int TeamSize;
     public static ArrayList<Player> TeamRed = new ArrayList<>();
     public static ArrayList<Player> TeamBlue = new ArrayList<>();
@@ -18,8 +17,4 @@ public class LiveSystem {
     public static ArrayList<Player> TeamYellow = new ArrayList<>();
     public static HashMap<Player, ArrayList<Player>> VotedPlayers = new HashMap<>();
 
-
-    public int getVotes() {
-        return votes;
-    }
 }

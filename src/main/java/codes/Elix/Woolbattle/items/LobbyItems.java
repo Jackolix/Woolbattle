@@ -134,9 +134,8 @@ public class LobbyItems implements Listener {
 
     @EventHandler
     public void onGUIClick(InventoryClickEvent event) {
-        if (!(event.getWhoClicked() instanceof Player)) return;
+        if (!(event.getWhoClicked() instanceof Player player)) return;
         if (event.getCurrentItem() == null) return;
-        Player player = (Player) event.getWhoClicked();
         FileConfiguration config = Woolbattle.getPlugin().getConfig();
         if (event.getClickedInventory().getTitle().equals("§3Wähle deine Perks!")) {
             event.setCancelled(true); //Player kann das Item nicht aus dem Inventar ziehen

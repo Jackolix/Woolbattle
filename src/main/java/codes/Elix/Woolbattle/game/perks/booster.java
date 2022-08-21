@@ -24,7 +24,7 @@ public class booster implements Listener {
             Vector vector = player.getLocation().getDirection().multiply(2.75D).setY(2D);
             player.setVelocity(vector);
 
-            player.playSound(player.getLocation(), Sound.CAT_HISS, 1F, 1F);
+            player.playSound(player.getLocation(), Sound.ENTITY_CAT_HISS, 1F, 1F);
             //TODO: Cooldown for booster
         }
     }

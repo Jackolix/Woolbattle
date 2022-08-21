@@ -30,8 +30,8 @@ public class switcher implements Listener {
             Location location2 = hitted.getLocation();
             shooter.teleport(location2);
             hitted.teleport(location1);
-            shooter.playSound(shooter.getLocation(), Sound.BURP, 1F, 1F);
-            hitted.playSound(hitted.getLocation(), Sound.BURP, 1F, 1F);
+            shooter.playSound(shooter.getLocation(), Sound.ENTITY_PLAYER_BURP, 1F, 1F);
+            hitted.playSound(hitted.getLocation(), Sound.ENTITY_PLAYER_BURP, 1F, 1F);
 
         }
     }

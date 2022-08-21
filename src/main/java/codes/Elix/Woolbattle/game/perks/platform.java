@@ -57,27 +57,27 @@ public class platform implements Listener {
         //move the location down with the value in depth
         location.add(0, -depth, 0);
 
-        if (location.add(2,0,-1).getBlock().getType() == Material.AIR) location.getBlock().setType(Material.WOOL);
-        if (location.add(0,0,1).getBlock().getType() == Material.AIR) location.getBlock().setType(Material.WOOL);
-        if (location.add(0,0,1).getBlock().getType() == Material.AIR) location.getBlock().setType(Material.WOOL);
-        if (location.add(-1,0,1).getBlock().getType() == Material.AIR) location.getBlock().setType(Material.WOOL);
-        if (location.add(0,0,-1).getBlock().getType() == Material.AIR) location.getBlock().setType(Material.WOOL);
-        if (location.add(0,0,-1).getBlock().getType() == Material.AIR) location.getBlock().setType(Material.WOOL);
-        if (location.add(0,0,-1).getBlock().getType() == Material.AIR) location.getBlock().setType(Material.WOOL);
-        if (location.add(0,0,-1).getBlock().getType() == Material.AIR) location.getBlock().setType(Material.WOOL);
-        if (location.add(-1,0,0).getBlock().getType() == Material.AIR) location.getBlock().setType(Material.WOOL);
-        if (location.add(0,0,1).getBlock().getType() == Material.AIR) location.getBlock().setType(Material.WOOL);
-        if (location.add(0,0,1).getBlock().getType() == Material.AIR) location.getBlock().setType(Material.WOOL);
-        if (location.add(0,0,1).getBlock().getType() == Material.AIR) location.getBlock().setType(Material.WOOL);
-        if (location.add(0,0,1).getBlock().getType() == Material.AIR) location.getBlock().setType(Material.WOOL);
-        if (location.add(-1,0,0).getBlock().getType() == Material.AIR) location.getBlock().setType(Material.WOOL);
-        if (location.add(0,0,-1).getBlock().getType() == Material.AIR) location.getBlock().setType(Material.WOOL);
-        if (location.add(0,0,-1).getBlock().getType() == Material.AIR) location.getBlock().setType(Material.WOOL);
-        if (location.add(0,0,-1).getBlock().getType() == Material.AIR) location.getBlock().setType(Material.WOOL);
-        if (location.add(0,0,-1).getBlock().getType() == Material.AIR) location.getBlock().setType(Material.WOOL);
-        if (location.add(-1,0,1).getBlock().getType() == Material.AIR) location.getBlock().setType(Material.WOOL);
-        if (location.add(0,0,1).getBlock().getType() == Material.AIR) location.getBlock().setType(Material.WOOL);
-        if (location.add(0,0,1).getBlock().getType() == Material.AIR) location.getBlock().setType(Material.WOOL);
+        if (location.add(2,0,-1).getBlock().getType() == Material.AIR) location.getBlock().setType(Material.BLACK_WOOL);
+        if (location.add(0,0,1).getBlock().getType() == Material.AIR) location.getBlock().setType(Material.BLACK_WOOL);
+        if (location.add(0,0,1).getBlock().getType() == Material.AIR) location.getBlock().setType(Material.BLACK_WOOL);
+        if (location.add(-1,0,1).getBlock().getType() == Material.AIR) location.getBlock().setType(Material.BLACK_WOOL);
+        if (location.add(0,0,-1).getBlock().getType() == Material.AIR) location.getBlock().setType(Material.BLACK_WOOL);
+        if (location.add(0,0,-1).getBlock().getType() == Material.AIR) location.getBlock().setType(Material.BLACK_WOOL);
+        if (location.add(0,0,-1).getBlock().getType() == Material.AIR) location.getBlock().setType(Material.BLACK_WOOL);
+        if (location.add(0,0,-1).getBlock().getType() == Material.AIR) location.getBlock().setType(Material.BLACK_WOOL);
+        if (location.add(-1,0,0).getBlock().getType() == Material.AIR) location.getBlock().setType(Material.BLACK_WOOL);
+        if (location.add(0,0,1).getBlock().getType() == Material.AIR) location.getBlock().setType(Material.BLACK_WOOL);
+        if (location.add(0,0,1).getBlock().getType() == Material.AIR) location.getBlock().setType(Material.BLACK_WOOL);
+        if (location.add(0,0,1).getBlock().getType() == Material.AIR) location.getBlock().setType(Material.BLACK_WOOL);
+        if (location.add(0,0,1).getBlock().getType() == Material.AIR) location.getBlock().setType(Material.BLACK_WOOL);
+        if (location.add(-1,0,0).getBlock().getType() == Material.AIR) location.getBlock().setType(Material.BLACK_WOOL);
+        if (location.add(0,0,-1).getBlock().getType() == Material.AIR) location.getBlock().setType(Material.BLACK_WOOL);
+        if (location.add(0,0,-1).getBlock().getType() == Material.AIR) location.getBlock().setType(Material.BLACK_WOOL);
+        if (location.add(0,0,-1).getBlock().getType() == Material.AIR) location.getBlock().setType(Material.BLACK_WOOL);
+        if (location.add(0,0,-1).getBlock().getType() == Material.AIR) location.getBlock().setType(Material.BLACK_WOOL);
+        if (location.add(-1,0,1).getBlock().getType() == Material.AIR) location.getBlock().setType(Material.BLACK_WOOL);
+        if (location.add(0,0,1).getBlock().getType() == Material.AIR) location.getBlock().setType(Material.BLACK_WOOL);
+        if (location.add(0,0,1).getBlock().getType() == Material.AIR) location.getBlock().setType(Material.BLACK_WOOL);
     }
 
     public static void enable() {

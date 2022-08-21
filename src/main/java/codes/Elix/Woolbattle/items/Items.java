@@ -204,7 +204,7 @@ public class Items {
 
     //TeamItemsConstructor
     public static void createTeam(Inventory inventory, Material material, int Itembyte, String name, ArrayList<String> lore, int slot) {
-        ItemStack item = new ItemStack(material, 1, (short) 0, (byte) Itembyte);
+        ItemStack item = new ItemStack(material); //1, (short) 0, (byte) Itembyte
         ItemMeta itemMeta = item.getItemMeta();
         itemMeta.setDisplayName(name);
         itemMeta.setLore(lore);

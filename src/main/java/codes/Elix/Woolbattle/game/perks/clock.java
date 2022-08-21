@@ -21,7 +21,7 @@ public class clock implements Listener {
     public void onClockInteract(PlayerInteractEvent event) {
         if (event.getItem() == null)    return;
         if (available.contains(event.getPlayer()))  return;
-        if (event.getItem().getType() == Material.WATCH) {
+        if (event.getItem().getType() == Material.CLOCK) {
             Player player = event.getPlayer();
             //ready = false;
             available.add(player);
@@ -30,8 +30,8 @@ public class clock implements Listener {
             Woolbattle.getPlugin().getServer().getScheduler().scheduleSyncDelayedTask(Woolbattle.getPlugin(),
                     () -> player.teleport(location), 20 * teleportTime);
 
-            player.playSound(player.getLocation(), Sound.CLICK, 1F, 1F);
-            player.playSound(player.getLocation(), Sound.ENDERDRAGON_WINGS, 1F, 1F);
+            player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1F, 1F);
+            player.playSound(player.getLocation(), Sound.ENTITY_ENDER_DRAGON_FLAP, 1F, 1F);
 
             //TODO: Add sounds
             //TODO: Cooldown for clock (visual representation)

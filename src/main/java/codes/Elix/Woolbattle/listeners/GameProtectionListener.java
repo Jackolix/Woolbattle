@@ -31,7 +31,7 @@ public class GameProtectionListener implements Listener {
 
     @EventHandler
     public void onPlayerDropItem(PlayerDropItemEvent event) {
-        if (event.getItemDrop().getItemStack().getType() != Material.WOOL) {
+        if (event.getItemDrop().getItemStack().getType() != Material.LEGACY_WOOL) {
             event.setCancelled(true);
         }
     }
@@ -66,10 +66,10 @@ public class GameProtectionListener implements Listener {
         if (!(event instanceof Player)) {
             Player player = event.getPlayer();
             if (GameStateManager.getCurrentGameState() instanceof IngameState) {
-                if (event.getBlock().getType() == Material.WOOL) {
+                if (event.getBlock().getType() == Material.LEGACY_WOOL) {
                     if (Woolbattle.blocks.contains(event.getBlock())) {
                         event.setCancelled(true);
-                        ItemStack item = new ItemStack(Material.WOOL);
+                        ItemStack item = new ItemStack(Material.LEGACY_WOOL);
                         item.setAmount(2);
                         player.getInventory().addItem(item);
                     }
@@ -89,7 +89,7 @@ public class GameProtectionListener implements Listener {
             return;
         }
         Player player = event.getPlayer();
-        if (event.getBlock().getType() == Material.WOOL) return;
+        if (event.getBlock().getType() == Material.LEGACY_WOOL) return;
         if (!(player.hasPermission("Woolbattle.build"))) {
             event.setCancelled(true);
         }

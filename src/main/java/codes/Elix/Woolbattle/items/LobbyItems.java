@@ -199,7 +199,7 @@ public class LobbyItems implements Listener {
                 case RED_STAINED_GLASS_PANE -> config.set(event.getWhoClicked().getName() + ".2Perk", "wandgenerator");
                 case TNT -> config.set(event.getWhoClicked().getName() + ".2Perk", "woolbombe");
                 // THE GRABBER
-                case LEGACY_DARK_OAK_DOOR_ITEM -> {
+                case DARK_OAK_DOOR -> {
                     PerkvorInventory(player);
                     return;
                 }
@@ -251,23 +251,23 @@ public class LobbyItems implements Listener {
         Object Sperk = config.get(player.getName() + ".2Perk");
         Object Pperk = config.get(player.getName() + ".passive");
 
-        if (inventory.getType().getDefaultTitle().equals("§3Erstes Perks:")) { //equals("§3Erstes Perk:")
+        if (inventory.getType().getDefaultTitle().equals("§3Erstes Perks:")) { //TODO: gettile
             switch (Fperk.toString()) {
                 case "booster" -> Items.createPerk(inventory, Material.TRIPWIRE_HOOK, true, "§3Booster", "Boostet dich durch die Luft", 12, 25, 0);
                 case "enterhaken" -> Items.createPerk(inventory, Material.FISHING_ROD, true, "§3Enterhaken", "Ziehe dich mit einem Enterhaken über die Map!", 5, 16, 1);
                 case "freezer" -> Items.createPerk(inventory, Material.PACKED_ICE, true, "§3Freezer", "Friere deine Gegner ein!", 6, 6, 2);
-                case "großvatersuhr" -> Items.createPerk(inventory, Material.LEGACY_WATCH, true, "§3Großvaters Uhr", "Teleportiert dich nach kurzer Zeit zu einem beliebigen Punk!", 8, 14, 3);
+                case "großvatersuhr" -> Items.createPerk(inventory, Material.CLOCK, true, "§3Großvaters Uhr", "Teleportiert dich nach kurzer Zeit zu einem beliebigen Punk!", 8, 14, 3);
                 case "linebuilder" -> Items.createPerk(inventory, Material.STICK, true, "§3Linebuilder", "Baut eine Linie aus Wolle", 8, 10, 4);
-                case "minigun" -> Items.createPerk(inventory, Material.LEGACY_DIAMOND_BARDING, true, "§3Minigun", "Schießt viele Pfeile in kurzer Zeit!", 12, 12, 5);
-                case "pfeilbombe" -> Items.createPerk(inventory, Material.LEGACY_FIREBALL, true, "§3Pfeilbombe", "Schießt am Explosionsort Pfeile in alle Richtungen", 7, 9, 6);
+                case "minigun" -> Items.createPerk(inventory, Material.DIAMOND_HORSE_ARMOR, true, "§3Minigun", "Schießt viele Pfeile in kurzer Zeit!", 12, 12, 5);
+                case "pfeilbombe" -> Items.createPerk(inventory, Material.FIRE_CHARGE, true, "§3Pfeilbombe", "Schießt am Explosionsort Pfeile in alle Richtungen", 7, 9, 6);
                 case "portal" -> Items.createPerk(inventory, Material.OBSIDIAN, true, "§3Portal", "Teleportier dich mithilfe des Portals zwischen zwei Punkten hin und her!", 35, 25, 7);
                 case "rettungskapsel" -> Items.createPerk(inventory, Material.RED_STAINED_GLASS, true, "§3Rettungskapsel", "Umhüllt dich mit Blöcken", 15, 30, 8);
                 case "rettungsplattform" -> Items.createPerk(inventory, Material.BLAZE_ROD, true, "§3Rettungsplattform", "Erschaffe eine Wollplattform unter dir!", 12, 28, 9);
                 case "rope" -> Items.createPerk(inventory, Material.VINE, true, "§3Rope", "Baut eine vertikale Linie aus Wolle", 12, 25, 10);
                 case "schutzschild" -> Items.createPerk(inventory, Material.EMERALD, true, "§3Schuztschild", "Beschützt dich vor allen Projektilen! Hält 4 Sekunden an!", 5, 10, 11);
                 case "slimeplattform" -> Items.createPerk(inventory, Material.SLIME_BALL, true, "§3SlimePlattform", "Kataplutiert dich hoch in die Luft!", 15, 25, 12);
-                case "sprengsatz" -> Items.createPerk(inventory, Material.LEGACY_STONE_PLATE, true, "§3Sprengsatz", "Setze eine Mine als Tretmine oder nutze den Fernzünder!", 8, 6, 13);
-                case "tauscher" -> Items.createPerk(inventory, Material.LEGACY_SNOW_BALL, true, "§3Tauscher", "Tausche mit deinem Gegner den Platz", 8, 6, 14);
+                case "sprengsatz" -> Items.createPerk(inventory, Material.STONE_PRESSURE_PLATE, true, "§3Sprengsatz", "Setze eine Mine als Tretmine oder nutze den Fernzünder!", 8, 6, 13);
+                case "tauscher" -> Items.createPerk(inventory, Material.SNOWBALL, true, "§3Tauscher", "Tausche mit deinem Gegner den Platz", 8, 6, 14);
                 case "klospülung" -> Items.createPerk(inventory, Material.GLASS_BOTTLE, true, "§3Klospülung", "Spült dich und deine Gegner weg!", 10, 16, 15);
                 case "wandgenerator" -> Items.createPerk(inventory, Material.RED_STAINED_GLASS_PANE, true, "§3Wandgenerator", "Baut eine Wand aus Wolle vor dir", 8, 10, 16);
                 case "woolbombe" -> Items.createPerk(inventory, Material.TNT, true, "§3WoolBombe", "Booste deine Gegner mit einem werfbaren TNT weg!", 8, 13, 17);
@@ -275,23 +275,23 @@ public class LobbyItems implements Listener {
                 default -> System.out.println("[NO_FIRST_PERK]: " + player.getName());
             }
 
-        } else if (inventory.getType().getDefaultTitle().equals("§3Zweites Perk:")) {
+        } else if (inventory.getType().getDefaultTitle().equals("§3Zweites Perk:")) { //TODO: gettile
             switch (Sperk.toString()) {
                 case "booster" -> Items.createPerk(inventory, Material.TRIPWIRE_HOOK, true, "§3Booster", "Boostet dich durch die Luft", 12, 25, 0);
                 case "enterhaken" -> Items.createPerk(inventory, Material.FISHING_ROD, true, "§3Enterhaken", "Ziehe dich mit einem Enterhaken über die Map!", 5, 16, 1);
                 case "freezer" -> Items.createPerk(inventory, Material.PACKED_ICE, true, "§3Freezer", "Friere deine Gegner ein!", 6, 6, 2);
-                case "großvatersuhr" -> Items.createPerk(inventory, Material.LEGACY_WATCH, true, "§3Großvaters Uhr", "Teleportiert dich nach kurzer Zeit zu einem beliebigen Punk!", 8, 14, 3);
+                case "großvatersuhr" -> Items.createPerk(inventory, Material.CLOCK, true, "§3Großvaters Uhr", "Teleportiert dich nach kurzer Zeit zu einem beliebigen Punk!", 8, 14, 3);
                 case "linebuilder" -> Items.createPerk(inventory, Material.STICK, true, "§3Linebuilder", "Baut eine Linie aus Wolle", 8, 10, 4);
-                case "minigun" -> Items.createPerk(inventory, Material.LEGACY_DIAMOND_BARDING, true, "§3Minigun", "Schießt viele Pfeile in kurzer Zeit!", 12, 12, 5);
-                case "pfeilbombe" -> Items.createPerk(inventory, Material.LEGACY_FIREBALL, true, "§3Pfeilbombe", "Schießt am Explosionsort Pfeile in alle Richtungen", 7, 9, 6);
+                case "minigun" -> Items.createPerk(inventory, Material.DIAMOND_HORSE_ARMOR, true, "§3Minigun", "Schießt viele Pfeile in kurzer Zeit!", 12, 12, 5);
+                case "pfeilbombe" -> Items.createPerk(inventory, Material.FIRE_CHARGE, true, "§3Pfeilbombe", "Schießt am Explosionsort Pfeile in alle Richtungen", 7, 9, 6);
                 case "portal" -> Items.createPerk(inventory, Material.OBSIDIAN, true, "§3Portal", "Teleportier dich mithilfe des Portals zwischen zwei Punkten hin und her!", 35, 25, 7);
                 case "rettungskapsel" -> Items.createPerk(inventory, Material.RED_STAINED_GLASS, true, "§3Rettungskapsel", "Umhüllt dich mit Blöcken", 15, 30, 8);
                 case "rettungsplattform" -> Items.createPerk(inventory, Material.BLAZE_ROD, true, "§3Rettungsplattform", "Erschaffe eine Wollplattform unter dir!", 12, 28, 9);
                 case "rope" -> Items.createPerk(inventory, Material.VINE, true, "§3Rope", "Baut eine vertikale Linie aus Wolle", 12, 25, 10);
                 case "schutzschild" -> Items.createPerk(inventory, Material.EMERALD, true, "§3Schuztschild", "Beschützt dich vor allen Projektilen! Hält 4 Sekunden an!", 5, 10, 11);
                 case "slimeplattform" -> Items.createPerk(inventory, Material.SLIME_BALL, true, "§3SlimePlattform", "Kataplutiert dich hoch in die Luft!", 15, 25, 12);
-                case "sprengsatz" -> Items.createPerk(inventory, Material.LEGACY_STONE_PLATE, true, "§3Sprengsatz", "Setze eine Mine als Tretmine oder nutze den Fernzünder!", 8, 6, 13);
-                case "tauscher" -> Items.createPerk(inventory, Material.LEGACY_SNOW_BALL, true, "§3Tauscher", "Tausche mit deinem Gegner den Platz", 8, 6, 14);
+                case "sprengsatz" -> Items.createPerk(inventory, Material.STONE_PRESSURE_PLATE, true, "§3Sprengsatz", "Setze eine Mine als Tretmine oder nutze den Fernzünder!", 8, 6, 13);
+                case "tauscher" -> Items.createPerk(inventory, Material.SNOWBALL, true, "§3Tauscher", "Tausche mit deinem Gegner den Platz", 8, 6, 14);
                 case "klospülung" -> Items.createPerk(inventory, Material.GLASS_BOTTLE, true, "§3Klospülung", "Spült dich und deine Gegner weg!", 10, 16, 15);
                 case "wandgenerator" -> Items.createPerk(inventory, Material.RED_STAINED_GLASS_PANE, true, "§3Wandgenerator", "Baut eine Wand aus Wolle vor dir", 8, 10, 16);
                 case "woolbombe" -> Items.createPerk(inventory, Material.TNT, true, "§3WoolBombe", "Booste deine Gegner mit einem werfbaren TNT weg!", 8, 13, 17);
@@ -299,7 +299,7 @@ public class LobbyItems implements Listener {
                 default -> System.out.println("[NO_SECOND_PERK]: " + player.getName());
             }
 
-        } else if (inventory.getType().getDefaultTitle().equals("§3Verfügbare Perks:")) {
+        } else if (inventory.getType().getDefaultTitle().equals("§3Verfügbare Perks:")) { //TODO: gettile
             switch (Pperk.toString()) {
                 case "aufzug" -> Items.createPassivePerk(inventory, Material.LADDER, true, "§3Aufzug", "Teleportiere dich mit der Enderperle auf den getroffenen Block!", null, "§6Cooldown: 3 Enderperlen", 0);
                 case "explodierender_pfeil" -> Items.createPassivePerk(inventory, Material.TNT, true, "§3Explodierender Pfeil", "Ein besonderer Pfeil der alles in die Luft sprengt!", "§6Preis: 8 Wolle", "Nach Pfeilen: 8", 1);
@@ -311,7 +311,7 @@ public class LobbyItems implements Listener {
                 case "portal" -> Items.createPassivePerk(inventory, Material.GOLD_INGOT, true, "§3IDK", "", "§6Preis: 8 Wolle", "§6Cooldown: 2", 7);
                 case "schock_pfeil" -> Items.createPerk(inventory, Material.RED_STAINED_GLASS,  true, "§3Rettungskapsel", "Umhüllt dich mit Blöcken", 15, 30, 8);
                 case "slowarrow" -> Items.createPassivePerk(inventory, Material.ARROW, true, "§3SlowArrow", "Verlangsame den Gegener!", "§6Preis: 2 Wolle", "§6Nach Pfeilen: 3", 9);
-                case "spinne" -> Items.createPassivePerk(inventory, Material.LEGACY_MONSTER_EGGS, 52, true, "§3Spinne", "Klettere wie eine Spinne an einer Wand hoch!", "§6Preis: 2 Wolle je Sekunde klettern", null, 10);
+                case "spinne" -> Items.createPassivePerk(inventory, Material.SPIDER_SPAWN_EGG, 52, true, "§3Spinne", "Klettere wie eine Spinne an einer Wand hoch!", "§6Preis: 2 Wolle je Sekunde klettern", null, 10);
                 case "stomper" -> Items.createPassivePerk(inventory, Material.DIAMOND_BOOTS, true, "§3Stomper", "Katapultiert alle Gegner in deiner Nähe nach einem Doppelsprung weg!", "§6Preis: 10 Wolle", "§6Nach Sprüngen: 2", 11);
                 case "slimeplattform" -> Items.create(inventory, Material.GOLDEN_HOE, true, "§3SlimePlattform", 12);
                 default -> System.out.println("[NO_PASSIVE_PERK]: " + player.getName());
@@ -320,7 +320,8 @@ public class LobbyItems implements Listener {
             System.out.println("[ERROR] NO_INVENTORY_FOUND");
         player.openInventory(inventory);
     }
-    //TODO: Nochmal ändern
+
+    //TODO: Refactor
     public static void particelitem(Player player) {
         FileConfiguration config = Woolbattle.getPlugin().getConfig();
         Object particels = config.get(player.getName() + ".particels");

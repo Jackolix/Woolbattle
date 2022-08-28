@@ -22,7 +22,7 @@ import java.util.ArrayList;
 
 public class LobbyItems implements Listener {
 
-    public static int VotedLives;
+    public static int VotedLives = 0;
     public static int Teams;
     private String Title;
 

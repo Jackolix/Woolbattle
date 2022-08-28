@@ -7,9 +7,9 @@
 - [x] Buildprotection for Lobby
 - [x] Foodlevelchange mit Doublejump
 - [x] Doublejump based on walk vector
-- [ ] Void Death System
-    - [ ] LebenSystem
-    - [ ] VoidTeleport
+- [x] Void Death System
+    - [x] LebenSystem
+    - [x] VoidTeleport
     - [ ] Spectator
 
 
@@ -17,8 +17,8 @@
 ### GAMEPLAY
 #### LobbyItems
 - [x] Bow (Perks)
-- [ ] Book (Team Wählen)
-- [ ] Lohenrute (Partikel sind an)
+- [x] Book (Team Wählen)
+- [x] Lohenrute (Partikel sind an)
 - [ ] Chest (Inventarsortierung)
 - [ ] Nametag (Lebensanzahl ändern)
 - [ ] Paper (Maps)

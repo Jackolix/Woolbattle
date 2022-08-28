@@ -6,6 +6,7 @@ import codes.Elix.Woolbattle.commands.StartCommand;
 import codes.Elix.Woolbattle.commands.test;
 import codes.Elix.Woolbattle.countdowns.LobbyCountdown;
 import codes.Elix.Woolbattle.game.DoubleJump;
+import codes.Elix.Woolbattle.game.VoidTeleport;
 import codes.Elix.Woolbattle.gamestates.GameState;
 import codes.Elix.Woolbattle.gamestates.GameStateManager;
 import codes.Elix.Woolbattle.gamestates.LobbyState;
@@ -37,7 +38,6 @@ public class Woolbattle extends JavaPlugin {
 
     public static List<Block> blocks = new ArrayList<>();
     private static Woolbattle plugin;
-    private File customConfigFile;
     private FileConfiguration customConfig;
 
 
@@ -68,6 +68,7 @@ public class Woolbattle extends JavaPlugin {
         pluginManager.registerEvents(new DoubleJump(), this);
         pluginManager.registerEvents(new GameProtectionListener(), this);
         pluginManager.registerEvents(new LobbyItems(), this);
+        pluginManager.registerEvents(new VoidTeleport(), this);
 
     }
 
@@ -110,7 +111,7 @@ public class Woolbattle extends JavaPlugin {
     }
 
     private void createCustomConfig() {
-        customConfigFile = new File(getDataFolder(), "PlayerPerkConfig.yml");
+        File customConfigFile = new File(getDataFolder(), "PlayerPerkConfig.yml");
         if (!customConfigFile.exists()) {
             customConfigFile.getParentFile().mkdirs();
             saveResource("PlayerPerkConfig.yml", false);

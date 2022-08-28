@@ -22,8 +22,9 @@ import java.util.ArrayList;
 
 public class LobbyItems implements Listener {
 
-    public static int VotedLives;
+    public static int VotedLives = 0;
     public static int Teams;
+    private String Title;
 
     public static void Lobby(Player player) {
         Items.create(player.getInventory(), Material.BOW, null, 5, "§3Perks", 0);
@@ -57,6 +58,7 @@ public class LobbyItems implements Listener {
     }
 
     private void PerkInventory(Player player, String title) {
+        Title = title;
         Inventory inventory = Bukkit.createInventory(null, 9*4, title);
         Items.createPerk(inventory, Material.TRIPWIRE_HOOK, false, "§3Booster", "Boostet dich durch die Luft",12, 25, 0);
         Items.createPerk(inventory, Material.FISHING_ROD, false, "§3Enterhaken", "Ziehe dich mit einem Enterhaken über die Map!", 5, 16, 1);
@@ -82,6 +84,7 @@ public class LobbyItems implements Listener {
     }
 
     private void PassivePerkInventory(Player player) {
+        Title = "§3Verfügbare Perks:";
         Inventory inventory = Bukkit.createInventory(null, 9*4, "§3Verfügbare Perks:");
         Items.createPassivePerk(inventory, Material.LADDER, false, "§3Aufzug", "Teleportiere dich mit der Enderperle auf den getroffenen Block!", null, "§6Cooldown: 3 Enderperlen", 0);
         Items.createPassivePerk(inventory, Material.TNT, false, "§3Explodierender Pfeil", "Ein besonderer Pfeil der alles in die Luft sprengt!", "§6Preis: 8 Wolle", "Nach Pfeilen: 8", 1);
@@ -251,7 +254,9 @@ public class LobbyItems implements Listener {
         Object Sperk = config.get(player.getName() + ".2Perk");
         Object Pperk = config.get(player.getName() + ".passive");
 
-        if (inventory.getType().getDefaultTitle().equals("§3Erstes Perks:")) { //TODO: gettile
+        if (Title.equals("§3Erstes Perk:")) { //TODO: gettile
+            if (Pperk == null)
+                config.set(player.getName() + ".1Perk", "booster");
             switch (Fperk.toString()) {
                 case "booster" -> Items.createPerk(inventory, Material.TRIPWIRE_HOOK, true, "§3Booster", "Boostet dich durch die Luft", 12, 25, 0);
                 case "enterhaken" -> Items.createPerk(inventory, Material.FISHING_ROD, true, "§3Enterhaken", "Ziehe dich mit einem Enterhaken über die Map!", 5, 16, 1);
@@ -275,7 +280,9 @@ public class LobbyItems implements Listener {
                 default -> System.out.println("[NO_FIRST_PERK]: " + player.getName());
             }
 
-        } else if (inventory.getType().getDefaultTitle().equals("§3Zweites Perk:")) { //TODO: gettile
+        } else if (Title.equals("§3Zweites Perk:")) { //TODO: gettile
+            if (Sperk == null)
+                config.set(player.getName() + ".2Perk", "booster");
             switch (Sperk.toString()) {
                 case "booster" -> Items.createPerk(inventory, Material.TRIPWIRE_HOOK, true, "§3Booster", "Boostet dich durch die Luft", 12, 25, 0);
                 case "enterhaken" -> Items.createPerk(inventory, Material.FISHING_ROD, true, "§3Enterhaken", "Ziehe dich mit einem Enterhaken über die Map!", 5, 16, 1);
@@ -299,7 +306,9 @@ public class LobbyItems implements Listener {
                 default -> System.out.println("[NO_SECOND_PERK]: " + player.getName());
             }
 
-        } else if (inventory.getType().getDefaultTitle().equals("§3Verfügbare Perks:")) { //TODO: gettile
+        } else if (Title.equals("§3Verfügbare Perks:")) { //TODO: gettile
+            if (Pperk == null)
+                config.set(player.getName() + ".passive", "aufzug");
             switch (Pperk.toString()) {
                 case "aufzug" -> Items.createPassivePerk(inventory, Material.LADDER, true, "§3Aufzug", "Teleportiere dich mit der Enderperle auf den getroffenen Block!", null, "§6Cooldown: 3 Enderperlen", 0);
                 case "explodierender_pfeil" -> Items.createPassivePerk(inventory, Material.TNT, true, "§3Explodierender Pfeil", "Ein besonderer Pfeil der alles in die Luft sprengt!", "§6Preis: 8 Wolle", "Nach Pfeilen: 8", 1);

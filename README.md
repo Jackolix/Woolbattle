@@ -28,7 +28,7 @@
 - [x] Booster
 - [ ] Enterhaken
 - [ ] Freezer
-- [ ] Großvaters Uhr
+- [x] Großvaters Uhr
 - [ ] Linebuilder
 - [ ] Minigun
 - [ ] Woolbombe
@@ -40,7 +40,7 @@
 - [ ] SlimePlattform
 - [ ] Schutzschild
 - [ ] Rope
-- [ ] Rettungsplatform
+- [x] Rettungsplatform
 - [ ] The Grabber
 
 #### PASSIVE PERKS

@@ -4,6 +4,8 @@ main: codes.Elix.Woolbattle.main.Woolbattle
 api-version: 1.19
 authors: [ N4med, Elix ]
 description: This plugin is cool i guess?
+depend:
+  - FastAsyncWorldEdit
 
 commands:
   setup:

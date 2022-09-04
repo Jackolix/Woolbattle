@@ -23,15 +23,16 @@ public class VoidTeleport implements Listener {
         if (!(GameStateManager.getCurrentGameState() instanceof IngameState)) return;
         Player player = event.getPlayer();
         if (player.getGameMode() == GameMode.SPECTATOR) return;
-        if (player.getLocation().getBlockY() <= 69) {
+        if (player.getLocation().getBlockY() <= -25) {
             ArrayList<Player> team = LiveSystem.VotedPlayers.get(player); // get the team of the player
             Integer lifes = LiveSystem.TeamLifes.get(team); // get the lifes of the team
             if (lifes == 0) {
                 player.setGameMode(GameMode.SPECTATOR);
+                player.teleport(new Location(player.getWorld(), 0,56,0));
                 return;
             }
             LiveSystem.TeamLifes.put(team, lifes - 1);
-            player.teleport(new Location(player.getWorld(), 85,75,-122)); // TODO: richtige Location
+            player.teleport(new Location(player.getWorld(), 0,56,0)); // TODO: richtige Location
 
             for (Player players : Bukkit.getOnlinePlayers())
                 IngameScoreboard.setup(players);

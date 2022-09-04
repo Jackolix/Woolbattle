@@ -7,12 +7,14 @@ import codes.Elix.Woolbattle.gamestates.GameState;
 import codes.Elix.Woolbattle.gamestates.GameStateManager;
 import codes.Elix.Woolbattle.gamestates.LobbyState;
 import codes.Elix.Woolbattle.main.Woolbattle;
+import codes.Elix.Woolbattle.util.Worldloader;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 
 public class LobbyCountdown extends Countdown{
 
     private static final int COUNTDOWN_TIME = 30, IDLE_TIME = 30;
-    private GameStateManager gameStateManager;
+    private final GameStateManager gameStateManager;
     private int seconds;
     private int idleID;
     private boolean isIdling;
@@ -29,17 +31,19 @@ public class LobbyCountdown extends Countdown{
             @Override
             public void run() {
                 switch (seconds) {
-                    case 30: case 20: case 10: case 5: case 3: case 2:
+                    case 30, 20, 10, 5, 2 ->
+                            Bukkit.broadcastMessage(Woolbattle.PREFIX + "§7Das Spiel startet in §a" + seconds + " Sekunden§7.");
+                    case 3 -> {
                         Bukkit.broadcastMessage(Woolbattle.PREFIX + "§7Das Spiel startet in §a" + seconds + " Sekunden§7.");
-                        break;
-                    case 1:
-                        Bukkit.broadcastMessage(Woolbattle.PREFIX + "§7Das Spiel startet in §aeiner Sekunde§7.");
-                        break;
-                    case 0:
+                        Worldloader.paste(new Location(Bukkit.getServer().getWorlds().get(0), 0, 50, 0), Worldloader.file);
+                        Woolbattle.safewool();
+                        //TODO: richtige location
+                    }
+                    case 1 -> Bukkit.broadcastMessage(Woolbattle.PREFIX + "§7Das Spiel startet in §aeiner Sekunde§7.");
+                    case 0 -> {
                         gameStateManager.setGameState(GameState.INGAME_STATE);
-                        break;
-                    default:
-                        break;
+                        Worldloader.teleport();
+                    }
                 }
                 seconds--;
             }

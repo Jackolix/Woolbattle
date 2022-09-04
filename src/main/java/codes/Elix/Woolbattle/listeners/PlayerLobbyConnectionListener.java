@@ -5,6 +5,7 @@ package codes.Elix.Woolbattle.listeners;
 
 
 import codes.Elix.Woolbattle.countdowns.LobbyCountdown;
+import codes.Elix.Woolbattle.gamestates.GameStateManager;
 import codes.Elix.Woolbattle.gamestates.LobbyState;
 import codes.Elix.Woolbattle.items.LobbyItems;
 import codes.Elix.Woolbattle.main.Woolbattle;
@@ -18,7 +19,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 public class PlayerLobbyConnectionListener implements Listener {
 
-    private Woolbattle plugin;
+    private final Woolbattle plugin;
 
 
     public PlayerLobbyConnectionListener(Woolbattle plugin) {
@@ -27,7 +28,7 @@ public class PlayerLobbyConnectionListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        if (!(plugin.getGameStateManager().getCurrentGameState() instanceof LobbyState)) return;
+        if (!(GameStateManager.getCurrentGameState() instanceof LobbyState lobbyState)) return;
         Player player = event.getPlayer();
         plugin.getPlayers().add(player);
         LobbyItems.Lobby(player);
@@ -40,7 +41,6 @@ public class PlayerLobbyConnectionListener implements Listener {
         } else
             Bukkit.getConsoleSender().sendMessage("§cDie Lobby-Location wurde noch nicht gesetzt!");
 
-        LobbyState lobbyState = (LobbyState) plugin.getGameStateManager().getCurrentGameState();
         LobbyCountdown countdown = lobbyState.getCountdown();
         if (plugin.getPlayers().size() >= LobbyState.MIN_PLAYERS) {
             if (!countdown.isRunning()) {
@@ -52,13 +52,12 @@ public class PlayerLobbyConnectionListener implements Listener {
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        if (!(plugin.getGameStateManager().getCurrentGameState() instanceof LobbyState)) return;
+        if (!(GameStateManager.getCurrentGameState() instanceof LobbyState lobbyState)) return;
         Player player = event.getPlayer();
         plugin.getPlayers().remove(player);
         event.setQuitMessage(Woolbattle.PREFIX + "§c" + player.getDisplayName() + " §7hat das Spiel verlassen. [" +
                 plugin.getPlayers().size() + "/" + LobbyState.MAX_PLAYERS + "]");
 
-        LobbyState lobbyState = (LobbyState) plugin.getGameStateManager().getCurrentGameState();
         LobbyCountdown countdown = lobbyState.getCountdown();
         if (plugin.getPlayers().size() < LobbyState.MIN_PLAYERS) {
             if (countdown.isRunning()) {

@@ -15,11 +15,11 @@ import org.bukkit.util.Vector;
 public class DoubleJump implements Listener {
 
     //TODO: can be changed from rocket jump
-    private double dj_height = 1.25D;
+    private double dj_height = 1.5D;
     //cooldown between double jumps
     private long cooldown = 4L;
     //strength of the double jumps
-    private float strength = 0.5f;
+    private float strength = 0.75f;
 
     @EventHandler
     public void onFly(PlayerToggleFlightEvent event) {

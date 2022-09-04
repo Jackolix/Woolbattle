@@ -23,9 +23,16 @@ public class Items {
         create(player.getInventory(), Material.ENDER_PEARL, null, null, "EnderPearl", 2);
     }
 
-
-
     //Normal Itemconstructor
+    public static void create(Inventory inventory, Material material, String name, int slot) {
+        ItemStack item = new ItemStack(material);
+        ItemMeta itemMeta = item.getItemMeta();
+        itemMeta.setDisplayName(name);
+        item.setItemMeta(itemMeta);
+        inventory.setItem(slot, item);
+    }
+
+    //Normal Itemconstructor with enchants
     public static void create(Inventory inventory, Material material, Enchantment enchant, Integer enchantnumber, String name, int slot) {
         ItemStack item = new ItemStack(material);
         ItemMeta itemMeta = item.getItemMeta();
@@ -33,19 +40,9 @@ public class Items {
         if (enchant != null) {
             itemMeta.addEnchant(enchant, enchantnumber, true);
         }
-        item.setItemMeta(itemMeta);
-        inventory.setItem(slot, item);
-    }
+        // for (int i = 0; i < enchant.length; i++)
+            // itemMeta.addEnchant(enchant[i], enchantnumber[i], true);
 
-
-    //Normal Itemconstructor with bytes
-    public static void create(Inventory inventory, Material material, int Itembyte, Enchantment enchant, Integer enchantnumber, String name, int slot) {
-        ItemStack item = new ItemStack(material, 1, (short) 0, (byte) Itembyte);
-        ItemMeta itemMeta = item.getItemMeta();
-        itemMeta.setDisplayName(name);
-        if (enchant != null) {
-            itemMeta.addEnchant(enchant, enchantnumber, true);
-        }
         item.setItemMeta(itemMeta);
         inventory.setItem(slot, item);
     }
@@ -65,19 +62,6 @@ public class Items {
     }
 
 
-    //Normal ItemConstructor with hiddenenchants and bytes
-    public static void create(Inventory inventory, Material material, int Itembyte, boolean enchanteffect, String name, int slot) {
-        ItemStack item = new ItemStack(material, 1, (short) 0, (byte) Itembyte);
-        ItemMeta itemMeta = item.getItemMeta();
-        itemMeta.setDisplayName(name);
-        if (enchanteffect) {
-            itemMeta.addEnchant(Enchantment.KNOCKBACK, 1, true);
-            itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-        }
-        item.setItemMeta(itemMeta);
-        inventory.setItem(slot, item);
-    }
-
     //Normal Itemconstructor with lore and hiddenenchants
     public static void create(Inventory inventory, Material material, boolean enchanteffect, String name, String text, int slot) {
         ItemStack item = new ItemStack(material);
@@ -96,16 +80,10 @@ public class Items {
         inventory.setItem(slot, item);
     }
 
-
-    //Normal ItemConstructor with lore and hiddenenchants and bytes
-    public static void create(Inventory inventory, Material material, int Itembyte, boolean enchanteffect, String name, String text, int slot) {
-        ItemStack item = new ItemStack(material, 1, (short) 0, (byte) Itembyte);
+    public static void create(Inventory inventory, Material material, int amount, String name, String text, int slot) {
+        ItemStack item = new ItemStack(material, amount);
         ItemMeta itemMeta = item.getItemMeta();
         itemMeta.setDisplayName(name);
-        if (enchanteffect) {
-            itemMeta.addEnchant(Enchantment.KNOCKBACK, 1, true);
-            itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-        }
 
         ArrayList<String> lore = new ArrayList<>();
         lore.add(text);
@@ -118,7 +96,7 @@ public class Items {
 
     //Perks
     //Itemcostructor for Perks with hidenenchants
-    public static void createPerk(Inventory inventory, Material material, boolean enchanteffect, String name, String description, int cost, int cooldown, int slot) {
+    public static void create(Inventory inventory, Material material, boolean enchanteffect, String name, String description, int cost, int cooldown, int slot) {
         ItemStack item = new ItemStack(material);
         ItemMeta itemMeta = item.getItemMeta();
         itemMeta.setDisplayName(name);
@@ -137,48 +115,6 @@ public class Items {
         inventory.setItem(slot, item);
     }
 
-    //Itemcostructor for Perks with hidenenchants and bytes
-    public static void createPerk(Inventory inventory, Material material, int Itembyte, boolean enchanteffect, String name, String description, int cost, int cooldown, int slot) {
-        ItemStack item = new ItemStack(material, 1, (short) 0, (byte) Itembyte);
-        ItemMeta itemMeta = item.getItemMeta();
-        itemMeta.setDisplayName(name);
-        if (enchanteffect) {
-            itemMeta.addEnchant(Enchantment.KNOCKBACK, 1, true);
-            itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-        }
-
-        ArrayList<String> lore = new ArrayList<>();
-        lore.add(ChatColor.GRAY + description);
-        lore.add(ChatColor.GOLD + "Preis: " + cost + " Wolle");
-        lore.add(ChatColor.GOLD + "Cooldown: " + cooldown);
-        itemMeta.setLore(lore);
-
-        item.setItemMeta(itemMeta);
-        inventory.setItem(slot, item);
-    }
-
-
-    //PassivePerk Constructor with hiddenenchants and bytes
-    public static void createPassivePerk(Inventory inventory, Material material, int Itembyte, boolean enchanteffect, String name, String description, String cost, String cooldown, int slot) {
-        ItemStack item = new ItemStack(material, 1, (short) 0, (byte) Itembyte);
-        ItemMeta itemMeta = item.getItemMeta();
-        itemMeta.setDisplayName(name);
-        if (enchanteffect) {
-            itemMeta.addEnchant(Enchantment.KNOCKBACK, 1, true);
-            itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-        }
-
-        ArrayList<String> lore = new ArrayList<>();
-        lore.add(ChatColor.GRAY + description);
-        if (cost != null)
-            lore.add(cost);
-        if (cooldown != null)
-            lore.add(cooldown);
-        itemMeta.setLore(lore);
-
-        item.setItemMeta(itemMeta);
-        inventory.setItem(slot, item);
-    }
 
     //PassivePerk Constructor with hiddenenchants
     public static void createPassivePerk(Inventory inventory, Material material, boolean enchanteffect, String name, String description, String cost, String cooldown, int slot) {
@@ -203,10 +139,25 @@ public class Items {
     }
 
     //TeamItemsConstructor
-    public static void createTeam(Inventory inventory, Material material, int Itembyte, String name, ArrayList<String> lore, int slot) {
-        ItemStack item = new ItemStack(material); //1, (short) 0, (byte) Itembyte
+    public static void createTeam(Inventory inventory, Material material, String name, ArrayList<String> lore, int slot) {
+        ItemStack item = new ItemStack(material);
         ItemMeta itemMeta = item.getItemMeta();
         itemMeta.setDisplayName(name);
+        itemMeta.setLore(lore);
+
+        item.setItemMeta(itemMeta);
+        inventory.setItem(slot, item);
+    }
+
+    public static void createMap(Inventory inventory, Material material, int amount, String name, String text, int slot) {
+        ItemStack item = new ItemStack(material, amount);
+        ItemMeta itemMeta = item.getItemMeta();
+        itemMeta.setDisplayName(name);
+
+        ArrayList<String> lore = new ArrayList<>();
+        lore.add(" ");
+        lore.add(text);
+        lore.add(" ");
         itemMeta.setLore(lore);
 
         item.setItemMeta(itemMeta);

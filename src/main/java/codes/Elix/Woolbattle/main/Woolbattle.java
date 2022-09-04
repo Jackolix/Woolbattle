@@ -1,6 +1,7 @@
 package codes.Elix.Woolbattle.main;
 
 
+import codes.Elix.Woolbattle.commands.Performance;
 import codes.Elix.Woolbattle.commands.SetupCommand;
 import codes.Elix.Woolbattle.commands.StartCommand;
 import codes.Elix.Woolbattle.commands.test;
@@ -13,6 +14,7 @@ import codes.Elix.Woolbattle.gamestates.LobbyState;
 import codes.Elix.Woolbattle.items.LobbyItems;
 import codes.Elix.Woolbattle.listeners.GameProtectionListener;
 import codes.Elix.Woolbattle.listeners.PlayerLobbyConnectionListener;
+import com.sun.management.OperatingSystemMXBean;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
@@ -27,6 +29,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryPoolMXBean;
+import java.lang.management.RuntimeMXBean;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,10 +52,11 @@ public class Woolbattle extends JavaPlugin {
         gameStateManager = new GameStateManager(this);
         players = new ArrayList<>();
         createCustomConfig();
+        initmonitor();
         PluginMessage();
 
         gameStateManager.setGameState(GameState.LOBBY_STATE);
-        safewool();
+        // safewool();
         addplayers();
 
         init(Bukkit.getPluginManager());
@@ -72,13 +78,52 @@ public class Woolbattle extends JavaPlugin {
 
     }
 
-    @Override
-    public void onDisable() {
+    private void initmonitor() {
+
+        // Start periodic task
+        getCommand("performance").setExecutor(new Performance());
+
+        // Log related items which are unchanging
+        OperatingSystemMXBean os = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
+        getLogger().info("Number of processors: " + Runtime.getRuntime().availableProcessors());
+        getLogger().info("Physical memory: " + os.getTotalPhysicalMemorySize()/1048576L + " MB");
+        getLogger().info("Maximum heap: " + Runtime.getRuntime().maxMemory()/1048576L + " MB");
+
+        // Log maximum metaspace
+        for (MemoryPoolMXBean memoryMXBean : ManagementFactory.getMemoryPoolMXBeans())
+        {
+            if ("Metaspace".equals(memoryMXBean.getName()))
+            {
+                long maxMetaspace = memoryMXBean.getUsage().getMax();
+                if (maxMetaspace >= 0)
+                {
+                    getLogger().info("Maximum metaspace: " + maxMetaspace/1048576L + " MB");
+                }
+                break;
+            }
+        }
 
 
+        // Log server view distance
+        getLogger().info("server.properties view-distance: " + getServer().getViewDistance());
+
+        // Log command line options
+        RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
+        List<String> arguments = runtimeMxBean.getInputArguments();
+        getLogger().info("Command line options: ");
+        for (String str : arguments)
+        {
+            getLogger().info("  " + str);
+        }
     }
-    private void safewool() {
-        World w = Bukkit.getWorld("world");
+
+
+    @Override
+    public void onDisable() {}
+
+
+    public static void safewool() {
+        World w = Bukkit.getServer().getWorlds().get(0);
         for (Chunk c : w.getLoadedChunks()) {
             int cx = c.getX() << 4;
             int cz = c.getZ() << 4;

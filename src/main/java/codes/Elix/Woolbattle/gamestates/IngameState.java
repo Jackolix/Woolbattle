@@ -11,6 +11,7 @@ import codes.Elix.Woolbattle.game.perks.clock;
 import codes.Elix.Woolbattle.game.perks.platform;
 import codes.Elix.Woolbattle.items.Items;
 import codes.Elix.Woolbattle.items.LobbyItems;
+import codes.Elix.Woolbattle.items.PerkItems;
 import codes.Elix.Woolbattle.main.Woolbattle;
 import codes.Elix.Woolbattle.util.IngameScoreboard;
 import org.bukkit.Bukkit;
@@ -33,6 +34,7 @@ public class IngameState extends GameState {
             current.getInventory().clear();
             Items.standartitems(current);
             IngameScoreboard.setup(current);
+            PerkItems.equip(current);
         }
         DoubleJump.enable();
         switcher.enable();

@@ -3,6 +3,7 @@
 
 package codes.Elix.Woolbattle.commands;
 
+import codes.Elix.Woolbattle.gamestates.GameStateManager;
 import codes.Elix.Woolbattle.gamestates.LobbyState;
 import codes.Elix.Woolbattle.main.Woolbattle;
 import org.bukkit.command.Command;
@@ -25,8 +26,7 @@ public class StartCommand implements CommandExecutor {
             Player player = (Player) sender;
             if (player.hasPermission("Woolbattle.start")) {
                 if (args.length == 0) {
-                    if (plugin.getGameStateManager().getCurrentGameState() instanceof LobbyState) {
-                        LobbyState lobbyState = (LobbyState) plugin.getGameStateManager().getCurrentGameState();
+                    if (GameStateManager.getCurrentGameState() instanceof LobbyState lobbyState) {
                         if (lobbyState.getCountdown().isRunning() && lobbyState.getCountdown().getSeconds() > START_SECONDS) {
                             lobbyState.getCountdown().setSeconds(START_SECONDS);
                             player.sendMessage(Woolbattle.PREFIX + "§aDer Spielstart wurde beschleunigt.");

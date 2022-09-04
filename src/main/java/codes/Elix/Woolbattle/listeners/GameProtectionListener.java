@@ -25,7 +25,7 @@ import org.bukkit.material.Wool;
 public class GameProtectionListener implements Listener {
 
     @EventHandler
-    public void onFoodlevelchange(FoodLevelChangeEvent event) {
+    public void onFoodlevelChange(FoodLevelChangeEvent event) {
         event.setCancelled(true);
     }
 

@@ -5,10 +5,7 @@ package codes.Elix.Woolbattle.gamestates;
 
 import codes.Elix.Woolbattle.game.DoubleJump;
 import codes.Elix.Woolbattle.game.LiveSystem;
-import codes.Elix.Woolbattle.game.perks.booster;
-import codes.Elix.Woolbattle.game.perks.switcher;
-import codes.Elix.Woolbattle.game.perks.clock;
-import codes.Elix.Woolbattle.game.perks.platform;
+import codes.Elix.Woolbattle.game.perks.*;
 import codes.Elix.Woolbattle.items.Items;
 import codes.Elix.Woolbattle.items.LobbyItems;
 import codes.Elix.Woolbattle.items.PerkItems;
@@ -41,7 +38,8 @@ public class IngameState extends GameState {
         booster.enable();
         clock.enable();
         platform.enable();
-
+        wall.enable();
+        freezer.enable();
     }
 
     @Override

@@ -3,9 +3,7 @@
 
 package codes.Elix.Woolbattle.util;
 
-import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.WorldEdit;
-import com.sk89q.worldedit.WorldEditException;
+import com.sk89q.worldedit.*;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
@@ -14,10 +12,15 @@ import com.sk89q.worldedit.extent.clipboard.io.ClipboardReader;
 import com.sk89q.worldedit.function.operation.Operation;
 import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.regions.CuboidRegion;
+import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.session.ClipboardHolder;
+import com.sk89q.worldedit.world.block.BaseBlock;
+import com.sk89q.worldedit.world.block.BlockState;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import com.sk89q.worldedit.world.World;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import java.io.File;
@@ -25,25 +28,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 public class Worldloader {
-
-    public static File file = new File("/Users/immanuelkolbl/lokal/Development/Server/Paper-1.19/plugins/FastAsyncWorldEdit/schematics/game1.schem");
-    //TODO: richtiges File
-    /*
-    public static World world;
-
-    public static void change() {
-        new WorldCreator("game1").createWorld();
-        World lobby = Bukkit.getServer().getWorlds().get(0); // gets default world
-        World gameworld = Bukkit.getServer().getWorld("game1");
-        Bukkit.getServer().unloadWorld(lobby, false);
-        world = gameworld;
-    }
-    */
-
-    public static void teleport() {
-        for (Player p : Bukkit.getOnlinePlayers())
-            p.teleport(new Location(Bukkit.getServer().getWorlds().get(0), 0, 0 ,0)); //TODO: richtige location
-    }
 
     public static void paste(Location location, File file) {
 
@@ -80,5 +64,42 @@ public class Worldloader {
                 e.printStackTrace();
             }
         }
+    }
+
+    public static void remove(Location pos1, Location pos2) {
+
+        World world = BukkitAdapter.adapt(pos1.getWorld());
+        BlockState air = BukkitAdapter.adapt(Material.AIR.createBlockData());
+
+        BlockVector3 position1 = BlockVector3.at(pos1.getBlockX(), pos1.getBlockY(), pos1.getBlockZ());
+        BlockVector3 position2 = BlockVector3.at(pos2.getBlockX(), pos2.getBlockY(), pos2.getBlockZ());
+        CuboidRegion region = new CuboidRegion(position1, position2);
+
+        EditSession editsession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(world, -1);
+        try {
+            // editsession.setBlocks((Region) region, new BaseBlock(air));
+            editsession.setBlocks((Region) region, new BaseBlock(air));
+        } catch (MaxChangedBlocksException e) {
+            e.printStackTrace();
+        }
+
+        Console.send("Removed blocks");
+
+
+        /*
+        BlockVector3 blockVector3 = BlockVector3.at(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+        World world = BukkitAdapter.adapt(location.getWorld());
+
+        EditSession editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(world, -1);
+        try {
+            editSession.setBlocks()
+        }
+
+         */
+    }
+
+    public static void teleport(Location location) {
+        for (Player p : Bukkit.getOnlinePlayers())
+            p.teleport(location);
     }
 }

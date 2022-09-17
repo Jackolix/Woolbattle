@@ -13,8 +13,11 @@ import codes.Elix.Woolbattle.items.Items;
 import codes.Elix.Woolbattle.items.LobbyItems;
 import codes.Elix.Woolbattle.items.PerkItems;
 import codes.Elix.Woolbattle.main.Woolbattle;
+import codes.Elix.Woolbattle.util.Console;
 import codes.Elix.Woolbattle.util.IngameScoreboard;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
 public class IngameState extends GameState {
@@ -28,6 +31,7 @@ public class IngameState extends GameState {
 
     @Override
     public void start() {
+        checkTeams();
         setLifes();
         for (Player current : Bukkit.getOnlinePlayers()) {
             current.closeInventory();
@@ -57,6 +61,51 @@ public class IngameState extends GameState {
         LiveSystem.TeamLifes.put(LiveSystem.TeamBlue, LobbyItems.VotedLives);
         LiveSystem.TeamLifes.put(LiveSystem.TeamGreen, LobbyItems.VotedLives);
 
+    }
+
+    public void checkTeams() {
+        Console.send("Checking teams...");
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (LiveSystem.VotedPlayers.containsKey(player)) return;
+            Console.send("Trying to add " + ChatColor.DARK_AQUA + player.getName() + ChatColor.GRAY + " to team");
+            addToEmptyTeam(player);
+        }
+        Console.send(" ");
+        Console.send(ChatColor.RED + "Team Red: " + LiveSystem.TeamRed.size());
+        Console.send(ChatColor.BLUE + "Team Blue: " + LiveSystem.TeamBlue.size());
+        Console.send(ChatColor.GREEN + "Team Green: " + LiveSystem.TeamGreen.size());
+        Console.send(ChatColor.YELLOW + "Team Yellow: " + LiveSystem.TeamYellow.size());
+    }
+
+    public void addToEmptyTeam(Player player) {
+        if (LiveSystem.TeamRed.size() < LiveSystem.TeamSize) {
+            LiveSystem.TeamRed.add(player);
+            LiveSystem.VotedPlayers.put(player, LiveSystem.TeamRed);
+            Console.send("Added " + ChatColor.DARK_AQUA + player.getName() + ChatColor.GRAY + " to Team" + ChatColor.RED + " Red");
+        } else if (LiveSystem.TeamBlue.size() < LiveSystem.TeamSize) {
+            LiveSystem.TeamBlue.add(player);
+            LiveSystem.VotedPlayers.put(player, LiveSystem.TeamBlue);
+            Console.send("Added " + ChatColor.DARK_AQUA + player.getName() + ChatColor.GRAY + " to Team" + ChatColor.BLUE + " Blue");
+        } else if (LiveSystem.TeamGreen.size() < LiveSystem.TeamSize) {
+            LiveSystem.TeamGreen.add(player);
+            LiveSystem.VotedPlayers.put(player, LiveSystem.TeamGreen);
+            Console.send("Added " + ChatColor.DARK_AQUA + player.getName() + ChatColor.GRAY + " to Team" + ChatColor.GREEN + " Green");
+        } else if (LiveSystem.TeamYellow.size() < LiveSystem.TeamSize) {
+            LiveSystem.TeamYellow.add(player);
+            LiveSystem.VotedPlayers.put(player, LiveSystem.TeamYellow);
+            Console.send("Added " + ChatColor.DARK_AQUA + player.getName() + ChatColor.GRAY + " to Team" + ChatColor.YELLOW + " Yellow");
+        } else {
+            Console.send(ChatColor.RED + "All Teams are full!");
+            player.setGameMode(GameMode.SPECTATOR);
+        }
+        /*
+        for (ArrayList<Player> teams : LiveSystem.getTeams()) {
+            if (teams.size() < LiveSystem.TeamSize) {
+                teams.add(player);
+                LiveSystem.VotedPlayers.put(player, teams);
+            }
+        }
+         */
     }
 
 }

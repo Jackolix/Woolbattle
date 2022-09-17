@@ -11,6 +11,8 @@ import codes.Elix.Woolbattle.util.Worldloader;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
+import java.io.File;
+
 public class LobbyCountdown extends Countdown{
 
     private static final int COUNTDOWN_TIME = 30, IDLE_TIME = 30;
@@ -31,18 +33,14 @@ public class LobbyCountdown extends Countdown{
             @Override
             public void run() {
                 switch (seconds) {
-                    case 30, 20, 10, 5, 2 ->
+                    case 30, 20, 10, 5, 3, 2 ->
                             Bukkit.broadcastMessage(Woolbattle.PREFIX + "§7Das Spiel startet in §a" + seconds + " Sekunden§7.");
-                    case 3 -> {
-                        Bukkit.broadcastMessage(Woolbattle.PREFIX + "§7Das Spiel startet in §a" + seconds + " Sekunden§7.");
-                        Worldloader.paste(new Location(Bukkit.getServer().getWorlds().get(0), 0, 50, 0), Worldloader.file);
-                        Woolbattle.safewool();
-                        //TODO: richtige location
-                    }
                     case 1 -> Bukkit.broadcastMessage(Woolbattle.PREFIX + "§7Das Spiel startet in §aeiner Sekunde§7.");
                     case 0 -> {
                         gameStateManager.setGameState(GameState.INGAME_STATE);
-                        Worldloader.teleport();
+                        Worldloader.paste(new Location(Bukkit.getServer().getWorlds().get(0), -38, 52, 15), new File("./plugins/Woolbattle/game1.schem"));
+                        Woolbattle.safewool();
+                        Worldloader.teleport(new Location(Bukkit.getServer().getWorlds().get(0), 0, 50, 0));
                     }
                 }
                 seconds--;
@@ -66,8 +64,9 @@ public class LobbyCountdown extends Countdown{
         idleID = Bukkit.getScheduler().scheduleSyncRepeatingTask(gameStateManager.getPlugin(), new Runnable() {
             @Override
             public void run() {
-                Bukkit.broadcastMessage(Woolbattle.PREFIX + "§7Bis zum Spielstart fehlen noch §6" +
-                        (LobbyState.MIN_PLAYERS - gameStateManager.getPlugin().getPlayers().size()) + " §7Spieler.");
+                if (Bukkit.getOnlinePlayers().size() > 0)
+                    Bukkit.broadcastMessage(Woolbattle.PREFIX + "§7Bis zum Spielstart fehlen noch §6" +
+                            (LobbyState.MIN_PLAYERS - gameStateManager.getPlugin().getPlayers().size()) + " §7Spieler.");
             }
         }, 0, 20* IDLE_TIME);
 

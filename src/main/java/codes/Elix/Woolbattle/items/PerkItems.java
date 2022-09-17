@@ -21,6 +21,14 @@ public class PerkItems {
         Integer Fperkslot = (Integer) config.get(player.getName() + ".1Perkslot");
         Integer Sperkslot = (Integer) config.get(player.getName() + ".2Perkslot");
 
+        if (Fperkslot == null) {
+            config.set(player.getName() + ".1Perkslot", 6);
+            Fperkslot = 6;
+        }
+        if (Sperkslot == null) {
+            config.set(player.getName() + ".2Perkslot", 7);
+            Sperkslot = 7;
+        }
 
         switch (Objects.requireNonNull(Fperk != null ? Fperk.toString() : null)) {
             case "booster" -> Items.create(player.getInventory(), Material.TRIPWIRE_HOOK, "§3Booster", Fperkslot);

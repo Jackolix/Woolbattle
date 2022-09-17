@@ -1,10 +1,7 @@
 package codes.Elix.Woolbattle.main;
 
 
-import codes.Elix.Woolbattle.commands.Performance;
-import codes.Elix.Woolbattle.commands.SetupCommand;
-import codes.Elix.Woolbattle.commands.StartCommand;
-import codes.Elix.Woolbattle.commands.test;
+import codes.Elix.Woolbattle.commands.*;
 import codes.Elix.Woolbattle.countdowns.LobbyCountdown;
 import codes.Elix.Woolbattle.game.DoubleJump;
 import codes.Elix.Woolbattle.game.VoidTeleport;
@@ -14,11 +11,10 @@ import codes.Elix.Woolbattle.gamestates.LobbyState;
 import codes.Elix.Woolbattle.items.LobbyItems;
 import codes.Elix.Woolbattle.listeners.GameProtectionListener;
 import codes.Elix.Woolbattle.listeners.PlayerLobbyConnectionListener;
+import codes.Elix.Woolbattle.util.Console;
+import codes.Elix.Woolbattle.util.Worldloader;
 import com.sun.management.OperatingSystemMXBean;
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -27,8 +23,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryPoolMXBean;
 import java.lang.management.RuntimeMXBean;
@@ -51,24 +46,32 @@ public class Woolbattle extends JavaPlugin {
         plugin = this;
         gameStateManager = new GameStateManager(this);
         players = new ArrayList<>();
-        createCustomConfig();
+
+        /*
+        try {
+            ExportResource("/Lobby1.schem");
+            ExportResource("/game1.schem");
+        } catch (Exception e) { throw new RuntimeException(e); }
+         */
+        createFiles();
+
         initmonitor();
         PluginMessage();
 
+        LobbyMap();
         gameStateManager.setGameState(GameState.LOBBY_STATE);
         // safewool();
         addplayers();
 
         init(Bukkit.getPluginManager());
-        System.out.println("Safed all Woolblocks!");
-        System.out.println("Woolbattle wurde aktiviert!");
-
+        Console.send("Woolbattle wurde aktiviert!");
     }
 
     private void init(PluginManager pluginManager) {
         getCommand("setup").setExecutor(new SetupCommand(this));
         getCommand("start").setExecutor(new StartCommand(this));
         getCommand("test").setExecutor(new test());
+        getCommand("countdown").setExecutor(new SetCountdown());
 
         pluginManager.registerEvents(new PlayerLobbyConnectionListener(this), this);
         pluginManager.registerEvents(new DoubleJump(), this);
@@ -132,12 +135,13 @@ public class Woolbattle extends JavaPlugin {
                     for (int y = 0; y < 128; y++) {
                         if (w.getBlockAt(x, y, z).getType() == Material.LEGACY_WOOL) {
                             blocks.add(w.getBlockAt(x,y,z));
-                            System.out.println("X: " + x + " Y: " + y + " Z: " + z);
+                            Console.send("X: " + x + " Y: " + y + " Z: " + z);
                         }
                     }
                 }
             }
         }
+        Console.send("Safed all Woolblocks!");
     }
 
     private void addplayers() {
@@ -155,7 +159,12 @@ public class Woolbattle extends JavaPlugin {
         }
     }
 
-    private void createCustomConfig() {
+    private void LobbyMap() {
+        Worldloader.paste(new Location(Bukkit.getServer().getWorlds().get(0), 2, 70, 1), new File("./plugins/Woolbattle/Lobby1.schem"));
+    }
+    // new File("./plugins/Woolbattle/Lobby1.schem")
+    private void createFiles() {
+
         File customConfigFile = new File(getDataFolder(), "PlayerPerkConfig.yml");
         if (!customConfigFile.exists()) {
             customConfigFile.getParentFile().mkdirs();
@@ -174,6 +183,39 @@ public class Woolbattle extends JavaPlugin {
         */
     }
 
+    /**
+     * Export a resource embedded into a Jar file to the local file path.
+     *
+     * @param resourceName ie.: "/SmartLibrary.dll"
+     * @return The path to the exported resource
+     * @throws Exception
+     */
+    static public String ExportResource(String resourceName) throws Exception {
+        InputStream stream = null;
+        OutputStream resStreamOut = null;
+        String jarFolder;
+        try {
+            stream = Woolbattle.class.getResourceAsStream(resourceName);//note that each / is a directory down in the "jar tree" been the jar the root of the tree
+            if(stream == null) {
+                throw new Exception("Cannot get resource \"" + resourceName + "\" from Jar file.");
+            }
+
+            int readBytes;
+            byte[] buffer = new byte[4096];
+            jarFolder = new File(Woolbattle.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).getParentFile().getPath().replace('\\', '/');
+            resStreamOut = new FileOutputStream("./plugins/Woolbattle" + resourceName);
+            while ((readBytes = stream.read(buffer)) > 0) {
+                resStreamOut.write(buffer, 0, readBytes);
+            }
+        } catch (Exception ex) {
+            throw ex;
+        } finally {
+            stream.close();
+            resStreamOut.close();
+        }
+        return jarFolder + resourceName;
+    }
+
     public ArrayList<Player> getPlayers() {
         return players;
     }
@@ -184,7 +226,7 @@ public class Woolbattle extends JavaPlugin {
     public FileConfiguration getCustomConfig() { return this.customConfig; }
 
     private void PluginMessage() {
-        Bukkit.getServer().getConsoleSender().sendMessage("\n" +
+        Console.send("\n" +
                 "\n __          __         _             \n" +
                 " \\ \\        / /        | |            \n" +
                 "  \\ \\  /\\  / /__   ___ | |            \n" +

@@ -12,3 +12,4 @@ commands:
   start:
   test:
   performance:
+  countdown:

@@ -123,8 +123,6 @@ public class LobbyItems implements Listener {
     private void Inventarsortierung() {}
 
     private void Lifes(Player player) {
-        LiveSystem.TeamSize = 2;
-
         //TODO: Voting System
 
         Inventory inventory = Bukkit.createInventory(null, 3*9, "§aLebensanzahl");
@@ -156,7 +154,6 @@ public class LobbyItems implements Listener {
         Items.create(inventory, Material.GRAY_STAINED_GLASS_PANE, " ", 25);
         Items.create(inventory, Material.GRAY_STAINED_GLASS_PANE, " ", 26);
         player.openInventory(inventory);
-
     }
 
     private void Maps() {}
@@ -305,8 +302,10 @@ public class LobbyItems implements Listener {
 
         switch (Title) {
             case "§3Erstes Perk:" -> {
-                if (Pperk == null)
+                if (Fperk == null) {
                     config.set(player.getName() + ".1Perk", "booster");
+                    Fperk = "booster";
+                }
                 switch (Fperk.toString()) {
                     case "booster" -> Items.create(inventory, Material.TRIPWIRE_HOOK, true, "§3Booster", "Boostet dich durch die Luft", 12, 25, 0);
                     case "enterhaken" -> Items.create(inventory, Material.FISHING_ROD, true, "§3Enterhaken", "Ziehe dich mit einem Enterhaken über die Map!", 5, 16, 1);
@@ -331,8 +330,10 @@ public class LobbyItems implements Listener {
                 }
             }
             case "§3Zweites Perk:" -> {
-                if (Sperk == null)
+                if (Sperk == null) {
                     config.set(player.getName() + ".2Perk", "enterhaken");
+                    Sperk = "enterhaken";
+                }
                 switch (Objects.requireNonNull(Sperk).toString()) {
                     case "booster" -> Items.create(inventory, Material.TRIPWIRE_HOOK, true, "§3Booster", "Boostet dich durch die Luft", 12, 25, 0);
                     case "enterhaken" -> Items.create(inventory, Material.FISHING_ROD, true, "§3Enterhaken", "Ziehe dich mit einem Enterhaken über die Map!", 5, 16, 1);
@@ -357,8 +358,10 @@ public class LobbyItems implements Listener {
                 }
             }
             case "§3Verfügbare Perks:" -> {
-                if (Pperk == null)
+                if (Pperk == null) {
                     config.set(player.getName() + ".passive", "aufzug");
+                    Pperk = "aufzug";
+                }
                 switch (Objects.requireNonNull(Pperk).toString()) {
                     case "aufzug" -> Items.createPassivePerk(inventory, Material.LADDER, true, "§3Aufzug", "Teleportiere dich mit der Enderperle auf den getroffenen Block!", null, "§6Cooldown: 3 Enderperlen", 0);
                     case "explodierender_pfeil" -> Items.createPassivePerk(inventory, Material.TNT, true, "§3Explodierender Pfeil", "Ein besonderer Pfeil der alles in die Luft sprengt!", "§6Preis: 8 Wolle", "Nach Pfeilen: 8", 1);
@@ -434,13 +437,7 @@ public class LobbyItems implements Listener {
 
     private void clickedvotes(Player player, int lifes) {
         //TODO: Funktioniert nicht
-        if (player.hasPermission("Rank.player")) {
-           lifes++;
-        } else if (player.hasPermission("Rank.vip")) {
-            lifes = lifes + 3;
-        } else if (player.hasPermission("Rank.admin")) {
-            lifes = lifes + 9;
-        }
+        life6 = 1;
         Lifes(player);
     }
 }

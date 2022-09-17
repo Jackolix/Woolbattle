@@ -4,7 +4,9 @@
 package codes.Elix.Woolbattle.gamestates;
 
 import codes.Elix.Woolbattle.countdowns.LobbyCountdown;
+import codes.Elix.Woolbattle.util.Console;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 
 public class LobbyState extends GameState {
 
@@ -22,7 +24,8 @@ public class LobbyState extends GameState {
 
     @Override
     public void stop() {
-        Bukkit.broadcastMessage("Das Spiel ist gestartet");
+        Console.send(ChatColor.GOLD + "Game has started");
+        Console.send(" ");
     }
 
 

@@ -4,6 +4,7 @@
 package codes.Elix.Woolbattle.items;
 
 import codes.Elix.Woolbattle.main.Woolbattle;
+import codes.Elix.Woolbattle.util.Console;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -73,5 +74,19 @@ public class PerkItems {
             case "thegrabber" -> Items.create(player.getInventory(), Material.FISHING_ROD, "§3The Grabber", Sperkslot);
         }
 
+    }
+
+    public static void select(Player player, String Perk, String Perkslot) {
+        Object Fperk = config.get(player.getName() + ".1Perk");
+        Object Sperk = config.get(player.getName() + ".2Perk");
+
+        if (Objects.equals(Perkslot, ".1Perk"))
+            if (Perk == Sperk) return;
+
+        if (Objects.equals(Perkslot, ".2Perk"))
+            if (Perk == Fperk) return;
+
+        config.set(player.getName() + Perkslot, Perk);
+        Woolbattle.getPlugin().saveConfig();
     }
 }

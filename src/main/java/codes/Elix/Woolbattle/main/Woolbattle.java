@@ -133,7 +133,7 @@ public class Woolbattle extends JavaPlugin {
             for (int x = cx; x < cx + 16; x++) {
                 for (int z = cz; z < cz + 16; z++) {
                     for (int y = 0; y < 128; y++) {
-                        if (w.getBlockAt(x, y, z).getType() == Material.LEGACY_WOOL) {
+                        if (Tag.WOOL.isTagged(w.getBlockAt(x, y, z).getType())) {
                             blocks.add(w.getBlockAt(x,y,z));
                             Console.send("X: " + x + " Y: " + y + " Z: " + z);
                         }

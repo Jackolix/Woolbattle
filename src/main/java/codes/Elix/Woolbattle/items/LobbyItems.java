@@ -8,6 +8,7 @@ import codes.Elix.Woolbattle.game.Perk;
 import codes.Elix.Woolbattle.gamestates.GameStateManager;
 import codes.Elix.Woolbattle.gamestates.LobbyState;
 import codes.Elix.Woolbattle.main.Woolbattle;
+import codes.Elix.Woolbattle.util.Console;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -173,7 +174,6 @@ public class LobbyItems implements Listener {
         // if (playerperk.getfirstPerk().equals(playerperk.getpassivePerk())) something like that
         // if (playerperk.getfirstPerk() || playerperk.getsecondtPerk())
 
-
         if (event.getView().getTitle().equals("§3Wähle deine Perks!")) {
             event.setCancelled(true); //Player kann das Item nicht aus dem Inventar ziehen
             switch (clicked) {
@@ -182,28 +182,28 @@ public class LobbyItems implements Listener {
                 case ENDER_CHEST -> PassivePerkInventory(player);
             }
         }
-        Material booster = Material.TRIPWIRE_HOOK;
+
         if (event.getView().getTitle().equals("§3Erstes Perk:")) {
             event.setCancelled(true);
             switch (clicked) {
-                case TRIPWIRE_HOOK -> config.set(event.getWhoClicked().getName() + ".1Perk", "booster");
-                case FISHING_ROD -> config.set(event.getWhoClicked().getName() + ".1Perk", "enterhaken");
-                case PACKED_ICE -> config.set(event.getWhoClicked().getName() + ".1Perk", "freezer");
-                case CLOCK -> config.set(event.getWhoClicked().getName() + ".1Perk", "großvatersuhr");
-                case STICK -> config.set(event.getWhoClicked().getName() + ".1Perk", "linebuilder");
-                case DIAMOND_HORSE_ARMOR -> config.set(event.getWhoClicked().getName() + ".1Perk", "minigun");
-                case FIRE_CHARGE -> config.set(event.getWhoClicked().getName() + ".1Perk", "pfeilbombe");
-                case OBSIDIAN -> config.set(event.getWhoClicked().getName() + ".1Perk", "portal");
-                case RED_STAINED_GLASS -> config.set(event.getWhoClicked().getName() + ".1Perk", "rettungskapsel");
-                case BLAZE_ROD -> config.set(event.getWhoClicked().getName() + ".1Perk", "rettungsplattform");
-                case VINE -> config.set(event.getWhoClicked().getName() + ".1Perk", "rope");
-                case EMERALD -> config.set(event.getWhoClicked().getName() + ".1Perk", "schutzschild");
-                case SLIME_BALL -> config.set(event.getWhoClicked().getName() + ".1Perk", "slimeplattform");
-                case STONE_PRESSURE_PLATE -> config.set(event.getWhoClicked().getName() + ".1Perk", "sprengsatz");
-                case SNOWBALL -> config.set(event.getWhoClicked().getName() + ".1Perk", "tauscher");
-                case GLASS_BOTTLE -> config.set(event.getWhoClicked().getName() + ".1Perk", "klospülung");
-                case RED_STAINED_GLASS_PANE -> config.set(event.getWhoClicked().getName() + ".1Perk", "wandgenerator");
-                case TNT -> config.set(event.getWhoClicked().getName() + ".1Perk", "woolbombe");
+                case TRIPWIRE_HOOK -> PerkItems.select(player, "booster", ".1Perk");
+                case FISHING_ROD -> PerkItems.select(player, "enterhaken", ".1Perk");
+                case PACKED_ICE -> PerkItems.select(player, "freezer", ".1Perk");
+                case CLOCK -> PerkItems.select(player, "großvatersuhr", ".1Perk");
+                case STICK -> PerkItems.select(player, "linebuilder", ".1Perk");
+                case DIAMOND_HORSE_ARMOR -> PerkItems.select(player, "minigun", ".1Perk");
+                case FIRE_CHARGE -> PerkItems.select(player, "pfeilbombe", ".1Perk");
+                case OBSIDIAN -> PerkItems.select(player, "portal", ".1Perk");
+                case RED_STAINED_GLASS -> PerkItems.select(player, "rettungskapsel", ".1Perk");
+                case BLAZE_ROD -> PerkItems.select(player, "rettungsplattform", ".1Perk");
+                case VINE -> PerkItems.select(player, "rope", ".1Perk");
+                case EMERALD -> PerkItems.select(player, "schutzschild", ".1Perk");
+                case SLIME_BALL -> PerkItems.select(player, "slimeplattform", ".1Perk");
+                case STONE_PRESSURE_PLATE -> PerkItems.select(player, "sprengsatz", ".1Perk");
+                case SNOWBALL -> PerkItems.select(player, "tauscher", ".1Perk");
+                case GLASS_BOTTLE -> PerkItems.select(player, "klospülung", ".1Perk");
+                case RED_STAINED_GLASS_PANE -> PerkItems.select(player, "wandgenerator", ".1Perk");
+                case TNT -> PerkItems.select(player, "woolbombe", ".1Perk");
                 // THE GRABBER
                 case DARK_OAK_DOOR -> {
                     PerkVorInventory(player);
@@ -217,24 +217,24 @@ public class LobbyItems implements Listener {
         if (event.getView().getTitle().equals("§3Zweites Perk:")) {
             event.setCancelled(true);
             switch (clicked) {
-                case TRIPWIRE_HOOK -> config.set(event.getWhoClicked().getName() + ".2Perk", "booster");
-                case FISHING_ROD -> config.set(event.getWhoClicked().getName() + ".2Perk", "enterhaken");
-                case PACKED_ICE -> config.set(event.getWhoClicked().getName() + ".2Perk", "freezer");
-                case CLOCK -> config.set(event.getWhoClicked().getName() + ".2Perk", "großvatersuhr");
-                case STICK -> config.set(event.getWhoClicked().getName() + ".2Perk", "linebuilder");
-                case DIAMOND_HORSE_ARMOR -> config.set(event.getWhoClicked().getName() + ".2Perk", "minigun");
-                case FIRE_CHARGE -> config.set(event.getWhoClicked().getName() + ".2Perk", "pfeilbombe");
-                case OBSIDIAN -> config.set(event.getWhoClicked().getName() + ".2Perk", "portal");
-                case RED_STAINED_GLASS -> config.set(event.getWhoClicked().getName() + ".2Perk", "rettungskapsel");
-                case BLAZE_ROD -> config.set(event.getWhoClicked().getName() + ".2Perk", "rettungsplattform");
-                case VINE -> config.set(event.getWhoClicked().getName() + ".2Perk", "rope");
-                case EMERALD -> config.set(event.getWhoClicked().getName() + ".2Perk", "schutzschild");
-                case SLIME_BALL -> config.set(event.getWhoClicked().getName() + ".2Perk", "slimeplattform");
-                case STONE_PRESSURE_PLATE -> config.set(event.getWhoClicked().getName() + ".2Perk", "sprengsatz");
-                case SNOWBALL -> config.set(event.getWhoClicked().getName() + ".2Perk", "tauscher");
-                case GLASS_BOTTLE -> config.set(event.getWhoClicked().getName() + ".2Perk", "klospülung");
-                case RED_STAINED_GLASS_PANE -> config.set(event.getWhoClicked().getName() + ".2Perk", "wandgenerator");
-                case TNT -> config.set(event.getWhoClicked().getName() + ".2Perk", "woolbombe");
+                case TRIPWIRE_HOOK -> PerkItems.select(player, "booster", ".2Perk");
+                case FISHING_ROD -> PerkItems.select(player, "enterhaken", ".2Perk");
+                case PACKED_ICE -> PerkItems.select(player, "freezer", ".2Perk");
+                case CLOCK -> PerkItems.select(player, "großvatersuhr", ".2Perk");
+                case STICK -> PerkItems.select(player, "linebuilder", ".2Perk");
+                case DIAMOND_HORSE_ARMOR -> PerkItems.select(player, "minigun", ".2Perk");
+                case FIRE_CHARGE -> PerkItems.select(player, "pfeilbombe", ".2Perk");
+                case OBSIDIAN -> PerkItems.select(player, "portal", ".2Perk");
+                case RED_STAINED_GLASS -> PerkItems.select(player, "rettungskapsel", ".2Perk");
+                case BLAZE_ROD -> PerkItems.select(player, "rettungsplattform", ".2Perk");
+                case VINE -> PerkItems.select(player, "rope", ".2Perk");
+                case EMERALD -> PerkItems.select(player, "schutzschild", ".2Perk");
+                case SLIME_BALL -> PerkItems.select(player, "slimeplattform", ".2Perk");
+                case STONE_PRESSURE_PLATE -> PerkItems.select(player, "sprengsatz", ".2Perk");
+                case SNOWBALL -> PerkItems.select(player, "tauscher", ".2Perk");
+                case GLASS_BOTTLE -> PerkItems.select(player, "klospülung", ".2Perk");
+                case RED_STAINED_GLASS_PANE -> PerkItems.select(player, "wandgenerator", ".2Perk");
+                case TNT -> PerkItems.select(player, "woolbombe", ".2Perk");
                 // THE GRABBER
                 case DARK_OAK_DOOR -> {
                     PerkVorInventory(player);

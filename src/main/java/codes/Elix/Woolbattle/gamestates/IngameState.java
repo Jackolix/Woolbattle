@@ -96,14 +96,7 @@ public class IngameState extends GameState {
             Console.send(ChatColor.RED + "All Teams are full!");
             player.setGameMode(GameMode.SPECTATOR);
         }
-        /*
-        for (ArrayList<Player> teams : LiveSystem.getTeams()) {
-            if (teams.size() < LiveSystem.TeamSize) {
-                teams.add(player);
-                LiveSystem.VotedPlayers.put(player, teams);
-            }
-        }
-         */
+
     }
 
 }

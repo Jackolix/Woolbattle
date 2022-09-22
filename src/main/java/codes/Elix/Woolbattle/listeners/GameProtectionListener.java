@@ -8,6 +8,7 @@ import codes.Elix.Woolbattle.gamestates.IngameState;
 import codes.Elix.Woolbattle.gamestates.LobbyState;
 import codes.Elix.Woolbattle.main.Woolbattle;
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -66,10 +67,10 @@ public class GameProtectionListener implements Listener {
         if (!(event instanceof Player)) {
             Player player = event.getPlayer();
             if (GameStateManager.getCurrentGameState() instanceof IngameState) {
-                if (event.getBlock().getType() == Material.LEGACY_WOOL) {
+                if (Tag.WOOL.isTagged(event.getBlock().getType())) {
                     if (Woolbattle.blocks.contains(event.getBlock())) {
                         event.setCancelled(true);
-                        ItemStack item = new ItemStack(Material.LEGACY_WOOL);
+                        ItemStack item = new ItemStack(Material.BLACK_WOOL);
                         item.setAmount(2);
                         player.getInventory().addItem(item);
                     }
@@ -89,7 +90,7 @@ public class GameProtectionListener implements Listener {
             return;
         }
         Player player = event.getPlayer();
-        if (event.getBlock().getType() == Material.LEGACY_WOOL) return;
+        if (Tag.WOOL.isTagged(event.getBlock().getType())) return;
         if (!(player.hasPermission("Woolbattle.build"))) {
             event.setCancelled(true);
         }

@@ -3,6 +3,8 @@ package codes.Elix.Woolbattle.main;
 
 import codes.Elix.Woolbattle.commands.*;
 import codes.Elix.Woolbattle.countdowns.LobbyCountdown;
+import codes.Elix.Woolbattle.game.BowShoot;
+import codes.Elix.Woolbattle.game.Chat;
 import codes.Elix.Woolbattle.game.DoubleJump;
 import codes.Elix.Woolbattle.game.VoidTeleport;
 import codes.Elix.Woolbattle.gamestates.GameState;
@@ -68,16 +70,21 @@ public class Woolbattle extends JavaPlugin {
     }
 
     private void init(PluginManager pluginManager) {
+        Chat chat = new Chat();
+
         getCommand("setup").setExecutor(new SetupCommand(this));
         getCommand("start").setExecutor(new StartCommand(this));
         getCommand("test").setExecutor(new test());
         getCommand("countdown").setExecutor(new SetCountdown());
+        getCommand("all").setExecutor(chat);
 
         pluginManager.registerEvents(new PlayerLobbyConnectionListener(this), this);
         pluginManager.registerEvents(new DoubleJump(), this);
         pluginManager.registerEvents(new GameProtectionListener(), this);
         pluginManager.registerEvents(new LobbyItems(), this);
         pluginManager.registerEvents(new VoidTeleport(), this);
+        pluginManager.registerEvents(new BowShoot(), this);
+        pluginManager.registerEvents(chat, this);
 
     }
 

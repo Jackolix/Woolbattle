@@ -15,15 +15,20 @@ import codes.Elix.Woolbattle.util.IngameScoreboard;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
 
 public class IngameState extends GameState {
 
     private Woolbattle plugin;
+    private static ArrayList<Player> spectator;
 
 
     public IngameState (Woolbattle plugin) {
         this.plugin = plugin;
+        spectator = new ArrayList<>();
     }
 
     @Override
@@ -64,7 +69,7 @@ public class IngameState extends GameState {
     public void checkTeams() {
         Console.send("Checking teams...");
         for (Player player : Bukkit.getOnlinePlayers()) {
-            if (LiveSystem.VotedPlayers.containsKey(player)) return;
+            if (LiveSystem.VotedPlayers.containsKey(player)) break;
             Console.send("Trying to add " + ChatColor.DARK_AQUA + player.getName() + ChatColor.GRAY + " to team");
             addToEmptyTeam(player);
         }
@@ -73,6 +78,40 @@ public class IngameState extends GameState {
         Console.send(ChatColor.BLUE + "Team Blue: " + LiveSystem.TeamBlue.size());
         Console.send(ChatColor.GREEN + "Team Green: " + LiveSystem.TeamGreen.size());
         Console.send(ChatColor.YELLOW + "Team Yellow: " + LiveSystem.TeamYellow.size());
+
+        /*
+        for (int i = 0; i < LiveSystem.TeamRed.size(); i++) {
+            LiveSystem.Team.put(LiveSystem.TeamRed.get(i), "red");
+        }
+        for (int i = 0; i < LiveSystem.TeamYellow.size(); i++) {
+            LiveSystem.Team.put(LiveSystem.TeamYellow.get(i), "yellow");
+        }
+        for (int i = 0; i < LiveSystem.TeamBlue.size(); i++) {
+            LiveSystem.Team.put(LiveSystem.TeamBlue.get(i), "blue");
+        }
+        for (int i = 0; i < LiveSystem.TeamGreen.size(); i++) {
+            LiveSystem.Team.put(LiveSystem.TeamGreen.get(i), "green");
+        }
+
+         */
+
+        teamupdate();
+    }
+
+    public static void teamupdate() {
+        LiveSystem.Team.clear();
+        for (int i = 0; i < LiveSystem.TeamRed.size(); i++) {
+            LiveSystem.Team.put(LiveSystem.TeamRed.get(i), "red");
+        }
+        for (int i = 0; i < LiveSystem.TeamYellow.size(); i++) {
+            LiveSystem.Team.put(LiveSystem.TeamYellow.get(i), "yellow");
+        }
+        for (int i = 0; i < LiveSystem.TeamBlue.size(); i++) {
+            LiveSystem.Team.put(LiveSystem.TeamBlue.get(i), "blue");
+        }
+        for (int i = 0; i < LiveSystem.TeamGreen.size(); i++) {
+            LiveSystem.Team.put(LiveSystem.TeamGreen.get(i), "green");
+        }
     }
 
     public void addToEmptyTeam(Player player) {
@@ -94,9 +133,23 @@ public class IngameState extends GameState {
             Console.send("Added " + ChatColor.DARK_AQUA + player.getName() + ChatColor.GRAY + " to Team" + ChatColor.YELLOW + " Yellow");
         } else {
             Console.send(ChatColor.RED + "All Teams are full!");
-            player.setGameMode(GameMode.SPECTATOR);
+            addSpectator(player);
         }
-
     }
 
+    public static void addSpectator(Player player) {
+        spectator.add(player);
+        player.setGameMode(GameMode.CREATIVE);
+
+        for (Player current : Bukkit.getOnlinePlayers()) {
+            current.hidePlayer(player);
+        }
+        player.teleport(new Location(Bukkit.getServer().getWorlds().get(0), 0, 50, 0));
+        LiveSystem.Team.put(player, "spectator");
+    }
+
+
+    public static ArrayList<Player> getSpectator() {
+        return spectator;
+    }
 }

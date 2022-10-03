@@ -12,6 +12,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -26,6 +28,8 @@ public class freezer implements Listener {
 
     private ArrayList<Player> available = new ArrayList<>();
 
+    private JavaPlugin plugin;
+
     @EventHandler
     public void onFreezerInteract(PlayerInteractEvent event) {
         if (event.getItem() == null) return;
@@ -37,7 +41,7 @@ public class freezer implements Listener {
             }
 
             Projectile snowball = event.getPlayer().launchProjectile(Snowball.class);
-            snowball.setCustomName("freezer");
+            snowball.setMetadata("Freezer", new FixedMetadataValue(plugin, "keineAhnungWiesoIchDasBrauch"));
 
             //TODO: Cooldown for freezer (visual representation)
             Woolbattle.getPlugin().getServer().getScheduler().scheduleSyncDelayedTask(Woolbattle.getPlugin(),

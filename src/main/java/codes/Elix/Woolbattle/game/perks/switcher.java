@@ -23,7 +23,7 @@ public class switcher implements Listener {
         if(event.getDamager() instanceof Snowball) {
             System.out.println("Projectile damage");
             Projectile projectile = (Projectile) event.getDamager();
-            if (projectile.getCustomName().equals("freezer")) {return;}
+            if (projectile.hasMetadata("Freezer")) { {return;}
             Player shooter = (Player) projectile.getShooter();
             Player hitted = (Player) event.getEntity();
             Location location1 = shooter.getLocation();
@@ -39,6 +39,5 @@ public class switcher implements Listener {
     public static void enable() {
         Bukkit.getPluginManager().registerEvents(new switcher(), Woolbattle.getPlugin());
     }
-
 }
 

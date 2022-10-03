@@ -7,6 +7,7 @@ package codes.Elix.Woolbattle.listeners;
 import codes.Elix.Woolbattle.countdowns.LobbyCountdown;
 import codes.Elix.Woolbattle.game.LiveSystem;
 import codes.Elix.Woolbattle.gamestates.GameStateManager;
+import codes.Elix.Woolbattle.gamestates.IngameState;
 import codes.Elix.Woolbattle.gamestates.LobbyState;
 import codes.Elix.Woolbattle.items.LobbyItems;
 import codes.Elix.Woolbattle.main.Woolbattle;
@@ -14,6 +15,7 @@ import codes.Elix.Woolbattle.util.ConfigLocationUtil;
 import codes.Elix.Woolbattle.util.Console;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -33,9 +35,19 @@ public class PlayerLobbyConnectionListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        if (!(GameStateManager.getCurrentGameState() instanceof LobbyState lobbyState)) return;
+        if (!(GameStateManager.getCurrentGameState() instanceof LobbyState lobbyState)) {
+            IngameState.addSpectator(event.getPlayer());
+            return;
+        }
         Player player = event.getPlayer();
         plugin.getPlayers().add(player);
+        player.setGameMode(GameMode.SURVIVAL);
+
+        for (Player current : Bukkit.getOnlinePlayers()) {
+            current.showPlayer(player);
+            player.showPlayer(current);
+        }
+
         LobbyItems.Lobby(player);
         event.setJoinMessage(Woolbattle.PREFIX + "§a" + player.getDisplayName() + " §7ist dem Spiel beigetreten. [" +
                 plugin.getPlayers().size() + "/" + LobbyState.MAX_PLAYERS + "]");
@@ -80,6 +92,7 @@ public class PlayerLobbyConnectionListener implements Listener {
         if (team != null)
             team.remove(player); //remove the player from the team
         LiveSystem.VotedPlayers.remove(player);
+        IngameState.teamupdate();
         Console.send(ChatColor.GREEN + "Successfully removed " + ChatColor.WHITE + player.getName());
     }
 

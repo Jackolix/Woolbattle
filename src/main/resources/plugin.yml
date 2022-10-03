@@ -13,3 +13,4 @@ commands:
   test:
   performance:
   countdown:
+  all:

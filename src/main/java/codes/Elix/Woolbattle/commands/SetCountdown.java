@@ -3,7 +3,6 @@
 
 package codes.Elix.Woolbattle.commands;
 
-import codes.Elix.Woolbattle.countdowns.LobbyCountdown;
 import codes.Elix.Woolbattle.gamestates.GameStateManager;
 import codes.Elix.Woolbattle.gamestates.LobbyState;
 import codes.Elix.Woolbattle.main.Woolbattle;

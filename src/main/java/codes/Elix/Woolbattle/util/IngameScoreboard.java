@@ -6,6 +6,7 @@ package codes.Elix.Woolbattle.util;
 import codes.Elix.Woolbattle.game.LiveSystem;
 import codes.Elix.Woolbattle.items.LobbyItems;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
@@ -34,11 +35,32 @@ public class IngameScoreboard {
         objective.getScore(" §7• " + MapName).setScore(7);
         objective.getScore("§8» §7Map").setScore(8);
         objective.getScore("  ").setScore(9);
-        objective.getScore(" §7• §8Spectator").setScore(10);
+        objective.getScore(" §7• " + team(player)).setScore(10);
         objective.getScore("§8» §7Dein Team").setScore(11);
         objective.getScore("   ").setScore(12);
         player.setScoreboard(scoreboard);
 
+    }
+
+    public static String team(Player player) {
+        String color = LiveSystem.Team.get(player);
+        switch (color) {
+            case "red" -> {
+                return ChatColor.RED + "Rot";
+            }
+            case "blue" -> {
+                return ChatColor.BLUE +"Blau";
+            }
+            case "yellow" -> {
+                return ChatColor.YELLOW +"Gelb";
+            }
+            case "green" -> {
+                return ChatColor.GREEN +"Grün";
+            }
+            default -> {
+                return ChatColor.GRAY +"Spectator";
+            }
+        }
     }
 
 }

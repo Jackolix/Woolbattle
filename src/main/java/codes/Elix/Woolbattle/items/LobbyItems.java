@@ -6,6 +6,7 @@ package codes.Elix.Woolbattle.items;
 import codes.Elix.Woolbattle.game.LiveSystem;
 import codes.Elix.Woolbattle.game.Perk;
 import codes.Elix.Woolbattle.gamestates.GameStateManager;
+import codes.Elix.Woolbattle.gamestates.IngameState;
 import codes.Elix.Woolbattle.gamestates.LobbyState;
 import codes.Elix.Woolbattle.main.Woolbattle;
 import codes.Elix.Woolbattle.util.Console;
@@ -425,7 +426,8 @@ public class LobbyItems implements Listener {
         if (arrayList.size() < LiveSystem.TeamSize) {
             arrayList.add(player);
             LiveSystem.VotedPlayers.put(player, arrayList);
-        } else System.out.println("Team is full");
+            IngameState.teamupdate();
+        } else Console.send(ChatColor.RED + "Team is full");
     }
 
     private void checkTeam(ArrayList<Player> arrayList, Inventory inventory, Material material, String Team, int slot, ChatColor color) {

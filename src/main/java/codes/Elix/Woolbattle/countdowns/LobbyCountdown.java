@@ -37,9 +37,9 @@ public class LobbyCountdown extends Countdown{
                             Bukkit.broadcastMessage(Woolbattle.PREFIX + "§7Das Spiel startet in §a" + seconds + " Sekunden§7.");
                     case 1 -> Bukkit.broadcastMessage(Woolbattle.PREFIX + "§7Das Spiel startet in §aeiner Sekunde§7.");
                     case 0 -> {
-                        gameStateManager.setGameState(GameState.INGAME_STATE);
                         Worldloader.paste(new Location(Bukkit.getServer().getWorlds().get(0), -38, 52, 15), new File("./plugins/Woolbattle/game1.schem"));
                         Woolbattle.safewool();
+                        gameStateManager.setGameState(GameState.INGAME_STATE);
                         Worldloader.teleport(new Location(Bukkit.getServer().getWorlds().get(0), 0, 50, 0));
                     }
                 }

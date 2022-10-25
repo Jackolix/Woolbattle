@@ -17,7 +17,7 @@ public class IngameScoreboard {
     public static String Colorname2 = "§cRot";
     public static String Colorname3 = "§aGreen";
     public static String Colorname4 = "§eGelb";
-    private static String MapName = "§3Whistles";
+    private static String MapName = "§3Custom";
 
     public static void setup(Player player) {
         org.bukkit.scoreboard.Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
@@ -44,6 +44,8 @@ public class IngameScoreboard {
 
     public static String team(Player player) {
         String color = LiveSystem.Team.get(player);
+        if (color == null) return "nicht ausgewählt";
+
         switch (color) {
             case "red" -> {
                 return ChatColor.RED + "Rot";

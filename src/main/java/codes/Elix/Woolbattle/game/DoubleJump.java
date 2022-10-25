@@ -2,14 +2,18 @@
 
 package codes.Elix.Woolbattle.game;
 
+import codes.Elix.Woolbattle.items.Items;
 import codes.Elix.Woolbattle.main.Woolbattle;
+import codes.Elix.Woolbattle.util.Console;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 public class DoubleJump implements Listener {
@@ -20,6 +24,7 @@ public class DoubleJump implements Listener {
     private long cooldown = 4L;
     //strength of the double jumps
     private float strength = 0.75f;
+    private int cost = 5;
 
     @EventHandler
     public void onFly(PlayerToggleFlightEvent event) {
@@ -27,6 +32,12 @@ public class DoubleJump implements Listener {
 
         if (player.getGameMode() == GameMode.SURVIVAL || player.getGameMode() == GameMode.ADVENTURE) {
             event.setCancelled(true);
+
+            if (!(Items.amount(player, Material.BLACK_WOOL) >= cost)) return;
+
+            ItemStack item = new ItemStack(Material.BLACK_WOOL);
+            item.setAmount(cost);
+            player.getInventory().removeItem(item);
 
             //give player the velocity
             Vector walk_vector = player.getVelocity().normalize();

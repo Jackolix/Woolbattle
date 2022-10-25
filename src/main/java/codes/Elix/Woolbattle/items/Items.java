@@ -4,23 +4,44 @@
 package codes.Elix.Woolbattle.items;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 import java.util.ArrayList;
 
 public class Items {
     //TODO: Enchantments zum Array machen
+    // public static boolean interact;
+    public static ArrayList<Player> interact = new ArrayList<>();
 
     public static void standartitems(Player player) {
-        create(player.getInventory(), Material.BOW, Enchantment.KNOCKBACK, 5, "§5Woolbow", 0);
-        create(player.getInventory(), Material.SHEARS, Enchantment.KNOCKBACK, 5, "§5Woolshear", 1);
         create(player.getInventory(), Material.ENDER_PEARL, null, null, "EnderPearl", 2);
+
+        ItemStack bow = new ItemStack(Material.BOW);
+        ItemMeta bowmeta = bow.getItemMeta();
+        bowmeta.setDisplayName("§bWool Blaster");
+        bowmeta.addEnchant(Enchantment.ARROW_KNOCKBACK, 2, false);
+        bowmeta.addEnchant(Enchantment.ARROW_INFINITE, 1, false);
+        bowmeta.addEnchant(Enchantment.KNOCKBACK, 5, true);
+        bow.setItemMeta(bowmeta);
+
+        ItemStack shears = new ItemStack(Material.SHEARS);
+        ItemMeta shearsmeta = shears.getItemMeta();
+        shearsmeta.setDisplayName("§aMega Schere");
+        shearsmeta.addEnchant(Enchantment.DIG_SPEED, 5, false);
+        shearsmeta.addEnchant(Enchantment.KNOCKBACK, 5, true);
+        shears.setItemMeta(shearsmeta);
+
+        player.getInventory().setItem(0, bow);
+        player.getInventory().setItem(1, shears);
     }
 
     //Normal Itemconstructor
@@ -40,8 +61,6 @@ public class Items {
         if (enchant != null) {
             itemMeta.addEnchant(enchant, enchantnumber, true);
         }
-        // for (int i = 0; i < enchant.length; i++)
-            // itemMeta.addEnchant(enchant[i], enchantnumber[i], true);
 
         item.setItemMeta(itemMeta);
         inventory.setItem(slot, item);
@@ -164,4 +183,34 @@ public class Items {
         inventory.setItem(slot, item);
     }
 
+    public static void createcooldown(Inventory inventory, Material material, int amount, String name, int slot) {
+        ItemStack item = new ItemStack(material, amount);
+        ItemMeta itemMeta = item.getItemMeta();
+        itemMeta.setDisplayName(name);
+
+        item.setItemMeta(itemMeta);
+        inventory.setItem(slot, item);
+    }
+
+    public static ItemStack boots(Color color) {
+        ItemStack item = new ItemStack(Material.LEATHER_BOOTS, 1);
+        LeatherArmorMeta meta = (LeatherArmorMeta) item.getItemMeta();
+
+        meta.setDisplayName(ChatColor.BLUE + "Cap");
+        meta.setColor(color);
+
+        item.setItemMeta(meta);
+        return item;
+    }
+
+
+    public static int amount(Player player, Material item) {
+        int count = 0;
+        PlayerInventory inv = player.getInventory();
+        for (ItemStack is : inv.all(item).values()) {
+            if (is != null && is.getType() == item)
+                count = count + is.getAmount();
+        }
+        return count;
+    }
 }

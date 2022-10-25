@@ -18,7 +18,7 @@ public class LiveSystem {
     public static ArrayList<Player> TeamYellow = new ArrayList<>();
     public static HashMap<Player, ArrayList<Player>> VotedPlayers = new HashMap<>();
     public static HashMap<Player, String> Team = new HashMap<>();
-    public static HashMap<Player, Player> hitted = new HashMap<>();
+    public static ArrayList<Player> hitted = new ArrayList<>();
     public static HashMap<ArrayList<Player>, Integer> TeamLifes = new HashMap<>();
     public static Collection<Player> getTeams() {
         //TODO: alle ArrayLists zurückgeben

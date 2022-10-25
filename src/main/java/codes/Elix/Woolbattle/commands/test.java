@@ -3,9 +3,14 @@
 
 package codes.Elix.Woolbattle.commands;
 
+import codes.Elix.Woolbattle.items.Items;
+import codes.Elix.Woolbattle.util.Console;
+import codes.Elix.Woolbattle.util.ConsoleAnimator;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.io.File;
 
@@ -14,6 +19,19 @@ public class test implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         System.out.println("test");
+
+        /*
+        ConsoleAnimator consoleHelper = new ConsoleAnimator();
+        for (int i = 0; i < 20; i++) {
+            consoleHelper.animate(i + "");
+            //simulate a piece of task
+            try {
+                Thread.sleep(400);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+         */
         // Location pos1 = new Location(Bukkit.getServer().getWorlds().get(0), -20, 50, -20);
         // Location pos2 = new Location(Bukkit.getServer().getWorlds().get(0), 20, 70, 20);
         // Worldloader.remove(pos1, pos2);

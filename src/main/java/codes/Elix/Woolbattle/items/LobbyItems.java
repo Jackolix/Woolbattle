@@ -171,7 +171,7 @@ public class LobbyItems implements Listener {
         String FirstPerk = (String) config.get(player.getName() + ".1Perk");
         String SecondPerk = (String) config.get(player.getName() + ".2Perk");
         String PassivePerk = (String) config.get(player.getName() + ".passive");
-        Perk playerperk = new Perk(player, FirstPerk, SecondPerk, PassivePerk);
+        // Perk playerperk = new Perk(player, FirstPerk, SecondPerk, PassivePerk);
         // if (playerperk.getfirstPerk().equals(playerperk.getpassivePerk())) something like that
         // if (playerperk.getfirstPerk() || playerperk.getsecondtPerk())
 
@@ -293,6 +293,12 @@ public class LobbyItems implements Listener {
             }
             Lifes(player);
         }
+        if (GameStateManager.getCurrentGameState() instanceof LobbyState)
+            event.setCancelled(true);
+        if (Items.interact.contains(player))
+            event.setCancelled(true);
+        if (event.getCurrentItem().getType() ==  Material.LEATHER_BOOTS)
+            event.setCancelled(true);
     }
 
     public void checkSelectet(Player player, Inventory inventory) {

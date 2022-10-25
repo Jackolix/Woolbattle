@@ -1,6 +1,8 @@
 package codes.Elix.Woolbattle.game.perks;
 
+import codes.Elix.Woolbattle.items.Items;
 import codes.Elix.Woolbattle.main.Woolbattle;
+import codes.Elix.Woolbattle.util.Console;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -15,23 +17,31 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class wall implements Listener {
     private ArrayList<Player> available = new ArrayList<>();
+    private HashMap<Player, Integer> scheduler = new HashMap<>();
     private long cooldown = 8;
 
     //number of blocks infornt of the player where the wall should be spawned
     private float front = 4;
+    private int cost = 5;
+    int taskID;
 
     @EventHandler
     public void onWallInteract(PlayerInteractEvent event) {
         if (event.getItem() == null)            return;
         if (available.contains(event.getPlayer()))  return;
         if (event.getItem().getType() == Material.RED_STAINED_GLASS_PANE) {
-            available.add(event.getPlayer());
-            for(Enchantment ench: event.getItem().getEnchantments().keySet()){
-                event.getItem().removeEnchantment(ench);
-            }
+            Player player = event.getPlayer();
+
+            if (!(Items.amount(player, Material.BLACK_WOOL) >= cost)) return;
+            ItemStack item = new ItemStack(Material.BLACK_WOOL);
+            item.setAmount(cost);
+            player.getInventory().removeItem(item);
+
+            available.add(player);
 
             Vector forwardVec = new Vector(0,0,0);
             Vector rightVec   = new Vector(0,0,0);
@@ -56,21 +66,12 @@ public class wall implements Listener {
                 forwardVec = new Vector(0,0,1);
                 rightVec = new Vector(-1,0,0);
             }
-            placeBlocks(event.getPlayer().getLocation(), forwardVec, rightVec);
 
-            //TODO: Cooldown for wall (visual representation)
-            Woolbattle.getPlugin().getServer().getScheduler().scheduleSyncDelayedTask(Woolbattle.getPlugin(),
-                    () -> activate(event.getPlayer(), event.getItem()), 20 * cooldown);
+            placeBlocks(player.getLocation(), forwardVec, rightVec);
+            int slot = player.getInventory().getHeldItemSlot();
+
+            visualCooldown(player, (int) cooldown, Material.RED_STAINED_GLASS_PANE, slot);
             }
-        }
-
-        private void activate(Player player, ItemStack item) {
-            available.remove(player);
-            //item.addEnchantment(Enchantment.KNOCKBACK, 1); //Specified enchantment cannot be applied to this itemstack
-            ItemMeta itemmeta = item.getItemMeta();
-            itemmeta.addEnchant(Enchantment.ARROW_DAMAGE, 1, true);
-            itemmeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-            item.setItemMeta(itemmeta);
         }
 
         private void placeBlocks(Location location, Vector forwardVec, Vector rightVec) {
@@ -95,10 +96,30 @@ public class wall implements Listener {
             if (location.add(rightVec).getBlock().getType() == Material.AIR) location.getBlock().setType(Material.BLACK_WOOL);
         }
 
-        public static void enable() {
-            Bukkit.getPluginManager().registerEvents(new codes.Elix.Woolbattle.game.perks.wall(), Woolbattle.getPlugin());
-        }
+    private void visualCooldown(Player player, int cooldown, Material perk, int slot) {
+        Items.interact.add(player);
+        taskID = Bukkit.getScheduler().scheduleAsyncRepeatingTask(Woolbattle.getPlugin(), new Runnable() {
+            int count = cooldown;
 
-        public static void disable() {
+            @Override
+            public void run() {
+                Items.createcooldown(player.getInventory(), Material.GRAY_DYE, count, "Cooldown", slot);
+                count--;
+                if (count == 0) {
+                    Items.create(player.getInventory(), perk, "§3Wall", slot);
+                    cancel(scheduler.get(player));
+                    Items.interact.remove(player);
+                    scheduler.remove(player);
+                    available.remove(player);
+                }
+            }
+        }, 0, 20);
+        scheduler.put(player, taskID);
     }
+
+    private void cancel(Integer taskID) {
+        Bukkit.getScheduler().cancelTask(taskID);
+    }
+    public static void enable() { Bukkit.getPluginManager().registerEvents(new codes.Elix.Woolbattle.game.perks.wall(), Woolbattle.getPlugin()); }
+    public static void disable() {}
 }

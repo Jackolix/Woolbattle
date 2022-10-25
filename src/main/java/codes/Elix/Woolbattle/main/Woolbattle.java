@@ -12,6 +12,7 @@ import codes.Elix.Woolbattle.gamestates.GameStateManager;
 import codes.Elix.Woolbattle.gamestates.LobbyState;
 import codes.Elix.Woolbattle.items.LobbyItems;
 import codes.Elix.Woolbattle.listeners.GameProtectionListener;
+import codes.Elix.Woolbattle.listeners.KeepDayTask;
 import codes.Elix.Woolbattle.listeners.PlayerLobbyConnectionListener;
 import codes.Elix.Woolbattle.util.Console;
 import codes.Elix.Woolbattle.util.Worldloader;
@@ -24,6 +25,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.io.*;
 import java.lang.management.ManagementFactory;
@@ -62,7 +64,6 @@ public class Woolbattle extends JavaPlugin {
 
         LobbyMap();
         gameStateManager.setGameState(GameState.LOBBY_STATE);
-        // safewool();
         addplayers();
 
         init(Bukkit.getPluginManager());
@@ -77,6 +78,9 @@ public class Woolbattle extends JavaPlugin {
         getCommand("test").setExecutor(new test());
         getCommand("countdown").setExecutor(new SetCountdown());
         getCommand("all").setExecutor(chat);
+        getCommand("setlive").setExecutor(new SetLive());
+        getCommand("build").setExecutor(new Build());
+        getCommand("hitted").setExecutor(new SetHitted());
 
         pluginManager.registerEvents(new PlayerLobbyConnectionListener(this), this);
         pluginManager.registerEvents(new DoubleJump(), this);
@@ -85,6 +89,8 @@ public class Woolbattle extends JavaPlugin {
         pluginManager.registerEvents(new VoidTeleport(), this);
         pluginManager.registerEvents(new BowShoot(), this);
         pluginManager.registerEvents(chat, this);
+
+        BukkitTask keepDayTask = new KeepDayTask().runTaskTimer(this, 0L, 100L);
 
     }
 
@@ -133,6 +139,7 @@ public class Woolbattle extends JavaPlugin {
 
 
     public static void safewool() {
+
         World w = Bukkit.getServer().getWorlds().get(0);
         for (Chunk c : w.getLoadedChunks()) {
             int cx = c.getX() << 4;
@@ -148,6 +155,32 @@ public class Woolbattle extends JavaPlugin {
                 }
             }
         }
+
+        /*
+        This is for multithreading
+        Bukkit.getScheduler().runTaskAsynchronously(Woolbattle.getPlugin(), new Runnable() {
+            @Override
+            public void run() {
+                World w = Bukkit.getServer().getWorlds().get(0);
+                for (Chunk c : w.getLoadedChunks()) {
+                    int cx = c.getX() << 4;
+                    int cz = c.getZ() << 4;
+                    for (int x = cx; x < cx + 16; x++) {
+                        for (int z = cz; z < cz + 16; z++) {
+                            for (int y = 0; y < 128; y++) {
+                                if (Tag.WOOL.isTagged(w.getBlockAt(x, y, z).getType())) {
+                                    blocks.add(w.getBlockAt(x,y,z));
+                                    Console.send("X: " + x + " Y: " + y + " Z: " + z);
+                                }
+                            }
+                        }
+                    }
+                }
+                Console.send("Safed all Woolblocks!");
+            }
+        });
+         */
+
         Console.send("Safed all Woolblocks!");
     }
 
@@ -184,19 +217,9 @@ public class Woolbattle extends JavaPlugin {
         } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();
         }
-        /* User Edit:
-            Instead of the above Try/Catch, you can also use
-            YamlConfiguration.loadConfiguration(customConfigFile)
-        */
+
     }
 
-    /**
-     * Export a resource embedded into a Jar file to the local file path.
-     *
-     * @param resourceName ie.: "/SmartLibrary.dll"
-     * @return The path to the exported resource
-     * @throws Exception
-     */
     static public String ExportResource(String resourceName) throws Exception {
         InputStream stream = null;
         OutputStream resStreamOut = null;

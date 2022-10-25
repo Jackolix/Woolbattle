@@ -16,6 +16,7 @@ import codes.Elix.Woolbattle.util.Console;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -52,11 +53,14 @@ public class PlayerLobbyConnectionListener implements Listener {
         event.setJoinMessage(Woolbattle.PREFIX + "§a" + player.getDisplayName() + " §7ist dem Spiel beigetreten. [" +
                 plugin.getPlayers().size() + "/" + LobbyState.MAX_PLAYERS + "]");
 
+        /*
         ConfigLocationUtil locationUtil = new ConfigLocationUtil(plugin, "Lobby");
         if (locationUtil.loadLocation() != null) {
             player.teleport(locationUtil.loadLocation());
         } else
             Bukkit.getConsoleSender().sendMessage("§cDie Lobby-Location wurde noch nicht gesetzt!");
+         */
+        player.teleport(new Location(Bukkit.getServer().getWorlds().get(0), 0, 70, 0));
 
         LobbyCountdown countdown = lobbyState.getCountdown();
         if (plugin.getPlayers().size() >= LobbyState.MIN_PLAYERS) {

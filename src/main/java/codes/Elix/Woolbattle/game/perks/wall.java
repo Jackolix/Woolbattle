@@ -46,10 +46,10 @@ public class wall implements Listener {
             Vector forwardVec = new Vector(0,0,0);
             Vector rightVec   = new Vector(0,0,0);
             double rotation = (event.getPlayer().getLocation().getYaw() - 90) % 360;
-            if (rotation < 0) {
+            if (rotation < -45) {
                 rotation += 360.0;
             }
-            if (0 <= rotation && rotation < 22.5) {
+            /*if (0 <= rotation && rotation < 22.5) {
                 //west
                 forwardVec = new Vector(-1, 0, 0);
                 rightVec = new Vector(0,0,1);
@@ -65,6 +65,24 @@ public class wall implements Listener {
                 //north
                 forwardVec = new Vector(0,0,1);
                 rightVec = new Vector(-1,0,0);
+            }*/
+
+            if (-45 <= rotation && rotation < 45) {
+                //west
+                forwardVec = new Vector(-1, 0, 0);
+                rightVec = new Vector(0,0,1);
+            } else if (45 <= rotation && rotation < 135) {
+                //south
+                forwardVec = new Vector(0,0,-1);
+                rightVec = new Vector(1,0,0);
+            } else if (135 <= rotation && rotation < 225) {
+                //east
+                forwardVec = new Vector(1,0,0);
+                rightVec = new Vector(0,0,1);
+            } else if (225 <= rotation && rotation <= 315) {
+                //north
+                forwardVec = new Vector(0, 0, 1);
+                rightVec = new Vector(-1, 0, 0);
             }
 
             placeBlocks(player.getLocation(), forwardVec, rightVec);

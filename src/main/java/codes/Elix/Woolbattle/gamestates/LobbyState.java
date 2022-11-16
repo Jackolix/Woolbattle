@@ -10,7 +10,7 @@ import org.bukkit.ChatColor;
 
 public class LobbyState extends GameState {
 
-    public static final int MIN_PLAYERS = 1, MAX_PLAYERS = 8;
+    public static final int MIN_PLAYERS = 1, MAX_PLAYERS = 4;
     private final LobbyCountdown countdown;
 
     public LobbyState(GameStateManager gameStateManager) {

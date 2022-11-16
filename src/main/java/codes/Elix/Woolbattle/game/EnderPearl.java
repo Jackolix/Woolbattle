@@ -18,62 +18,25 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class EnderPearl implements Listener {
-
-    private ArrayList<Player> available = new ArrayList<>();
-    private HashMap<Player, Integer> scheduler = new HashMap<>();
-    int taskID;
     int cooldown = 3;
-    private int cost = 3;
+    int cost = 3;
 
     @EventHandler
     public void enderpearl(PlayerInteractEvent event) {
         if (event.getItem() == null)    return;
         if (event.getItem().getType() != Material.ENDER_PEARL) return;
-        if (available.contains(event.getPlayer()))  return;
 
         Player player = event.getPlayer();
-
-        if (!(Items.amount(player, Material.BLACK_WOOL) >= cost)) {
-            Console.send("Player has less than " + cost + " wool");
+        if (!Items.cost(player, cost)) {
             event.setCancelled(true);
             return;
         }
-        ItemStack item = new ItemStack(Material.BLACK_WOOL);
-        item.setAmount(cost);
-        player.getInventory().removeItem(item);
 
-        available.add(event.getPlayer());
+        player.launchProjectile(org.bukkit.entity.EnderPearl.class);
+        event.setCancelled(true);
 
         int slot = event.getPlayer().getInventory().getHeldItemSlot();
-        visualCooldown(event.getPlayer(), cooldown, Material.ENDER_PEARL, slot);
-    }
-
-    // https://www.spigotmc.org/threads/ender-pearl-cooldown.457041/
-    // Enderpearl cooldown
-
-    private void visualCooldown(Player player, int cooldown, Material perk, int slot) {
-        Items.interact.add(player);
-        taskID = Bukkit.getScheduler().scheduleAsyncRepeatingTask(Woolbattle.getPlugin(), new Runnable() {
-            int count = cooldown;
-
-            @Override
-            public void run() {
-                Items.createcooldown(player.getInventory(), Material.GRAY_DYE, count, "Cooldown", slot);
-                count--;
-                if (count == 0) {
-                    Items.create(player.getInventory(), perk, "§3Enderperle", slot);
-                    cancel(scheduler.get(player));
-                    Items.interact.remove(player);
-                    scheduler.remove(player);
-                    available.remove(player);
-                }
-            }
-        }, 0, 20);
-        scheduler.put(player, taskID);
-    }
-
-    private void cancel(Integer taskID) {
-        Bukkit.getScheduler().cancelTask(taskID);
+        Items.visualCooldown(player, cooldown, Material.ENDER_PEARL, slot, "§3EnderPerle");
     }
 
     public static void enable() {

@@ -17,3 +17,5 @@ commands:
   setlive:
   build:
   hitted:
+  debug:
+  switchteam:

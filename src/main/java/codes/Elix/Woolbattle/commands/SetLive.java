@@ -28,7 +28,10 @@ public class SetLive implements CommandExecutor, TabCompleter {
         if (GameStateManager.getCurrentGameState() instanceof IngameState) {
             if (sender instanceof Player player) {
                 if (args.length >= 1)
-                    set(args[0], Integer.parseInt(args[1]), player);
+                    // set(args[0], Integer.parseInt(args[1]), player);
+                    LiveSystem.TeamLifes.put(args[0], Integer.parseInt(args[1]));
+                    for (Player players : Bukkit.getOnlinePlayers())
+                        IngameScoreboard.setup(players);
             }
         }
         return false;
@@ -46,7 +49,7 @@ public class SetLive implements CommandExecutor, TabCompleter {
         }
         return null;
     }
-
+    /*
 
     private void set(String name, int value, Player player) {
 
@@ -61,4 +64,6 @@ public class SetLive implements CommandExecutor, TabCompleter {
         for (Player players : Bukkit.getOnlinePlayers())
             IngameScoreboard.setup(players);
     }
+
+     */
 }

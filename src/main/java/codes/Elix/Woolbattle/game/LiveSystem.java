@@ -12,14 +12,15 @@ import java.util.HashMap;
 public class LiveSystem {
 
     public static int TeamSize = 2; // Amount of players in a Team
+    public static int Teams = 2; // How many teams are
     public static ArrayList<Player> TeamRed = new ArrayList<>();
     public static ArrayList<Player> TeamBlue = new ArrayList<>();
     public static ArrayList<Player> TeamGreen = new ArrayList<>();
     public static ArrayList<Player> TeamYellow = new ArrayList<>();
-    public static HashMap<Player, ArrayList<Player>> VotedPlayers = new HashMap<>();
+    public static HashMap<Player, ArrayList<Player>> VotedPlayers = new HashMap<>(); //TODO: Diese Arraylist mit Team arraylist ersetzen
     public static HashMap<Player, String> Team = new HashMap<>();
     public static ArrayList<Player> hitted = new ArrayList<>();
-    public static HashMap<ArrayList<Player>, Integer> TeamLifes = new HashMap<>();
+    public static HashMap<String, Integer> TeamLifes = new HashMap<>(); //TODO: String team statt Arraylist<Player>
     public static Collection<Player> getTeams() {
         //TODO: alle ArrayLists zurückgeben
         return null;

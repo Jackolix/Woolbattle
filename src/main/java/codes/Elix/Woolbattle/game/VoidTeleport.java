@@ -24,7 +24,7 @@ public class VoidTeleport implements Listener {
         Player player = event.getPlayer();
         if (player.getGameMode() == GameMode.SPECTATOR) return;
         if (player.getLocation().getBlockY() <= -25) {
-            ArrayList<Player> team = LiveSystem.VotedPlayers.get(player); // get the team of the player
+            String team = LiveSystem.Team.get(player); // get the team of the player
             Integer lifes = LiveSystem.TeamLifes.get(team); // get the lifes of the team
 
             if (lifes == 0) {

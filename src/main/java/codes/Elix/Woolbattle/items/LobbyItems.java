@@ -27,7 +27,6 @@ import java.util.Objects;
 public class LobbyItems implements Listener {
 
     public static int VotedLives = 6;
-    public static int Teams = 2;
     private String Title;
 
     private int life6;
@@ -114,10 +113,15 @@ public class LobbyItems implements Listener {
 
     private void TeamsInventory(Player player) {
         Inventory inventory = Bukkit.createInventory(null, 9, "§bWähle dein Team!");
-        checkTeam(LiveSystem.TeamRed, inventory, Material.RED_DYE, "§cTeam Rot", 1, ChatColor.RED);
-        checkTeam(LiveSystem.TeamBlue, inventory, Material.BLUE_DYE, "§bTeam Blau", 3, ChatColor.AQUA);
-        checkTeam(LiveSystem.TeamYellow, inventory, Material.YELLOW_DYE, "§eTeam Gelb", 5, ChatColor.YELLOW);
-        checkTeam(LiveSystem.TeamGreen, inventory, Material.GREEN_DYE, "§aTeam Grün", 7, ChatColor.GREEN);
+        if (LiveSystem.Teams == 2) {
+            checkTeam(LiveSystem.TeamRed, inventory, Material.RED_DYE, "§cTeam Rot", 3, ChatColor.RED);
+            checkTeam(LiveSystem.TeamBlue, inventory, Material.BLUE_DYE, "§bTeam Blau", 5, ChatColor.AQUA);
+        } else {
+            checkTeam(LiveSystem.TeamRed, inventory, Material.RED_DYE, "§cTeam Rot", 1, ChatColor.RED);
+            checkTeam(LiveSystem.TeamBlue, inventory, Material.BLUE_DYE, "§bTeam Blau", 3, ChatColor.AQUA);
+            checkTeam(LiveSystem.TeamYellow, inventory, Material.YELLOW_DYE, "§eTeam Gelb", 5, ChatColor.YELLOW);
+            checkTeam(LiveSystem.TeamGreen, inventory, Material.GREEN_DYE, "§aTeam Grün", 7, ChatColor.GREEN);
+        }
         player.openInventory(inventory);
     }
 

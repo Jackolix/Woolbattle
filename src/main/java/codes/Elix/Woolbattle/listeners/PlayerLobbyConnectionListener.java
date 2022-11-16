@@ -13,6 +13,7 @@ import codes.Elix.Woolbattle.items.LobbyItems;
 import codes.Elix.Woolbattle.main.Woolbattle;
 import codes.Elix.Woolbattle.util.ConfigLocationUtil;
 import codes.Elix.Woolbattle.util.Console;
+import codes.Elix.Woolbattle.util.LobbyScoreboard;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -41,7 +42,8 @@ public class PlayerLobbyConnectionListener implements Listener {
             return;
         }
         Player player = event.getPlayer();
-        plugin.getPlayers().add(player);
+        Woolbattle.players.add(player);
+        // plugin.getPlayers().add(player);
         player.setGameMode(GameMode.SURVIVAL);
 
         for (Player current : Bukkit.getOnlinePlayers()) {
@@ -50,8 +52,9 @@ public class PlayerLobbyConnectionListener implements Listener {
         }
 
         LobbyItems.Lobby(player);
+        LobbyScoreboard.setup(player);
         event.setJoinMessage(Woolbattle.PREFIX + "§a" + player.getDisplayName() + " §7ist dem Spiel beigetreten. [" +
-                plugin.getPlayers().size() + "/" + LobbyState.MAX_PLAYERS + "]");
+                Woolbattle.players.size() + "/" + LobbyState.MAX_PLAYERS + "]");
 
         /*
         ConfigLocationUtil locationUtil = new ConfigLocationUtil(plugin, "Lobby");
@@ -63,7 +66,7 @@ public class PlayerLobbyConnectionListener implements Listener {
         player.teleport(new Location(Bukkit.getServer().getWorlds().get(0), 0, 70, 0));
 
         LobbyCountdown countdown = lobbyState.getCountdown();
-        if (plugin.getPlayers().size() >= LobbyState.MIN_PLAYERS) {
+        if (Woolbattle.getPlayers().size() >= LobbyState.MIN_PLAYERS) {
             if (!countdown.isRunning()) {
                 countdown.stopIdle();
                 countdown.start();
@@ -77,10 +80,10 @@ public class PlayerLobbyConnectionListener implements Listener {
         Player player = event.getPlayer();
         plugin.getPlayers().remove(player);
         event.setQuitMessage(Woolbattle.PREFIX + "§c" + player.getDisplayName() + " §7hat das Spiel verlassen. [" +
-                plugin.getPlayers().size() + "/" + LobbyState.MAX_PLAYERS + "]");
+                Woolbattle.getPlayers().size() + "/" + LobbyState.MAX_PLAYERS + "]");
 
         LobbyCountdown countdown = lobbyState.getCountdown();
-        if (plugin.getPlayers().size() < LobbyState.MIN_PLAYERS) {
+        if (Woolbattle.getPlayers().size() < LobbyState.MIN_PLAYERS) {
             if (countdown.isRunning()) {
                 countdown.stop();
                 countdown.startIdle();

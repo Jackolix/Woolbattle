@@ -30,14 +30,14 @@ public class BowShoot implements Listener {
     public void onShootBow(EntityShootBowEvent e){
         if (!(e.getEntity() instanceof Player player)) return;
 
-        if (Items.amount(player, Material.BLACK_WOOL) == 0) {
+        if (Items.amount(player, Items.getWoolColor(player)) == 0) {
             Console.send("Player has less than 1 wool");
             ItemStack arrow = new ItemStack(Material.ARROW);
             player.getInventory().removeItem(arrow);
             return;
         }
 
-        ItemStack item = new ItemStack(Material.BLACK_WOOL);
+        ItemStack item = new ItemStack(Items.getWoolColor(player));
         item.setAmount(1);
         player.getInventory().removeItem(item);
         check(player);
@@ -88,7 +88,7 @@ public class BowShoot implements Listener {
         Bukkit.getScheduler().scheduleSyncDelayedTask(Woolbattle.getPlugin(), new Runnable() {
             @Override
             public void run() {
-                if (Items.amount(player, Material.BLACK_WOOL) == 0) {
+                if (Items.amount(player, Items.getWoolColor(player)) == 0) {
                     Console.send("Player has less than 1 wool");
                     ItemStack arrow = new ItemStack(Material.ARROW);
                     player.getInventory().removeItem(arrow);

@@ -3,6 +3,8 @@
 
 package codes.Elix.Woolbattle.commands;
 
+import codes.Elix.Woolbattle.game.LiveSystem;
+import codes.Elix.Woolbattle.gamestates.IngameState;
 import codes.Elix.Woolbattle.items.Items;
 import codes.Elix.Woolbattle.util.Console;
 import codes.Elix.Woolbattle.util.ConsoleAnimator;
@@ -13,12 +15,27 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class test implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         System.out.println("test");
+        /*
+        ArrayList<Player> team = LiveSystem.VotedPlayers.get(sender);
+        System.out.println( "Previous Team: " + team);
+        System.out.println("List Team: " + LiveSystem.Team);
+        System.out.println("Map VotedPlayers: " + LiveSystem.VotedPlayers);
+        System.out.println("Map Teamlifes: " + LiveSystem.TeamLifes);
+
+        System.out.println("Map Team: " + LiveSystem.Team);
+
+        ArrayList<Player> player = LiveSystem.VotedPlayers.get(sender);
+        System.out.println("Map VotedPlayers: " + player);
+        Integer lifes = LiveSystem.TeamLifes.get(player);
+        System.out.println(lifes);
 
         /*
         ConsoleAnimator consoleHelper = new ConsoleAnimator();

@@ -24,12 +24,12 @@ public class IngameScoreboard {
         Objective objective = scoreboard.registerNewObjective("abcd", "abcd");
         objective.setDisplayName("§f§lWOOLBATTLE");
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-        objective.getScore(" §7• §4❤ " + LiveSystem.TeamLifes.get(LiveSystem.TeamRed) + " §8- " + Colorname2).setScore(1);
-        objective.getScore(" §7• §4❤ " + LiveSystem.TeamLifes.get(LiveSystem.TeamBlue) + " §8- " + Colorname1).setScore(2);
-        if (LobbyItems.Teams >= 3)
-            objective.getScore(" §7• §4❤ " + LiveSystem.TeamLifes.get(LiveSystem.TeamGreen) + " §8- " + Colorname3).setScore(3);
-        if (LobbyItems.Teams >= 4)
-            objective.getScore(" §7• §4❤ " + LiveSystem.TeamLifes.get(LiveSystem.TeamYellow) + " §8- " + Colorname4).setScore(4);
+        objective.getScore(" §7• §4❤ " + LiveSystem.TeamLifes.get("red") + " §8- " + Colorname2).setScore(1);
+        objective.getScore(" §7• §4❤ " + LiveSystem.TeamLifes.get("blue") + " §8- " + Colorname1).setScore(2);
+        if (LiveSystem.Teams >= 3)
+            objective.getScore(" §7• §4❤ " + LiveSystem.TeamLifes.get("green") + " §8- " + Colorname3).setScore(3);
+        if (LiveSystem.Teams >= 4)
+            objective.getScore(" §7• §4❤ " + LiveSystem.TeamLifes.get("yellow") + " §8- " + Colorname4).setScore(4);
         objective.getScore("§8» §7Leben").setScore(5);
         objective.getScore(" ").setScore(6);
         objective.getScore(" §7• " + MapName).setScore(7);

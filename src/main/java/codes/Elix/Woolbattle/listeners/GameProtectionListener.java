@@ -6,6 +6,7 @@ package codes.Elix.Woolbattle.listeners;
 import codes.Elix.Woolbattle.commands.Build;
 import codes.Elix.Woolbattle.game.LiveSystem;
 import codes.Elix.Woolbattle.gamestates.GameStateManager;
+import codes.Elix.Woolbattle.gamestates.IngameState;
 import codes.Elix.Woolbattle.gamestates.LobbyState;
 import codes.Elix.Woolbattle.items.Items;
 import codes.Elix.Woolbattle.main.Woolbattle;
@@ -13,6 +14,7 @@ import codes.Elix.Woolbattle.util.Console;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Tag;
+import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_19_R1.entity.CraftEnderPearl;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -22,11 +24,10 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
+import java.util.*;
 
 public class GameProtectionListener implements Listener {
 
@@ -47,12 +48,17 @@ public class GameProtectionListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerpickup(PlayerPickupItemEvent event) {
+    public void onPlayerPickup(EntityPickupItemEvent event) {
+        /*
+        if (!(event.getEntity() instanceof Player)) return;
         ItemStack item = new ItemStack(Material.BLACK_WOOL);
-        if (event.getItem().getItemStack() != item) return;
+        if (!event.getItem().getItemStack().equals(item)) return;
         Console.send("Item ist wolle");
-        if (Items.amount(event.getPlayer(), Material.BLACK_WOOL) >= 196)
+        if (Items.amount((Player) event.getEntity(), Material.BLACK_WOOL) >= 196) // Items.getWoolColor(player) idk ob das funktioniert
             event.setCancelled(true);
+
+         */
+        event.setCancelled(true);
     }
 
     @EventHandler
@@ -68,13 +74,17 @@ public class GameProtectionListener implements Listener {
 
     @EventHandler
     public void onPlayerDamage(EntityDamageByEntityEvent event) {
-        if (!(event.getEntity() instanceof Player)) return;
+        if (!(event.getEntity() instanceof Player player)) return;
         if (GameStateManager.getCurrentGameState() instanceof LobbyState) {
             event.setCancelled(true);
             return;
         }
+        if (IngameState.spectator.contains(player)) {
+            event.setCancelled(true);
+            return;
+        }
 
-        if (!(event.getDamager() instanceof Player) && !(event.getDamager() instanceof Arrow) && !(event.getDamager() instanceof CraftEnderPearl))
+        if (!(event.getDamager() instanceof Player) && !(event.getDamager() instanceof Arrow) && !(event.getDamager() instanceof CraftEnderPearl) && !(event.getDamager() instanceof TNTPrimed))
             return;
 
         if (event.getDamager() instanceof EnderPearl) {
@@ -82,21 +92,17 @@ public class GameProtectionListener implements Listener {
             return;
         }
 
+        if (event.getDamager() instanceof TNTPrimed) {
+            event.setDamage(0.00000000001D);
+            //event.getEntity().setVelocity(); //TODO: More knockback needed
+            ((Player) event.getEntity()).setHealth(20);
+            return;
+        }
+
         Entity causePlayer;
         if ((event.getDamager() instanceof Arrow arrow)) {
-            Console.send("Damage kommt von ARROW");
-
             causePlayer = (Entity) arrow.getShooter();
-
             if (!(causePlayer instanceof Player)) return;
-            /*
-            ArrayList<Player> team1 = LiveSystem.VotedPlayers.get((Player) shooter);
-            if (team1.contains((Player) shooter)) {
-                event.setCancelled(true);
-                return;
-            }
-
-             */
         } else
             causePlayer = event.getDamager();
 
@@ -104,14 +110,11 @@ public class GameProtectionListener implements Listener {
         ArrayList<Player> team = LiveSystem.VotedPlayers.get((Player) causePlayer);
 
         if (team.contains((Player) event.getEntity())) {
-            Console.send("Target is your Teammember");
             event.setCancelled(true);
             return;
         }
 
-
         LiveSystem.hitted.add((Player) event.getEntity());
-        Console.send(((Player) event.getEntity()).getPlayer().getName() + "hitted.");
 
         event.setDamage(0.00000000001D);
         ((Player) event.getEntity()).setHealth(20);
@@ -120,7 +123,6 @@ public class GameProtectionListener implements Listener {
             @Override
             public void run() {
                 LiveSystem.hitted.remove((Player) event.getEntity());
-                Console.send("Removed " + ((Player) event.getEntity()).getPlayer().getName() + " from hitted.");
             }
         }, 20 * 10);
     }
@@ -144,27 +146,30 @@ public class GameProtectionListener implements Listener {
             return;
         }
 
+        if (IngameState.spectator.contains(player)) {
+            event.setCancelled(true);
+            return;
+        }
         if (Tag.WOOL.isTagged(event.getBlock().getType())) {
             if (!(Woolbattle.blocks.contains(event.getBlock()))) {
                 event.setDropItems(false);
                 return;
             }
 
-            if (Items.amount(player, Material.BLACK_WOOL) >= 192) {
+            if (Items.amount(player, Items.getWoolColor(player)) >= 192) {
                 event.setCancelled(true);
                 return;
-            } else if (Items.amount(player, Material.BLACK_WOOL) == 191) {
-                ItemStack item = new ItemStack(Material.BLACK_WOOL);
+            } else if (Items.amount(player, Items.getWoolColor(player)) == 191) {
+                ItemStack item = new ItemStack(Items.getWoolColor(player));
                 item.setAmount(1);
                 player.getInventory().addItem(item);
             } else {
-                ItemStack item = new ItemStack(Material.BLACK_WOOL);
+                ItemStack item = new ItemStack(Items.getWoolColor(player));
                 item.setAmount(2);
                 player.getInventory().addItem(item);
             }
 
             if (Items.amount(player, Material.ARROW) == 0) {
-                Console.send("Player has wool but no arrow");
                 ItemStack arrow = new ItemStack(Material.ARROW);
                 player.getInventory().setItem(30, arrow);
             }
@@ -180,8 +185,33 @@ public class GameProtectionListener implements Listener {
             return;
         }
         Player player = event.getPlayer();
+        if (IngameState.spectator.contains(player)) event.setCancelled(true);
         if (Tag.WOOL.isTagged(event.getBlock().getType())) return;
         if (Build.BuildPlayers.contains(player)) return;
         event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onEntityExplode(EntityExplodeEvent event) {
+        if (event.getEntity().getType() == EntityType.PRIMED_TNT) {
+            List destroyed = event.blockList();
+            Iterator it = destroyed.iterator();
+            while (it.hasNext()) {
+                Block block = (Block) it.next();
+                if (Woolbattle.blocks.contains(block) || !toDestroy.contains(block.getType()))
+                    it.remove();
+            }
+            event.setYield(0);
+        }
+    }
+
+    private static final Set<Material> toDestroy = new HashSet<Material>();
+    static {
+        toDestroy.add(Material.RED_WOOL);
+        toDestroy.add(Material.BLUE_WOOL);
+        toDestroy.add(Material.GREEN_WOOL);
+        toDestroy.add(Material.YELLOW_WOOL);
+        toDestroy.add(Material.BLACK_WOOL);
+        toDestroy.add(Material.ORANGE_WOOL);
     }
 }

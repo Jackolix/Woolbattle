@@ -2,9 +2,9 @@
 
 package codes.Elix.Woolbattle.game;
 
+import codes.Elix.Woolbattle.gamestates.IngameState;
 import codes.Elix.Woolbattle.items.Items;
 import codes.Elix.Woolbattle.main.Woolbattle;
-import codes.Elix.Woolbattle.util.Console;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -19,25 +19,22 @@ import org.bukkit.util.Vector;
 public class DoubleJump implements Listener {
 
     //TODO: can be changed from rocket jump
-    private double dj_height = 1.5D;
+    double dj_height = 1.5D;
     //cooldown between double jumps
-    private long cooldown = 4L;
+    long cooldown = 4L;
     //strength of the double jumps
-    private float strength = 0.75f;
-    private int cost = 5;
+    float strength = 0.75f;
+    int cost = 5;
 
     @EventHandler
     public void onFly(PlayerToggleFlightEvent event) {
         Player player = event.getPlayer();
+        if (IngameState.spectator.contains(player)) return;
 
         if (player.getGameMode() == GameMode.SURVIVAL || player.getGameMode() == GameMode.ADVENTURE) {
             event.setCancelled(true);
 
-            if (!(Items.amount(player, Material.BLACK_WOOL) >= cost)) return;
-
-            ItemStack item = new ItemStack(Material.BLACK_WOOL);
-            item.setAmount(cost);
-            player.getInventory().removeItem(item);
+            if (!Items.cost(player, cost)) return;
 
             //give player the velocity
             Vector walk_vector = player.getVelocity().normalize();
@@ -54,7 +51,6 @@ public class DoubleJump implements Listener {
                 setEXP(i, player);
             }
 
-            //cooldown
             Woolbattle.getPlugin().getServer().getScheduler().scheduleSyncDelayedTask(Woolbattle.getPlugin(),
                     () -> player.setAllowFlight(true), 20 * cooldown);
 
@@ -70,20 +66,17 @@ public class DoubleJump implements Listener {
 
     @EventHandler
     public void onGamemodeChange(PlayerGameModeChangeEvent event) {
-        if (event.getNewGameMode() == GameMode.SURVIVAL || event.getNewGameMode() == GameMode.ADVENTURE) {
+        if (event.getNewGameMode() == GameMode.SURVIVAL || event.getNewGameMode() == GameMode.ADVENTURE)
             event.getPlayer().setAllowFlight(true);
-        }
     }
 
     public static void enable() {
-        for (Player current : Bukkit.getOnlinePlayers()) {
+        for (Player current : Bukkit.getOnlinePlayers())
             current.getPlayer().setAllowFlight(true);
-        }
     }
 
     public static void disable() {
-        for (Player current : Bukkit.getOnlinePlayers()) {
+        for (Player current : Bukkit.getOnlinePlayers())
             current.getPlayer().setAllowFlight(false);
-        }
     }
 }

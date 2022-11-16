@@ -7,15 +7,17 @@ import codes.Elix.Woolbattle.gamestates.GameState;
 import codes.Elix.Woolbattle.gamestates.GameStateManager;
 import codes.Elix.Woolbattle.gamestates.LobbyState;
 import codes.Elix.Woolbattle.main.Woolbattle;
+import codes.Elix.Woolbattle.util.LobbyScoreboard;
 import codes.Elix.Woolbattle.util.Worldloader;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
 import java.io.File;
 
 public class LobbyCountdown extends Countdown{
 
-    private static final int COUNTDOWN_TIME = 30, IDLE_TIME = 30;
+    public static final int COUNTDOWN_TIME = 30, IDLE_TIME = 30;
     private final GameStateManager gameStateManager;
     private int seconds;
     private int idleID;
@@ -44,6 +46,8 @@ public class LobbyCountdown extends Countdown{
                     }
                 }
                 seconds--;
+                for (Player current : Bukkit.getOnlinePlayers())
+                    LobbyScoreboard.setup(current);
             }
         }, 0, 20);
 
@@ -84,7 +88,9 @@ public class LobbyCountdown extends Countdown{
     }
 
     public int getSeconds() {
-        return seconds;
+        if (isRunning)
+            return seconds;
+        return COUNTDOWN_TIME;
     }
 
     public void setSeconds(int seconds) {

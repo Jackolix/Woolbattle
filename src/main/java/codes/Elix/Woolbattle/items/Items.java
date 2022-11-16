@@ -3,6 +3,10 @@
 
 package codes.Elix.Woolbattle.items;
 
+import codes.Elix.Woolbattle.game.LiveSystem;
+import codes.Elix.Woolbattle.main.Woolbattle;
+import codes.Elix.Woolbattle.util.Console;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -16,11 +20,15 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Items {
     //TODO: Enchantments zum Array machen
-    // public static boolean interact;
+
     public static ArrayList<Player> interact = new ArrayList<>();
+    public static Map<Player, Map<String, Integer>> tasks = new HashMap<>();
 
     public static void standartitems(Player player) {
         create(player.getInventory(), Material.ENDER_PEARL, null, null, "EnderPearl", 2);
@@ -31,6 +39,7 @@ public class Items {
         bowmeta.addEnchant(Enchantment.ARROW_KNOCKBACK, 2, false);
         bowmeta.addEnchant(Enchantment.ARROW_INFINITE, 1, false);
         bowmeta.addEnchant(Enchantment.KNOCKBACK, 5, true);
+        bowmeta.setUnbreakable(true);
         bow.setItemMeta(bowmeta);
 
         ItemStack shears = new ItemStack(Material.SHEARS);
@@ -38,6 +47,7 @@ public class Items {
         shearsmeta.setDisplayName("§aMega Schere");
         shearsmeta.addEnchant(Enchantment.DIG_SPEED, 5, false);
         shearsmeta.addEnchant(Enchantment.KNOCKBACK, 5, true);
+        shearsmeta.setUnbreakable(true);
         shears.setItemMeta(shearsmeta);
 
         player.getInventory().setItem(0, bow);
@@ -196,8 +206,9 @@ public class Items {
         ItemStack item = new ItemStack(Material.LEATHER_BOOTS, 1);
         LeatherArmorMeta meta = (LeatherArmorMeta) item.getItemMeta();
 
-        meta.setDisplayName(ChatColor.BLUE + "Cap");
+        meta.setDisplayName(ChatColor.BLUE + "Boots");
         meta.setColor(color);
+        meta.setUnbreakable(true);
 
         item.setItemMeta(meta);
         return item;
@@ -212,5 +223,60 @@ public class Items {
                 count = count + is.getAmount();
         }
         return count;
+    }
+
+    public static boolean cost(Player player, int cost) {
+        if (!(Items.amount(player, Items.getWoolColor(player)) >= cost))
+            return false;
+
+        ItemStack item = new ItemStack(Items.getWoolColor(player));
+        item.setAmount(cost);
+        player.getInventory().removeItem(item);
+        return true;
+    }
+
+    public static void visualCooldown(Player player, int cooldown, Material perk, int slot, String perkname) {
+        Items.interact.add(player);
+
+        int taskID = Bukkit.getScheduler().scheduleAsyncRepeatingTask(Woolbattle.getPlugin(), new Runnable() {
+            int count = cooldown;
+
+            @Override
+            public void run() {
+                Items.createcooldown(player.getInventory(), Material.GRAY_DYE, count, "Cooldown", slot);
+                count--;
+                if (count == 0) {
+                    Items.create(player.getInventory(), perk, perkname, slot);
+                    Items.interact.remove(player);
+                    cancel(tasks.get(player).get(perkname));
+                }
+            }
+        }, 0, 20);
+        tasks.computeIfAbsent(player, k -> new HashMap<>()).put(perkname, taskID);
+        Console.send("Task added to Database");
+
+    }
+
+    public static Material getWoolColor(Player player) {
+        return switch (LiveSystem.Team.get(player)) {
+            case "red" -> Material.RED_WOOL;
+            case "blue" -> Material.BLUE_WOOL;
+            case "green" -> Material.GREEN_WOOL;
+            case "yellow" -> Material.YELLOW_WOOL;
+            default -> null;
+        };
+    }
+    public static void cancel(Integer taskID) {
+        Bukkit.getScheduler().cancelTask(taskID);
+    }
+
+    public static ChatColor getColor(String team) {
+        return switch (team) {
+            case "red" -> ChatColor.RED;
+            case "blue" -> ChatColor.BLUE;
+            case "green" -> ChatColor.GREEN;
+            case "yellow" -> ChatColor.YELLOW;
+            default -> null;
+        };
     }
 }

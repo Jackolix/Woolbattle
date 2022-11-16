@@ -13,6 +13,7 @@ import codes.Elix.Woolbattle.items.PerkItems;
 import codes.Elix.Woolbattle.main.Woolbattle;
 import codes.Elix.Woolbattle.util.Console;
 import codes.Elix.Woolbattle.util.IngameScoreboard;
+import codes.Elix.Woolbattle.util.LobbyScoreboard;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 
@@ -21,7 +22,7 @@ import java.util.ArrayList;
 public class IngameState extends GameState {
 
     private Woolbattle plugin;
-    private static ArrayList<Player> spectator;
+    public static ArrayList<Player> spectator;
 
 
     public IngameState (Woolbattle plugin) {
@@ -47,8 +48,12 @@ public class IngameState extends GameState {
         booster.enable();
         clock.enable();
         platform.enable();
+        rettungsplattform.enable();
         wall.enable();
         freezer.enable();
+        woolbomb.enable();
+        rope.enable();
+        enterhaken.enable();
     }
 
     @Override
@@ -59,10 +64,10 @@ public class IngameState extends GameState {
     public void setLifes() {
         if (LobbyItems.VotedLives == 0)
             LobbyItems.VotedLives = 6;
-        LiveSystem.TeamLifes.put(LiveSystem.TeamRed, LobbyItems.VotedLives);
-        LiveSystem.TeamLifes.put(LiveSystem.TeamYellow, LobbyItems.VotedLives);
-        LiveSystem.TeamLifes.put(LiveSystem.TeamBlue, LobbyItems.VotedLives);
-        LiveSystem.TeamLifes.put(LiveSystem.TeamGreen, LobbyItems.VotedLives);
+        LiveSystem.TeamLifes.put("red", LobbyItems.VotedLives);
+        LiveSystem.TeamLifes.put("blue", LobbyItems.VotedLives);
+        LiveSystem.TeamLifes.put("green", LobbyItems.VotedLives);
+        LiveSystem.TeamLifes.put("yellow", LobbyItems.VotedLives);
 
     }
 
@@ -85,18 +90,21 @@ public class IngameState extends GameState {
 
     public static void teamupdate() {
         LiveSystem.Team.clear();
-        for (int i = 0; i < LiveSystem.TeamRed.size(); i++) {
+
+        for (int i = 0; i < LiveSystem.TeamRed.size(); i++)
             LiveSystem.Team.put(LiveSystem.TeamRed.get(i), "red");
-        }
-        for (int i = 0; i < LiveSystem.TeamYellow.size(); i++) {
+
+        for (int i = 0; i < LiveSystem.TeamYellow.size(); i++)
             LiveSystem.Team.put(LiveSystem.TeamYellow.get(i), "yellow");
-        }
-        for (int i = 0; i < LiveSystem.TeamBlue.size(); i++) {
+
+        for (int i = 0; i < LiveSystem.TeamBlue.size(); i++)
             LiveSystem.Team.put(LiveSystem.TeamBlue.get(i), "blue");
-        }
-        for (int i = 0; i < LiveSystem.TeamGreen.size(); i++) {
+
+        for (int i = 0; i < LiveSystem.TeamGreen.size(); i++)
             LiveSystem.Team.put(LiveSystem.TeamGreen.get(i), "green");
-        }
+
+        for (Player current : Bukkit.getOnlinePlayers())
+            LobbyScoreboard.setup(current);
     }
 
     public void addToEmptyTeam(Player player) {
@@ -108,14 +116,18 @@ public class IngameState extends GameState {
             LiveSystem.TeamBlue.add(player);
             LiveSystem.VotedPlayers.put(player, LiveSystem.TeamBlue);
             Console.send("Added " + ChatColor.DARK_AQUA + player.getName() + ChatColor.GRAY + " to Team" + ChatColor.BLUE + " Blue");
-        } else if (LiveSystem.TeamGreen.size() < LiveSystem.TeamSize) {
-            LiveSystem.TeamGreen.add(player);
-            LiveSystem.VotedPlayers.put(player, LiveSystem.TeamGreen);
-            Console.send("Added " + ChatColor.DARK_AQUA + player.getName() + ChatColor.GRAY + " to Team" + ChatColor.GREEN + " Green");
-        } else if (LiveSystem.TeamYellow.size() < LiveSystem.TeamSize) {
-            LiveSystem.TeamYellow.add(player);
-            LiveSystem.VotedPlayers.put(player, LiveSystem.TeamYellow);
-            Console.send("Added " + ChatColor.DARK_AQUA + player.getName() + ChatColor.GRAY + " to Team" + ChatColor.YELLOW + " Yellow");
+        } else if (LiveSystem.Teams >= 3) {
+            if (LiveSystem.TeamGreen.size() < LiveSystem.TeamSize) {
+                LiveSystem.TeamGreen.add(player);
+                LiveSystem.VotedPlayers.put(player, LiveSystem.TeamGreen);
+                Console.send("Added " + ChatColor.DARK_AQUA + player.getName() + ChatColor.GRAY + " to Team" + ChatColor.GREEN + " Green");
+            }
+        } else if (LiveSystem.Teams >= 3) {
+            if (LiveSystem.TeamYellow.size() < LiveSystem.TeamSize) {
+                LiveSystem.TeamYellow.add(player);
+                LiveSystem.VotedPlayers.put(player, LiveSystem.TeamYellow);
+                Console.send("Added " + ChatColor.DARK_AQUA + player.getName() + ChatColor.GRAY + " to Team" + ChatColor.YELLOW + " Yellow");
+            }
         } else {
             Console.send(ChatColor.RED + "All Teams are full!");
             addSpectator(player);
@@ -124,7 +136,7 @@ public class IngameState extends GameState {
 
     public static void addSpectator(Player player) {
         spectator.add(player);
-        player.setGameMode(GameMode.CREATIVE);
+        player.setAllowFlight(true);
         player.getInventory().clear();
 
         for (Player current : Bukkit.getOnlinePlayers())
@@ -132,9 +144,10 @@ public class IngameState extends GameState {
 
         player.teleport(new Location(Bukkit.getServer().getWorlds().get(0), 0, 50, 0));
         LiveSystem.Team.put(player, "spectator");
+        IngameScoreboard.setup(player);
     }
 
-    private void boots() {
+    public static void boots() {
         for (Player player : LiveSystem.TeamRed)
             player.getInventory().setBoots(Items.boots(Color.RED));
 

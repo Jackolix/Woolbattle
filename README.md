@@ -1,5 +1,5 @@
 # Woolbattle
-## 65% Done
+## 80% Done
 
 ---------------
 ## TODO
@@ -10,7 +10,7 @@
 - [x] Void Death System
     - [x] LebenSystem
     - [x] VoidTeleport
-    - [ ] Spectator
+    - [x] Spectator
 
 
 
@@ -27,19 +27,19 @@
 - [x] Tauscher
 - [x] Booster
 - [ ] Enterhaken
-- [ ] Freezer
+- [x] Freezer
 - [x] Großvaters Uhr
 - [ ] Linebuilder
 - [ ] Minigun
-- [ ] Woolbombe
+- [x] Woolbombe
 - [ ] Pfeilbombe
-- [ ] Rettungskapsel
-- [ ] Wandgenerator
+- [x] Rettungskapsel
+- [x] Wandgenerator
 - [ ] Klospülung
 - [ ] Sprengsatz
 - [ ] SlimePlattform
 - [ ] Schutzschild
-- [ ] Rope
+- [x] Rope
 - [x] Rettungsplatform
 - [ ] The Grabber
 

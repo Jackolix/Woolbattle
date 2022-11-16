@@ -38,11 +38,12 @@ public class Woolbattle extends JavaPlugin {
 
     public static final String PREFIX = "§7[§cWOOLBATTLE§7] §r", NO_PERMISSION = PREFIX + "§cDazu hast du keine Rechte!";
     private GameStateManager gameStateManager;
-    private ArrayList<Player> players;
+    public static ArrayList<Player> players;
 
     public static List<Block> blocks = new ArrayList<>();
     private static Woolbattle plugin;
     private FileConfiguration customConfig;
+    public static boolean debug = false;
 
 
     @Override
@@ -81,6 +82,8 @@ public class Woolbattle extends JavaPlugin {
         getCommand("setlive").setExecutor(new SetLive());
         getCommand("build").setExecutor(new Build());
         getCommand("hitted").setExecutor(new SetHitted());
+        getCommand("debug").setExecutor(new Debug());
+        getCommand("switchteam").setExecutor(new Switchteam());
 
         pluginManager.registerEvents(new PlayerLobbyConnectionListener(this), this);
         pluginManager.registerEvents(new DoubleJump(), this);
@@ -246,7 +249,7 @@ public class Woolbattle extends JavaPlugin {
         return jarFolder + resourceName;
     }
 
-    public ArrayList<Player> getPlayers() {
+    public static ArrayList<Player> getPlayers() {
         return players;
     }
     public GameStateManager getGameStateManager() {

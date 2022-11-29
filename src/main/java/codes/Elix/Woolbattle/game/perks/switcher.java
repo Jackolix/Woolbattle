@@ -13,6 +13,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.metadata.FixedMetadataValue;
 
 
 public class switcher implements Listener {
@@ -30,7 +31,7 @@ public class switcher implements Listener {
         Player shooter = (Player) projectile.getShooter();
         Player hitted = (Player) event.getEntity();
 
-        if (projectile.hasMetadata("Freezer")) return;
+        if (!projectile.hasMetadata("Switcher")) return;
 
         Location location1 = shooter.getLocation();
         Location location2 = hitted.getLocation();
@@ -52,6 +53,9 @@ public class switcher implements Listener {
             event.setCancelled(true);
             return;
         }
+
+        Projectile snowball = player.launchProjectile(Snowball.class);
+        snowball.setMetadata("Switcher", new FixedMetadataValue(Woolbattle.getPlugin(), "keineAhnungWiesoIchDasBrauch"));
 
         player.launchProjectile(Snowball.class);
         event.setCancelled(true);

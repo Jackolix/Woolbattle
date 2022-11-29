@@ -167,6 +167,16 @@ public class Items {
         inventory.setItem(slot, item);
     }
 
+    public static void createPassivePerk(Inventory inventory, Material material, String name, int slot) {
+        ItemStack item = new ItemStack(material);
+        ItemMeta itemMeta = item.getItemMeta();
+        itemMeta.setDisplayName(name);
+        itemMeta.addItemFlags(ItemFlag.HIDE_DESTROYS);
+
+        item.setItemMeta(itemMeta);
+        inventory.setItem(slot, item);
+    }
+
     //TeamItemsConstructor
     public static void createTeam(Inventory inventory, Material material, String name, ArrayList<String> lore, int slot) {
         ItemStack item = new ItemStack(material);
@@ -188,6 +198,24 @@ public class Items {
         lore.add(text);
         lore.add(" ");
         itemMeta.setLore(lore);
+
+        item.setItemMeta(itemMeta);
+        inventory.setItem(slot, item);
+    }
+
+    public static void createMapEffect(Inventory inventory, Material material, int amount, String name, String text, int slot) {
+        ItemStack item = new ItemStack(material, amount);
+        ItemMeta itemMeta = item.getItemMeta();
+        itemMeta.setDisplayName(name);
+
+        ArrayList<String> lore = new ArrayList<>();
+        lore.add(" ");
+        lore.add(text);
+        lore.add(" ");
+        itemMeta.setLore(lore);
+        itemMeta.addEnchant(Enchantment.KNOCKBACK, 1, true);
+        itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+
 
         item.setItemMeta(itemMeta);
         inventory.setItem(slot, item);

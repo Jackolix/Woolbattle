@@ -1,5 +1,5 @@
 name: Woolbattle
-version: '${project.version}'
+version: 0.8
 main: codes.Elix.Woolbattle.main.Woolbattle
 api-version: 1.19
 authors: [ N4med, Elix ]
@@ -19,3 +19,4 @@ commands:
   hitted:
   debug:
   switchteam:
+  fix:

@@ -10,6 +10,7 @@ import codes.Elix.Woolbattle.game.perks.*;
 import codes.Elix.Woolbattle.items.Items;
 import codes.Elix.Woolbattle.items.LobbyItems;
 import codes.Elix.Woolbattle.items.PerkItems;
+import codes.Elix.Woolbattle.items.Voting;
 import codes.Elix.Woolbattle.main.Woolbattle;
 import codes.Elix.Woolbattle.util.Console;
 import codes.Elix.Woolbattle.util.IngameScoreboard;
@@ -62,19 +63,20 @@ public class IngameState extends GameState {
     }
 
     public void setLifes() {
-        if (LobbyItems.VotedLives == 0)
-            LobbyItems.VotedLives = 6;
-        LiveSystem.TeamLifes.put("red", LobbyItems.VotedLives);
-        LiveSystem.TeamLifes.put("blue", LobbyItems.VotedLives);
-        LiveSystem.TeamLifes.put("green", LobbyItems.VotedLives);
-        LiveSystem.TeamLifes.put("yellow", LobbyItems.VotedLives);
+        int lives = Voting.winner();
+        if (lives == 0)
+            lives = 6;
+        LiveSystem.TeamLifes.put("red", lives);
+        LiveSystem.TeamLifes.put("blue", lives);
+        LiveSystem.TeamLifes.put("green", lives);
+        LiveSystem.TeamLifes.put("yellow", lives);
 
     }
 
     public void checkTeams() {
+        Console.send(ChatColor.GOLD + "---------- Teams ----------");
         Console.send("Checking teams...");
         for (Player player : Bukkit.getOnlinePlayers()) {
-            Console.send(player.getName());
             if (LiveSystem.VotedPlayers.containsKey(player)) continue;
             Console.send("Trying to add " + ChatColor.DARK_AQUA + player.getName() + ChatColor.GRAY + " to team");
             addToEmptyTeam(player);
@@ -85,10 +87,10 @@ public class IngameState extends GameState {
         Console.send(ChatColor.GREEN + "Team Green: " + LiveSystem.TeamGreen.size());
         Console.send(ChatColor.YELLOW + "Team Yellow: " + LiveSystem.TeamYellow.size());
 
-        teamupdate();
+        teamUpdate();
     }
 
-    public static void teamupdate() {
+    public static void teamUpdate() {
         LiveSystem.Team.clear();
 
         for (int i = 0; i < LiveSystem.TeamRed.size(); i++)

@@ -34,7 +34,8 @@ public class DoubleJump implements Listener {
         if (player.getGameMode() == GameMode.SURVIVAL || player.getGameMode() == GameMode.ADVENTURE) {
             event.setCancelled(true);
 
-            if (!Items.cost(player, cost)) return;
+            if (!Woolbattle.debug)
+                if (!Items.cost(player, cost)) return;
 
             //give player the velocity
             Vector walk_vector = player.getVelocity().normalize();

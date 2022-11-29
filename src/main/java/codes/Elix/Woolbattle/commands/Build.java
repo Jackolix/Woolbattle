@@ -18,35 +18,36 @@ public class Build implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if (sender instanceof Player player) {
-            if (player.hasPermission("Woolbattle.build")) {
-                if(args.length == 0) {
-                    if (!(BuildPlayers.contains(player))) {
-                        BuildPlayers.add(player);
-                        player.sendMessage("§2Build activated!");
-                    } else {
-                        BuildPlayers.remove(player);
-                        player.sendMessage("§2Build disabled!");
-                    }
-                } else if (args.length == 1) {
-                    Player target = Bukkit.getPlayer(args[0]);
-                    if (target != null) {
-                        if (!(BuildPlayers.contains(target))) {
-                            BuildPlayers.add(target);
-                            target.sendMessage("§aBuild activated!");
-                            player.sendMessage("§aBuild for the player §5" + target.getName() + " §adeactivated");
-                        } else {
-                            BuildPlayers.remove(target);
-                            target.sendMessage("§2Build deactivated");
-                            player.sendMessage("§aBuild for the player §5" + target.getName() + " §adeactivated");
-                        }
-                    } else
-                        player.sendMessage("§cThe player §6" + args[0] + " §cis not online.");
-                } else
-                    player.sendMessage("§cPlease use §6/build <PLAYER>§c!");
-            } else
-                player.sendMessage("§cNo permissions!");
+        if (!(sender instanceof Player player)) return false;
+        if (!player.hasPermission("Woolbattle.build")) {
+            player.sendMessage("§cNo permissions!");
+            return false;
         }
+
+        if(args.length == 0) {
+            if (!(BuildPlayers.contains(player))) {
+                BuildPlayers.add(player);
+                player.sendMessage("§2Build activated!");
+            } else {
+                BuildPlayers.remove(player);
+                player.sendMessage("§2Build disabled!");
+            }
+        } else if (args.length == 1) {
+            Player target = Bukkit.getPlayer(args[0]);
+            if (target != null) {
+                if (!(BuildPlayers.contains(target))) {
+                    BuildPlayers.add(target);
+                    target.sendMessage("§aBuild activated!");
+                    player.sendMessage("§aBuild for the player §5" + target.getName() + " §adeactivated");
+                } else {
+                    BuildPlayers.remove(target);
+                    target.sendMessage("§2Build deactivated");
+                    player.sendMessage("§aBuild for the player §5" + target.getName() + " §adeactivated");
+                }
+            } else
+                player.sendMessage("§cThe player §6" + args[0] + " §cis not online.");
+        } else
+            player.sendMessage("§cPlease use §6/build <PLAYER>§c!");
         return false;
     }
 }

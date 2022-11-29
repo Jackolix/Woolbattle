@@ -18,9 +18,11 @@ public class PerkItems {
     public static void equip(Player player) {
         Object Fperk = config.get(player.getName() + ".1Perk");
         Object Sperk = config.get(player.getName() + ".2Perk");
+        Object Pperk = config.get(player.getName() + ".passive");
 
         Integer Fperkslot = (Integer) config.get(player.getName() + ".1Perkslot");
         Integer Sperkslot = (Integer) config.get(player.getName() + ".2Perkslot");
+        Integer Pperkslot = 8;
 
         if (Fperkslot == null) {
             config.set(player.getName() + ".1Perkslot", 6);
@@ -72,6 +74,23 @@ public class PerkItems {
             case "wandgenerator" -> Items.create(player.getInventory(), Material.RED_STAINED_GLASS_PANE, "§3Wandgenerator", Sperkslot);
             case "woolbombe" -> Items.create(player.getInventory(), Material.TNT, "§3WoolBombe", Sperkslot);
             case "thegrabber" -> Items.create(player.getInventory(), Material.FISHING_ROD, "§3The Grabber", Sperkslot);
+        }
+
+        switch (Objects.requireNonNull(Pperk != null ? Pperk.toString() : null)) {
+            case "aufzug" -> Items.createPassivePerk(player.getInventory(),  Material.LADDER, "§3Aufzug", Pperkslot);
+            case "explodierender_pfeil" -> Items.createPassivePerk(player.getInventory(), Material.TNT, "§3Explodierender Pfeil", Pperkslot);
+            case "IDK" -> Items.createPassivePerk(player.getInventory(), Material.FISHING_ROD, "§3IDK", Pperkslot);
+            case "pfeilregen" -> Items.createPassivePerk(player.getInventory(), Material.DISPENSER, "§3Pfeilregen", Pperkslot);
+            case "recharger" -> Items.createPassivePerk(player.getInventory(), Material.IRON_CHESTPLATE, "§3Recharger", Pperkslot);
+            case "reflector" -> Items.createPassivePerk(player.getInventory(), Material.CACTUS, "§3Reflector", Pperkslot);
+            case "rocket_jump" -> Items.createPassivePerk(player.getInventory(), Material.RABBIT_FOOT, "§3Rocket Jump", Pperkslot);
+            case "portal" -> Items.createPassivePerk(player.getInventory(), Material.GOLD_INGOT, "§3IDK1", Pperkslot);
+            case "schock_pfeil" -> Items.createPassivePerk(player.getInventory(), Material.RED_STAINED_GLASS, "§3Rettungskapsel", Pperkslot);
+            case "slowarrow" -> Items.createPassivePerk(player.getInventory(), Material.ARROW, "§3SlowArrow", Pperkslot);
+            case "spinne" -> Items.createPassivePerk(player.getInventory(), Material.SPIDER_SPAWN_EGG, "§3Spinne", Pperkslot);
+            case "stomper" -> Items.createPassivePerk(player.getInventory(), Material.DIAMOND_BOOTS, "§3Stomper", Pperkslot);
+            case "slimeplattform" -> Items.createPassivePerk(player.getInventory(), Material.GOLDEN_HOE, "§3SlimePlattform", Pperkslot);
+            default -> System.out.println("[NO_PASSIVE_PERK]: " + player.getName());
         }
 
     }

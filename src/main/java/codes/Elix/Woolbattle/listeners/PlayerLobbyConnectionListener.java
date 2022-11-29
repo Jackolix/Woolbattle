@@ -10,8 +10,8 @@ import codes.Elix.Woolbattle.gamestates.GameStateManager;
 import codes.Elix.Woolbattle.gamestates.IngameState;
 import codes.Elix.Woolbattle.gamestates.LobbyState;
 import codes.Elix.Woolbattle.items.LobbyItems;
+import codes.Elix.Woolbattle.items.Voting;
 import codes.Elix.Woolbattle.main.Woolbattle;
-import codes.Elix.Woolbattle.util.ConfigLocationUtil;
 import codes.Elix.Woolbattle.util.Console;
 import codes.Elix.Woolbattle.util.LobbyScoreboard;
 import org.bukkit.Bukkit;
@@ -90,6 +90,9 @@ public class PlayerLobbyConnectionListener implements Listener {
             }
         }
 
+        Voting.voted.remove(player);
+        Voting.update();
+
          if (!LiveSystem.VotedPlayers.containsKey(player))
              return;
          Console.send(ChatColor.RED + "Player is in a team");
@@ -99,7 +102,7 @@ public class PlayerLobbyConnectionListener implements Listener {
         if (team != null)
             team.remove(player); //remove the player from the team
         LiveSystem.VotedPlayers.remove(player);
-        IngameState.teamupdate();
+        IngameState.teamUpdate();
         Console.send(ChatColor.GREEN + "Successfully removed " + ChatColor.WHITE + player.getName());
     }
 

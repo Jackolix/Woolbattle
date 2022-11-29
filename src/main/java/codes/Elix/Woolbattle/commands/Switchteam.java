@@ -60,7 +60,7 @@ public class Switchteam implements CommandExecutor, TabCompleter {
         LiveSystem.Team.put(player, args[0]);
         LiveSystem.VotedPlayers.put(player, arrayList);
 
-        IngameState.teamupdate();
+        IngameState.teamUpdate();
         IngameState.boots();
 
         player.sendMessage(ChatColor.GREEN + "You are now in Team " + Items.getColor(args[0]) + args[0]);

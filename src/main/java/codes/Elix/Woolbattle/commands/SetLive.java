@@ -22,18 +22,14 @@ import java.util.List;
 
 public class SetLive implements CommandExecutor, TabCompleter {
 
-
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if (GameStateManager.getCurrentGameState() instanceof IngameState) {
-            if (sender instanceof Player player) {
-                if (args.length >= 1)
-                    // set(args[0], Integer.parseInt(args[1]), player);
-                    LiveSystem.TeamLifes.put(args[0], Integer.parseInt(args[1]));
-                    for (Player players : Bukkit.getOnlinePlayers())
-                        IngameScoreboard.setup(players);
-            }
-        }
+        if (!(GameStateManager.getCurrentGameState() instanceof IngameState)) return false;
+        if (!(sender instanceof Player player)) return false;
+        if (!(args.length >= 1)) return false;
+        LiveSystem.TeamLifes.put(args[0], Integer.parseInt(args[1]));
+        for (Player players : Bukkit.getOnlinePlayers())
+            IngameScoreboard.setup(players);
         return false;
     }
 
@@ -44,26 +40,8 @@ public class SetLive implements CommandExecutor, TabCompleter {
         completerlist.add("blue");
         completerlist.add("green");
         completerlist.add("yellow");
-        if (args.length == 1) {
+        if (args.length == 1)
             return completerlist;
-        }
         return null;
     }
-    /*
-
-    private void set(String name, int value, Player player) {
-
-        switch (name) {
-            case "red" -> LiveSystem.TeamLifes.put(LiveSystem.TeamRed, value);
-            case "blue" -> LiveSystem.TeamLifes.put(LiveSystem.TeamBlue, value);
-            case "green" -> LiveSystem.TeamLifes.put(LiveSystem.TeamGreen, value);
-            case "yellow" -> LiveSystem.TeamLifes.put(LiveSystem.TeamYellow, value);
-            default -> player.sendMessage(ChatColor.RED + "Wrong input! Use /setlive <team> <number> instead.");
-        }
-
-        for (Player players : Bukkit.getOnlinePlayers())
-            IngameScoreboard.setup(players);
-    }
-
-     */
 }

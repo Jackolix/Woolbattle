@@ -26,7 +26,7 @@
 #### PERKS
 - [x] Tauscher
 - [x] Booster
-- [ ] Enterhaken
+- [x] Enterhaken
 - [x] Freezer
 - [x] Großvaters Uhr
 - [ ] Linebuilder

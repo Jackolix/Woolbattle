@@ -10,7 +10,6 @@ import codes.Elix.Woolbattle.gamestates.IngameState;
 import codes.Elix.Woolbattle.gamestates.LobbyState;
 import codes.Elix.Woolbattle.items.Items;
 import codes.Elix.Woolbattle.main.Woolbattle;
-import codes.Elix.Woolbattle.util.Console;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Tag;
@@ -53,12 +52,12 @@ public class GameProtectionListener implements Listener {
         if (!(event.getEntity() instanceof Player)) return;
         ItemStack item = new ItemStack(Material.BLACK_WOOL);
         if (!event.getItem().getItemStack().equals(item)) return;
-        Console.send("Item ist wolle");
+        Console.send("Item ist Wolle");
         if (Items.amount((Player) event.getEntity(), Material.BLACK_WOOL) >= 196) // Items.getWoolColor(player) idk ob das funktioniert
             event.setCancelled(true);
 
          */
-        event.setCancelled(true);
+        // event.setCancelled(true);
     }
 
     @EventHandler
@@ -79,9 +78,11 @@ public class GameProtectionListener implements Listener {
             event.setCancelled(true);
             return;
         }
-        if (IngameState.spectator.contains(player)) {
-            event.setCancelled(true);
-            return;
+        if (event.getDamager() instanceof Player) {
+            if (IngameState.spectator.contains((Player) event.getDamager())) {
+                event.setCancelled(true);
+                return;
+            }
         }
 
         if (!(event.getDamager() instanceof Player) && !(event.getDamager() instanceof Arrow) && !(event.getDamager() instanceof CraftEnderPearl) && !(event.getDamager() instanceof TNTPrimed))
@@ -136,10 +137,9 @@ public class GameProtectionListener implements Listener {
     }
 
     @EventHandler
-    public void onBlockbreak(BlockBreakEvent event) {
+    public void onBlockbreak(BlockBreakEvent event) { //TODO: Wolle in der mitte kann nur mit op abgebaut werden warum auch immer wtf
         if (event instanceof Player) return;
         Player player = event.getPlayer();
-
         if (Build.BuildPlayers.contains(player)) return;
         if (GameStateManager.getCurrentGameState() instanceof LobbyState) {
             event.setCancelled(true);
@@ -194,8 +194,8 @@ public class GameProtectionListener implements Listener {
     @EventHandler
     public void onEntityExplode(EntityExplodeEvent event) {
         if (event.getEntity().getType() == EntityType.PRIMED_TNT) {
-            List destroyed = event.blockList();
-            Iterator it = destroyed.iterator();
+            List<Block> destroyed = event.blockList();
+            Iterator<Block> it = destroyed.iterator();
             while (it.hasNext()) {
                 Block block = (Block) it.next();
                 if (Woolbattle.blocks.contains(block) || !toDestroy.contains(block.getType()))

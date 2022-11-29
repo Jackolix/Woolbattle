@@ -12,6 +12,11 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class woolbomb implements Listener {
 
@@ -22,20 +27,41 @@ public class woolbomb implements Listener {
     public void onBlockHit(ProjectileHitEvent event) {
         if (!(event.getEntity() instanceof Snowball)) return;
         if (!(event.getEntity().hasMetadata("Woolbomb"))) return;
-        Location location = event.getHitBlock().getLocation();
+        Location location;
+        if (event.getHitBlock() == null) {
+            location = event.getHitEntity().getLocation();
+        } else
+            location = event.getHitBlock().getLocation();
+
         TNTPrimed tnt = (TNTPrimed) Bukkit.getWorlds().get(0).spawnEntity(location, EntityType.PRIMED_TNT);
         tnt.setFuseTicks(10); // How long until it explodes
 
-        Player player = (Player) event.getEntity().getShooter();
-        int xPos = location.getBlockX() -  player.getLocation().getBlockX();
-        int zPos = location.getBlockZ() -  player.getLocation().getBlockX();
-        int redux = 5; // You don't want the player flying thousands of blocks
+        System.out.println(location.getNearbyEntities(5,5,5));
+
+        @NotNull Collection<Entity> list = location.getNearbyEntities(5,5,5);
+        ArrayList<Player> players = new ArrayList<>();
+        for (Entity entity : list) {
+            if (entity instanceof Player)
+                players.add((Player) entity);
+        }
+
+        //Player player = (Player) event.getEntity().getShooter();
+        //int xPos = location.getBlockX() -  player.getLocation().getBlockX();
+        //int zPos = location.getBlockZ() -  player.getLocation().getBlockX();
+        //int redux = 5; // You don't want the player flying thousands of blocks
         // player.setVelocity(new Vector(xPos/redux, 0.5, zPos/redux));
 
         Bukkit.getScheduler().scheduleSyncDelayedTask(Woolbattle.getPlugin(), new Runnable() {
             @Override
             public void run() {
-                player.setVelocity(new Vector(-(xPos/redux), 0.5, -(zPos/redux)));
+                for (Player player : players) {
+                    int xPos = location.getBlockX() - player.getLocation().getBlockX();
+                    int zPos = location.getBlockZ() - player.getLocation().getBlockZ();
+                    double redux = 0.25; // You don't want the player flying thousands of blocks
+                    Vector v = new Vector(-(xPos / redux), 0.5, -(zPos / redux));
+                    //player.setVelocity(new Vector(-(xPos / redux), 0.5, -(zPos / redux)));
+                    player.setVelocity(v.normalize().multiply(5));
+                }
             }
         }, 10);
 

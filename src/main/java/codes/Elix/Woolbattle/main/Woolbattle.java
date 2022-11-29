@@ -84,6 +84,7 @@ public class Woolbattle extends JavaPlugin {
         getCommand("hitted").setExecutor(new SetHitted());
         getCommand("debug").setExecutor(new Debug());
         getCommand("switchteam").setExecutor(new Switchteam());
+        getCommand("fix").setExecutor(new Fix());
 
         pluginManager.registerEvents(new PlayerLobbyConnectionListener(this), this);
         pluginManager.registerEvents(new DoubleJump(), this);

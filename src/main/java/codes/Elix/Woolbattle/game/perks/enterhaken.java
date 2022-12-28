@@ -1,5 +1,6 @@
 package codes.Elix.Woolbattle.game.perks;
 
+import codes.Elix.Woolbattle.game.PerkHelper;
 import codes.Elix.Woolbattle.items.Items;
 import codes.Elix.Woolbattle.main.Woolbattle;
 import org.bukkit.Bukkit;
@@ -32,6 +33,8 @@ public class enterhaken implements Listener {
             vector.normalize().multiply(5.0);
             player.setVelocity(vector);
 
+            if (PerkHelper.passive(player) == "recharger")
+                cooldown = 13;
             if (!Woolbattle.debug)
                 Items.visualCooldown(player, cooldown, Material.FISHING_ROD, slot, "§3Enterhaken");
         }

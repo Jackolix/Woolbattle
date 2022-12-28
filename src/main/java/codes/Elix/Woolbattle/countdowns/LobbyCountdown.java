@@ -9,6 +9,7 @@ import codes.Elix.Woolbattle.gamestates.LobbyState;
 import codes.Elix.Woolbattle.main.Woolbattle;
 import codes.Elix.Woolbattle.util.LobbyScoreboard;
 import codes.Elix.Woolbattle.util.Worldloader;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -35,19 +36,22 @@ public class LobbyCountdown extends Countdown{
             @Override
             public void run() {
                 switch (seconds) {
-                    case 30, 20, 10, 5, 3, 2 ->
-                            Bukkit.broadcastMessage(Woolbattle.PREFIX + "§7Das Spiel startet in §a" + seconds + " Sekunden§7.");
-                    case 1 -> Bukkit.broadcastMessage(Woolbattle.PREFIX + "§7Das Spiel startet in §aeiner Sekunde§7.");
+                    case 30, 20, 10, 5, 4, 3, 2 ->
+                            Bukkit.broadcast(Component.text(Woolbattle.PREFIX + "§7Das Spiel startet in §a" + seconds + " Sekunden§7."));
+                    case 1 -> Bukkit.broadcast(Component.text( Woolbattle.PREFIX + "§7Das Spiel startet in §aeiner Sekunde§7."));
                     case 0 -> {
                         Worldloader.paste(new Location(Bukkit.getServer().getWorlds().get(0), -38, 52, 15), new File("./plugins/Woolbattle/game1.schem"));
                         Woolbattle.safewool();
                         gameStateManager.setGameState(GameState.INGAME_STATE);
                         Worldloader.teleport(new Location(Bukkit.getServer().getWorlds().get(0), 0, 50, 0));
+                        Worldloader.remove();
                     }
                 }
                 seconds--;
-                for (Player current : Bukkit.getOnlinePlayers())
-                    LobbyScoreboard.setup(current);
+                for (Player current : Bukkit.getOnlinePlayers()) {
+                   LobbyScoreboard.change(current); // LobbyScoreboard.setup(current);
+                }
+
             }
         }, 0, 20);
 
@@ -69,8 +73,8 @@ public class LobbyCountdown extends Countdown{
             @Override
             public void run() {
                 if (Bukkit.getOnlinePlayers().size() > 0)
-                    Bukkit.broadcastMessage(Woolbattle.PREFIX + "§7Bis zum Spielstart fehlen noch §6" +
-                            (LobbyState.MIN_PLAYERS - gameStateManager.getPlugin().getPlayers().size()) + " §7Spieler.");
+                    Bukkit.broadcast(Component.text(Woolbattle.PREFIX + "§7Bis zum Spielstart fehlen noch §6" +
+                            (LobbyState.MIN_PLAYERS - Woolbattle.getPlayers().size()) + " §7Spieler."));
             }
         }, 0, 20* IDLE_TIME);
 

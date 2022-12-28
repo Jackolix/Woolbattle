@@ -1,5 +1,6 @@
 package codes.Elix.Woolbattle.game.perks;
 
+import codes.Elix.Woolbattle.game.PerkHelper;
 import codes.Elix.Woolbattle.items.Items;
 import codes.Elix.Woolbattle.main.Woolbattle;
 import org.bukkit.Bukkit;
@@ -9,6 +10,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerInteractEvent;
+
+import java.util.Objects;
 
 
 public class platform implements Listener {
@@ -29,6 +32,8 @@ public class platform implements Listener {
             return;
         }
         if (!Items.cost(player, cost)) return;
+        if (Objects.equals(PerkHelper.passive(player), "recharger"))
+            cooldown = 12;
         int slot = player.getInventory().getHeldItemSlot();
         placeBlocks(player.getLocation(), Items.getWoolColor(player));
         Items.visualCooldown(player, cooldown, Material.BLAZE_ROD, slot, "§3Plattform");

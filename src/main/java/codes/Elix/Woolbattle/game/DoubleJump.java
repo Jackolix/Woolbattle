@@ -5,6 +5,7 @@ package codes.Elix.Woolbattle.game;
 import codes.Elix.Woolbattle.gamestates.IngameState;
 import codes.Elix.Woolbattle.items.Items;
 import codes.Elix.Woolbattle.main.Woolbattle;
+import codes.Elix.Woolbattle.util.Console;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -15,6 +16,8 @@ import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
+
+import java.util.Objects;
 
 public class DoubleJump implements Listener {
 
@@ -37,6 +40,8 @@ public class DoubleJump implements Listener {
             if (!Woolbattle.debug)
                 if (!Items.cost(player, cost)) return;
 
+            if (Objects.equals(PerkHelper.passive(player), "rocket_jump"))
+                dj_height = 2D;
             //give player the velocity
             Vector walk_vector = player.getVelocity().normalize();
             Vector vector = new Vector(walk_vector.getX(), dj_height, walk_vector.getZ());
@@ -52,6 +57,8 @@ public class DoubleJump implements Listener {
                 setEXP(i, player);
             }
 
+            if (Objects.equals(PerkHelper.passive(player), "recharger"))
+                cooldown = 3L;
             Woolbattle.getPlugin().getServer().getScheduler().scheduleSyncDelayedTask(Woolbattle.getPlugin(),
                     () -> player.setAllowFlight(true), 20 * cooldown);
 
@@ -67,8 +74,13 @@ public class DoubleJump implements Listener {
 
     @EventHandler
     public void onGamemodeChange(PlayerGameModeChangeEvent event) {
-        if (event.getNewGameMode() == GameMode.SURVIVAL || event.getNewGameMode() == GameMode.ADVENTURE)
-            event.getPlayer().setAllowFlight(true);
+        Bukkit.getScheduler().runTaskLaterAsynchronously(Woolbattle.getPlugin(), new Runnable() {
+            @Override
+            public void run() {
+                if (event.getNewGameMode() == GameMode.SURVIVAL)
+                    event.getPlayer().setAllowFlight(true);
+            }
+        }, 10);
     }
 
     public static void enable() {

@@ -8,7 +8,6 @@ import codes.Elix.Woolbattle.game.EnderPearl;
 import codes.Elix.Woolbattle.game.LiveSystem;
 import codes.Elix.Woolbattle.game.perks.*;
 import codes.Elix.Woolbattle.items.Items;
-import codes.Elix.Woolbattle.items.LobbyItems;
 import codes.Elix.Woolbattle.items.PerkItems;
 import codes.Elix.Woolbattle.items.Voting;
 import codes.Elix.Woolbattle.main.Woolbattle;
@@ -21,13 +20,10 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 
 public class IngameState extends GameState {
-
-    private Woolbattle plugin;
     public static ArrayList<Player> spectator;
 
 
-    public IngameState (Woolbattle plugin) {
-        this.plugin = plugin;
+    public IngameState () {
         spectator = new ArrayList<>();
     }
 
@@ -106,7 +102,7 @@ public class IngameState extends GameState {
             LiveSystem.Team.put(LiveSystem.TeamGreen.get(i), "green");
 
         for (Player current : Bukkit.getOnlinePlayers())
-            LobbyScoreboard.setup(current);
+            LobbyScoreboard.change(current);
     }
 
     public void addToEmptyTeam(Player player) {
@@ -142,7 +138,7 @@ public class IngameState extends GameState {
         player.getInventory().clear();
 
         for (Player current : Bukkit.getOnlinePlayers())
-            current.hidePlayer(player);
+            current.hidePlayer(Woolbattle.getPlugin(), player);
 
         player.teleport(new Location(Bukkit.getServer().getWorlds().get(0), 0, 50, 0));
         LiveSystem.Team.put(player, "spectator");

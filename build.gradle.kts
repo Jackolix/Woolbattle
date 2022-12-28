@@ -2,13 +2,14 @@
 
 plugins {
   `java-library`
-  id("io.papermc.paperweight.userdev") version "1.3.8"
-  id("xyz.jpenilla.run-paper") version "1.0.6" // Adds runServer and runMojangMappedServer tasks for testing
+  // id("io.papermc.paperweight.userdev") version "1.3.8"
+  // id("xyz.jpenilla.run-paper") version "1.0.6" // Adds runServer and runMojangMappedServer tasks for testing
   //id("net.minecrell.plugin-yml.bukkit") version "0.5.2" // Generates plugin.yml
+  id ("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
 group = "codes.Elix"
-version = "0.6.5"
+version = "0.8"
 description = "Gamemode for Minecraft"
 
 
@@ -18,21 +19,37 @@ java {
 }
 
 dependencies {
-  paperDevBundle("1.19.2-R0.1-SNAPSHOT")
-  compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.4.5")
-  compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.4.5")
+  // paperDevBundle("1.19.2-R0.1-SNAPSHOT")
+  implementation(platform("com.intellectualsites.bom:bom-1.18.x:1.20")) //Fawe
+  compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.4.9") //Fawe
+  compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.4.9") //Fawe
+  implementation("com.github.ShieldCommunity:SternalBoard:2.1.0") // ScoreBoard
+  compileOnly(files("/Users/jackolix/IdeaProjects/Paper/Paper-API/build/libs/paper.jar")) // Custom paper-api
+  implementation("net.kyori:adventure-api:4.12.0")
+  compileOnly("net.md-5:bungeecord-api:1.19-R0.1-SNAPSHOT")
+// implementation("mysql:mysql-connector-java:8.0.31")
+  // implementation("pro.husk:mysql:1.4.1")
   // paperweightDevBundle("com.example.paperfork", "1.19.2-R0.1-SNAPSHOT")
 
   // You will need to manually specify the full dependency if using the groovy gradle dsl
   // (paperDevBundle and paperweightDevBundle functions do not work in groovy)
   // paperweightDevelopmentBundle("io.papermc.paper:dev-bundle:1.19.2-R0.1-SNAPSHOT")
 }
+repositories {
+  mavenCentral()
+  maven("https://jitpack.io")
+  maven("https://oss.sonatype.org/content/repositories/snapshots") // This lets gradle find the BungeeCord files online
+}
 
 tasks {
   // Configure reobfJar to run when invoking the build task
   assemble {
-    dependsOn(reobfJar)
+    // dependsOn(reobfJar)
   }
+
+  // shadowJar {
+    // relocate("com.shieldcommunity.sternalboard", "com.shieldcommunity.sternalboard1")
+  // }
 
   compileJava {
     options.encoding = Charsets.UTF_8.name() // We want UTF-8 for everything
@@ -46,6 +63,15 @@ tasks {
   }
   processResources {
     filteringCharset = Charsets.UTF_8.name() // We want UTF-8 for everything
+  }
+
+  jar {
+    destinationDirectory.set(file("/Users/jackolix/Development/Server/Paper1.19/plugins"))
+    finalizedBy("push")
+  }
+
+  register<Exec>("push") {
+    commandLine("sh", "/Users/jackolix/IdeaProjects/Woolbattle/push.sh")
   }
 
   /*

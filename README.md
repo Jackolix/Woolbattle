@@ -20,7 +20,7 @@
 - [x] Book (Team Wählen)
 - [x] Lohenrute (Partikel sind an)
 - [ ] Chest (Inventarsortierung)
-- [ ] Nametag (Lebensanzahl ändern)
+- [x] Nametag (Lebensanzahl ändern)
 - [ ] Paper (Maps)
 
 #### PERKS

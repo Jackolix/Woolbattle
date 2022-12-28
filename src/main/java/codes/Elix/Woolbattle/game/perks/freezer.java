@@ -1,5 +1,6 @@
 package codes.Elix.Woolbattle.game.perks;
 
+import codes.Elix.Woolbattle.game.PerkHelper;
 import codes.Elix.Woolbattle.items.Items;
 import codes.Elix.Woolbattle.main.Woolbattle;
 import org.bukkit.Bukkit;
@@ -12,6 +13,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+
+import java.util.Objects;
 
 public class freezer implements Listener {
 
@@ -26,14 +29,17 @@ public class freezer implements Listener {
         if (event.getItem() == null) return;
         if (event.getItem().getType() == Material.PACKED_ICE) {
             Player player = event.getPlayer();
-
-            if (!Items.cost(player, cost)) return;
+            if (!Woolbattle.debug)
+                if (!Items.cost(player, cost)) return;
 
             Projectile snowball = player.launchProjectile(Snowball.class);
             snowball.setMetadata("Freezer", new FixedMetadataValue(Woolbattle.getPlugin(), "keineAhnungWiesoIchDasBrauch"));
 
+            if (Objects.equals(PerkHelper.passive(player), "recharger"))
+                cooldown = 3;
             int slot = player.getInventory().getHeldItemSlot();
-            Items.visualCooldown(player, cooldown, Material.PACKED_ICE, slot, "§3Freezer");
+            if (!Woolbattle.debug)
+                Items.visualCooldown(player, cooldown, Material.PACKED_ICE, slot, "§3Freezer");
         }
     }
 

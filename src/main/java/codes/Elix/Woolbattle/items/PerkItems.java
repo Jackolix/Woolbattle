@@ -22,7 +22,7 @@ public class PerkItems {
 
         Integer Fperkslot = (Integer) config.get(player.getName() + ".1Perkslot");
         Integer Sperkslot = (Integer) config.get(player.getName() + ".2Perkslot");
-        Integer Pperkslot = 8;
+        int Pperkslot = 8;
 
         if (Fperkslot == null) {
             config.set(player.getName() + ".1Perkslot", 6);

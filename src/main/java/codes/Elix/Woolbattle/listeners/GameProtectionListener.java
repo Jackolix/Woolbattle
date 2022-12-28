@@ -14,7 +14,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_19_R1.entity.CraftEnderPearl;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -73,7 +72,7 @@ public class GameProtectionListener implements Listener {
 
     @EventHandler
     public void onPlayerDamage(EntityDamageByEntityEvent event) {
-        if (!(event.getEntity() instanceof Player player)) return;
+        if (!(event.getEntity() instanceof Player)) return;
         if (GameStateManager.getCurrentGameState() instanceof LobbyState) {
             event.setCancelled(true);
             return;
@@ -85,7 +84,7 @@ public class GameProtectionListener implements Listener {
             }
         }
 
-        if (!(event.getDamager() instanceof Player) && !(event.getDamager() instanceof Arrow) && !(event.getDamager() instanceof CraftEnderPearl) && !(event.getDamager() instanceof TNTPrimed))
+        if (!(event.getDamager() instanceof Player) && !(event.getDamager() instanceof Arrow) && !(event.getDamager() instanceof EnderPearl) && !(event.getDamager() instanceof TNTPrimed))
             return;
 
         if (event.getDamager() instanceof EnderPearl) {
@@ -95,7 +94,6 @@ public class GameProtectionListener implements Listener {
 
         if (event.getDamager() instanceof TNTPrimed) {
             event.setDamage(0.00000000001D);
-            //event.getEntity().setVelocity(); //TODO: More knockback needed
             ((Player) event.getEntity()).setHealth(20);
             return;
         }

@@ -1,5 +1,6 @@
 package codes.Elix.Woolbattle.game.perks;
 
+import codes.Elix.Woolbattle.game.PerkHelper;
 import codes.Elix.Woolbattle.items.Items;
 import codes.Elix.Woolbattle.main.Woolbattle;
 import org.bukkit.Bukkit;
@@ -17,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 public class woolbomb implements Listener {
 
@@ -51,7 +53,7 @@ public class woolbomb implements Listener {
         //int redux = 5; // You don't want the player flying thousands of blocks
         // player.setVelocity(new Vector(xPos/redux, 0.5, zPos/redux));
 
-        Bukkit.getScheduler().scheduleSyncDelayedTask(Woolbattle.getPlugin(), new Runnable() {
+        Bukkit.getScheduler().scheduleAsyncDelayedTask(Woolbattle.getPlugin(), new Runnable() {
             @Override
             public void run() {
                 for (Player player : players) {
@@ -89,6 +91,8 @@ public class woolbomb implements Listener {
         snowball.setMetadata("Woolbomb", new FixedMetadataValue(Woolbattle.getPlugin(), "keineAhnungWiesoIchDasBrauch"));
 
         event.setCancelled(true);
+        if (Objects.equals(PerkHelper.passive(player), "recharger"))
+            cooldown = 6;
         int slot = player.getInventory().getHeldItemSlot();
         Items.visualCooldown(player, cooldown, Material.TNT, slot, "§3Woolbomb");
     }

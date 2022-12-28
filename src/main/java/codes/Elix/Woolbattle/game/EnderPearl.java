@@ -16,6 +16,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class EnderPearl implements Listener {
     int cooldown = 3;
@@ -35,8 +36,11 @@ public class EnderPearl implements Listener {
         player.launchProjectile(org.bukkit.entity.EnderPearl.class);
         event.setCancelled(true);
 
+        if (Objects.equals(PerkHelper.passive(player), "recharger"))
+            cooldown = 2;
         int slot = event.getPlayer().getInventory().getHeldItemSlot();
-        Items.visualCooldown(player, cooldown, Material.ENDER_PEARL, slot, "§3EnderPerle");
+        if (!Woolbattle.debug)
+            Items.visualCooldown(player, cooldown, Material.ENDER_PEARL, slot, "§3EnderPerle");
     }
 
     public static void enable() {

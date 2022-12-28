@@ -52,8 +52,6 @@ public class BowShoot implements Listener {
         }
     }
 
-    //moved the Bukkit runnable to a single method and not in the onEnable
-    @SuppressWarnings("deprecation")
     public void addParticleEffect(final Projectile entity){
         new BukkitRunnable(){
 

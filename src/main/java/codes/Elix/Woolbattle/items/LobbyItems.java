@@ -4,17 +4,18 @@
 package codes.Elix.Woolbattle.items;
 
 import codes.Elix.Woolbattle.game.LiveSystem;
+import codes.Elix.Woolbattle.game.Perk;
 import codes.Elix.Woolbattle.gamestates.GameStateManager;
 import codes.Elix.Woolbattle.gamestates.IngameState;
 import codes.Elix.Woolbattle.gamestates.LobbyState;
 import codes.Elix.Woolbattle.main.Woolbattle;
 import codes.Elix.Woolbattle.util.Console;
+import dev.jackolix.WoolbattleFile;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -52,7 +53,7 @@ public class LobbyItems implements Listener {
     }
 
     private void PerkVorInventory(Player player) {
-        Inventory inventory = Bukkit.createInventory(null, 9, "§3Wähle deine Perks!");
+        Inventory inventory = Bukkit.createInventory(null, 9, Component.text("§3Wähle deine Perks!"));
         Items.create(inventory, Material.CHEST, null, 5, "§6Aktiv-Perk #1", 3);
         Items.create(inventory, Material.TRAPPED_CHEST, null, 5, "§6Aktiv-Perk #2", 4);
         Items.create(inventory, Material.ENDER_CHEST, null, 5, "§3Passiv-Perk", 5);
@@ -61,7 +62,7 @@ public class LobbyItems implements Listener {
 
     private void PerkInventory(Player player, String title) {
         Title.put(player, title);
-        Inventory inventory = Bukkit.createInventory(null, 9*4, title);
+        Inventory inventory = Bukkit.createInventory(null, 9*4, Component.text(title));
         Items.create(inventory, Material.TRIPWIRE_HOOK, false, "§3Booster", "Boostet dich durch die Luft",12, 25, 0);
         Items.create(inventory, Material.FISHING_ROD, false, "§3Enterhaken", "Ziehe dich mit einem Enterhaken über die Map!", 5, 16, 1);
         Items.create(inventory, Material.PACKED_ICE, false, "§3Freezer", "Friere deine Gegner ein!", 6, 6, 2);
@@ -87,7 +88,7 @@ public class LobbyItems implements Listener {
 
     private void PassivePerkInventory(Player player) {
         Title.put(player,"§3Verfügbare Perks:");
-        Inventory inventory = Bukkit.createInventory(null, 9*4, "§3Verfügbare Perks:");
+        Inventory inventory = Bukkit.createInventory(null, 9*4, Component.text("§3Verfügbare Perks:"));
         Items.createPassivePerk(inventory, Material.LADDER, false, "§3Aufzug", "Teleportiere dich mit der Enderperle auf den getroffenen Block!", null, "§6Cooldown: 3 Enderperlen", 0);
         Items.createPassivePerk(inventory, Material.TNT, false, "§3Explodierender Pfeil", "Ein besonderer Pfeil der alles in die Luft sprengt!", "§6Preis: 8 Wolle", "Nach Pfeilen: 8", 1);
         Items.createPassivePerk(inventory, Material.FISHING_ROD, false, "§3IDK", "IDK", "IDK", "IDK", 2);
@@ -106,7 +107,7 @@ public class LobbyItems implements Listener {
     }
 
     private void TeamsInventory(Player player) {
-        Inventory inventory = Bukkit.createInventory(null, 9, "§bWähle dein Team!");
+        Inventory inventory = Bukkit.createInventory(null, 9, Component.text("§bWähle dein Team!"));
         if (LiveSystem.Teams == 2) {
             checkTeam(LiveSystem.TeamRed, inventory, Material.RED_DYE, "§cTeam Rot", 3, ChatColor.RED);
             checkTeam(LiveSystem.TeamBlue, inventory, Material.BLUE_DYE, "§bTeam Blau", 5, ChatColor.AQUA);
@@ -124,7 +125,7 @@ public class LobbyItems implements Listener {
 
     private void Lifes(Player player) {
         Title.put(player,"§aLebensanzahl");
-        Inventory inventory = Bukkit.createInventory(null, 3*9, "§aLebensanzahl");
+        Inventory inventory = Bukkit.createInventory(null, 3*9, Component.text("§aLebensanzahl"));
         Items.create(inventory, Material.GRAY_STAINED_GLASS_PANE, " ", 0);
         Items.create(inventory, Material.GRAY_STAINED_GLASS_PANE, " ", 1);
         Items.create(inventory, Material.GRAY_STAINED_GLASS_PANE, " ", 2);
@@ -157,7 +158,7 @@ public class LobbyItems implements Listener {
 
     private void Maps(Player player) {
 
-        Inventory inventory = Bukkit.createInventory(null, 4*9, "§aMaps");
+        Inventory inventory = Bukkit.createInventory(null, 4*9, Component.text("§aMaps"));
         Items.create(inventory, Material.GRAY_STAINED_GLASS_PANE, "Custom", 0);
 
         player.openInventory(inventory);
@@ -174,22 +175,14 @@ public class LobbyItems implements Listener {
         String FirstPerk = (String) config.get(player.getName() + ".1Perk");
         String SecondPerk = (String) config.get(player.getName() + ".2Perk");
         String PassivePerk = (String) config.get(player.getName() + ".passive");
-        // Perk playerperk = new Perk(player, FirstPerk, SecondPerk, PassivePerk);
-        // if (playerperk.getfirstPerk().equals(playerperk.getpassivePerk())) something like that
-        // if (playerperk.getfirstPerk() || playerperk.getsecondtPerk())
 
-        // System.out.println(event.getView().title());
         /*
-        * TextComponentImpl{content="Wähle deine Perks!",
-        * style=StyleImpl{obfuscated=not_set,
-        * bold=not_set, strikethrough=not_set, underlined=not_set,
-        * italic=not_set, color=NamedTextColor{name="dark_aqua",
-        * value="#00aaaa"}, clickEvent=null, hoverEvent=null,
-        * insertion=null, font=null}, children=[]}
+        String FirstPerk = player.getFirstPerk();
+        String SecondPerk = player.getSecondPerk();
+        String PassivePerk = player.getPassivePerk();
          */
-        // event.getView().title().equals(Component.text("§6YourFancyInvTitle"))
 
-        if (event.getView().getTitle().equals("§3Wähle deine Perks!")) { //title().equals(Component.text("Wähle deine Perks!")
+        if (event.getView().title().equals(Component.text("§3Wähle deine Perks!"))) {
             event.setCancelled(true); //Player kann das Item nicht aus dem Inventar ziehen
             switch (clicked) {
                 case CHEST -> PerkInventory(player, "§3Erstes Perk:");
@@ -198,7 +191,7 @@ public class LobbyItems implements Listener {
             }
         }
 
-        if (event.getView().getTitle().equals("§3Erstes Perk:")) {
+        if (event.getView().title().equals(Component.text("§3Erstes Perk:"))) {
             event.setCancelled(true);
             switch (clicked) {
                 case TRIPWIRE_HOOK -> PerkItems.select(player, "booster", ".1Perk");
@@ -229,7 +222,7 @@ public class LobbyItems implements Listener {
             PerkInventory(player, "§3Erstes Perk:");
         }
 
-        if (event.getView().getTitle().equals("§3Zweites Perk:")) {
+        if (event.getView().title().equals(Component.text("§3Zweites Perk:"))) {
             event.setCancelled(true);
             switch (clicked) {
                 case TRIPWIRE_HOOK -> PerkItems.select(player, "booster", ".2Perk");
@@ -260,7 +253,7 @@ public class LobbyItems implements Listener {
             PerkInventory(player, "§3Zweites Perk:");
         }
 
-        if (event.getView().getTitle().equals("§3Verfügbare Perks:")) {
+        if (event.getView().title().equals(Component.text("§3Verfügbare Perks:"))) {
             event.setCancelled(true);
             String name = event.getWhoClicked().getName();
             switch (clicked) {
@@ -286,7 +279,7 @@ public class LobbyItems implements Listener {
             PassivePerkInventory(player);
         }
 
-        if (event.getView().getTitle().equals("§bWähle dein Team!")) {
+        if (event.getView().title().equals(Component.text("§bWähle dein Team!"))) {
             event.setCancelled(true);
             switch (event.getCurrentItem().getItemMeta().getDisplayName()) {
                 case "§cTeam Rot" -> addToTeam(LiveSystem.TeamRed, player);
@@ -297,8 +290,9 @@ public class LobbyItems implements Listener {
             TeamsInventory(player);
         }
 
-        if (event.getView().getTitle().equals("§aLebensanzahl")) {
+        if (event.getView().title().equals(Component.text("§aLebensanzahl"))) {
             event.setCancelled(true);
+            System.out.println(event.getCurrentItem().getItemMeta().displayName());
             switch (event.getCurrentItem().getItemMeta().getDisplayName()) {
                 case "§e6 Leben" -> Voting.vote(player, 6);
                 case "§e12 Leben" -> Voting.vote(player, 12);
@@ -308,7 +302,7 @@ public class LobbyItems implements Listener {
             Lifes(player);
         }
 
-        if (event.getView().getTitle().contains("§aMaps")) {
+        if (event.getView().title().contains(Component.text("§aMaps"))) {
             event.setCancelled(true);
         }
 
@@ -327,7 +321,14 @@ public class LobbyItems implements Listener {
         Object Fperk = config.get(player.getName() + ".1Perk");
         Object Sperk = config.get(player.getName() + ".2Perk");
         Object Pperk = config.get(player.getName() + ".passive");
+
         Integer number = Voting.voted.get(player);
+        /*
+        String Fperk = player.getFirstPerk();
+        String Sperk = player.getSecondPerk();
+        String Pperk = player.getPassivePerk();
+
+         */
 
         switch (Title.get(player)) {
             case "§3Erstes Perk:" -> {

@@ -1,5 +1,6 @@
 package codes.Elix.Woolbattle.game.perks;
 
+import codes.Elix.Woolbattle.game.PerkHelper;
 import codes.Elix.Woolbattle.items.Items;
 import codes.Elix.Woolbattle.main.Woolbattle;
 import org.bukkit.Bukkit;
@@ -10,6 +11,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.util.Vector;
+
+import java.util.Objects;
 
 
 public class wall implements Listener {
@@ -24,8 +27,8 @@ public class wall implements Listener {
         if (event.getItem() == null) return;
         if (event.getItem().getType() == Material.RED_STAINED_GLASS_PANE) {
             Player player = event.getPlayer();
-
-            if (!Items.cost(player, cost)) return;
+            if (!Woolbattle.debug)
+                if (!Items.cost(player, cost)) return;
 
             Vector forwardVec = new Vector(0,0,0);
             Vector rightVec   = new Vector(0,0,0);
@@ -69,9 +72,14 @@ public class wall implements Listener {
                 rightVec = new Vector(-1, 0, 0);
             }
 
-            placeBlocks(player.getLocation(), Items.getWoolColor(player), forwardVec, rightVec);
-            int slot = player.getInventory().getHeldItemSlot();
+            if (!Woolbattle.debug) {
+                placeBlocks(player.getLocation(), Items.getWoolColor(player), forwardVec, rightVec);
+                return;
+            }
 
+            if (Objects.equals(PerkHelper.passive(player), "recharger"))
+                cooldown = 6;
+            int slot = player.getInventory().getHeldItemSlot();
             Items.visualCooldown(player, cooldown, Material.RED_STAINED_GLASS_PANE, slot, "§3Wall");
             }
         }

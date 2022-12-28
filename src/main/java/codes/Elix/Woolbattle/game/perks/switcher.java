@@ -3,6 +3,7 @@
 
 package codes.Elix.Woolbattle.game.perks;
 
+import codes.Elix.Woolbattle.game.PerkHelper;
 import codes.Elix.Woolbattle.items.Items;
 import codes.Elix.Woolbattle.main.Woolbattle;
 import org.bukkit.*;
@@ -14,6 +15,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.metadata.FixedMetadataValue;
+
+import java.util.Objects;
 
 
 public class switcher implements Listener {
@@ -48,19 +51,22 @@ public class switcher implements Listener {
         if (event.getItem() == null)    return;
         if (!(event.getItem().getType() == Material.SNOWBALL)) return;
         Player player = event.getPlayer();
-
-        if (!Items.cost(player, cost)) {
-            event.setCancelled(true);
-            return;
-        }
-
+        if (!Woolbattle.debug)
+            if (!Items.cost(player, cost)) {
+                event.setCancelled(true);
+                return;
+            }
+        // Snowball wird 2 mal losgeschickt, (TODO) keine Ahnung ob es jetzt noch funktioniert, müsste eigentlich
         Projectile snowball = player.launchProjectile(Snowball.class);
         snowball.setMetadata("Switcher", new FixedMetadataValue(Woolbattle.getPlugin(), "keineAhnungWiesoIchDasBrauch"));
 
-        player.launchProjectile(Snowball.class);
+        // player.launchProjectile(Snowball.class);
         event.setCancelled(true);
+        if (Objects.equals(PerkHelper.passive(player), "recharger"))
+            cooldown = 8;
         int slot = player.getInventory().getHeldItemSlot();
-        Items.visualCooldown(player, cooldown, Material.SNOWBALL, slot, "§3Tauscher");
+        if (!Woolbattle.debug)
+            Items.visualCooldown(player, cooldown, Material.SNOWBALL, slot, "§3Tauscher");
     }
 
     public static void enable() {

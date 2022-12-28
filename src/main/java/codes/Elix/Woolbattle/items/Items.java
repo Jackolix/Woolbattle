@@ -4,8 +4,10 @@
 package codes.Elix.Woolbattle.items;
 
 import codes.Elix.Woolbattle.game.LiveSystem;
+import codes.Elix.Woolbattle.game.Perk;
 import codes.Elix.Woolbattle.main.Woolbattle;
 import codes.Elix.Woolbattle.util.Console;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
@@ -29,13 +31,14 @@ public class Items {
 
     public static ArrayList<Player> interact = new ArrayList<>();
     public static Map<Player, Map<String, Integer>> tasks = new HashMap<>();
+    public static HashMap<Player, Perk> perks = new HashMap<>();
 
     public static void standartitems(Player player) {
         create(player.getInventory(), Material.ENDER_PEARL, null, null, "EnderPearl", 2);
 
         ItemStack bow = new ItemStack(Material.BOW);
         ItemMeta bowmeta = bow.getItemMeta();
-        bowmeta.setDisplayName("§bWool Blaster");
+        bowmeta.displayName(Component.text("§bWool Blaster"));
         bowmeta.addEnchant(Enchantment.ARROW_KNOCKBACK, 2, false);
         bowmeta.addEnchant(Enchantment.ARROW_INFINITE, 1, false);
         bowmeta.addEnchant(Enchantment.KNOCKBACK, 5, true);
@@ -44,7 +47,7 @@ public class Items {
 
         ItemStack shears = new ItemStack(Material.SHEARS);
         ItemMeta shearsmeta = shears.getItemMeta();
-        shearsmeta.setDisplayName("§aMega Schere");
+        shearsmeta.displayName(Component.text("§aMega Schere"));
         shearsmeta.addEnchant(Enchantment.DIG_SPEED, 5, false);
         shearsmeta.addEnchant(Enchantment.KNOCKBACK, 5, true);
         shearsmeta.setUnbreakable(true);
@@ -54,16 +57,16 @@ public class Items {
         player.getInventory().setItem(1, shears);
     }
 
-    //Normal Itemconstructor
+    //Normal ItemConstructor
     public static void create(Inventory inventory, Material material, String name, int slot) {
         ItemStack item = new ItemStack(material);
         ItemMeta itemMeta = item.getItemMeta();
-        itemMeta.setDisplayName(name);
+        itemMeta.displayName(Component.text(name));
         item.setItemMeta(itemMeta);
         inventory.setItem(slot, item);
     }
 
-    //Normal Itemconstructor with enchants
+    //Normal ItemConstructor with enchants
     public static void create(Inventory inventory, Material material, Enchantment enchant, Integer enchantnumber, String name, int slot) {
         ItemStack item = new ItemStack(material);
         ItemMeta itemMeta = item.getItemMeta();
@@ -77,12 +80,12 @@ public class Items {
     }
 
 
-    //Normal ItemConstructor with hiddenenchants
-    public static void create(Inventory inventory, Material material, boolean enchanteffect, String name, int slot) {
+    //Normal ItemConstructor with hiddenEnchants
+    public static void create(Inventory inventory, Material material, boolean enchantEffect, String name, int slot) {
         ItemStack item = new ItemStack(material);
         ItemMeta itemMeta = item.getItemMeta();
         itemMeta.setDisplayName(name);
-        if (enchanteffect) {
+        if (enchantEffect) {
             itemMeta.addEnchant(Enchantment.KNOCKBACK, 1, true);
             itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         }
@@ -91,19 +94,19 @@ public class Items {
     }
 
 
-    //Normal Itemconstructor with lore and hiddenenchants
-    public static void create(Inventory inventory, Material material, boolean enchanteffect, String name, String text, int slot) {
+    //Normal ItemConstructor with lore and hiddenEnchants
+    public static void create(Inventory inventory, Material material, boolean enchantEffect, String name, String text, int slot) {
         ItemStack item = new ItemStack(material);
         ItemMeta itemMeta = item.getItemMeta();
-        itemMeta.setDisplayName(name);
-        if (enchanteffect) {
+        itemMeta.setDisplayName(name);;
+        if (enchantEffect) {
             itemMeta.addEnchant(Enchantment.KNOCKBACK, 1, true);
             itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         }
 
-        ArrayList<String> lore = new ArrayList<>();
-        lore.add(text);
-        itemMeta.setLore(lore);
+        List<Component> lore = new ArrayList<>(); // To list with component
+        lore.add(Component.text(text));
+        itemMeta.lore(lore);
 
         item.setItemMeta(itemMeta);
         inventory.setItem(slot, item);
@@ -114,9 +117,9 @@ public class Items {
         ItemMeta itemMeta = item.getItemMeta();
         itemMeta.setDisplayName(name);
 
-        ArrayList<String> lore = new ArrayList<>();
-        lore.add(text);
-        itemMeta.setLore(lore);
+        List<Component> lore = new ArrayList<>();
+        lore.add(Component.text(text));
+        itemMeta.lore(lore);
 
         item.setItemMeta(itemMeta);
         inventory.setItem(slot, item);
@@ -124,44 +127,44 @@ public class Items {
 
 
     //Perks
-    //Itemcostructor for Perks with hidenenchants
-    public static void create(Inventory inventory, Material material, boolean enchanteffect, String name, String description, int cost, int cooldown, int slot) {
+    //ItemConstructor for Perks with hiddenEnchants
+    public static void create(Inventory inventory, Material material, boolean enchantEffect, String name, String description, int cost, int cooldown, int slot) {
         ItemStack item = new ItemStack(material);
         ItemMeta itemMeta = item.getItemMeta();
         itemMeta.setDisplayName(name);
-        if (enchanteffect) {
+        if (enchantEffect) {
             itemMeta.addEnchant(Enchantment.KNOCKBACK, 1, true);
             itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         }
 
-        ArrayList<String> lore = new ArrayList<>();
-        lore.add(ChatColor.GRAY + description);
-        lore.add(ChatColor.GOLD + "Preis: " + cost + " Wolle");
-        lore.add(ChatColor.GOLD + "Cooldown: " + cooldown);
-        itemMeta.setLore(lore);
+        List<Component> lore = new ArrayList<>();
+        lore.add(Component.text(ChatColor.GRAY + description));
+        lore.add(Component.text(ChatColor.GOLD + "Preis: " + cost + " Wolle"));
+        lore.add(Component.text(ChatColor.GOLD + "Cooldown: " + cooldown));
+        itemMeta.lore(lore);
 
         item.setItemMeta(itemMeta);
         inventory.setItem(slot, item);
     }
 
 
-    //PassivePerk Constructor with hiddenenchants
-    public static void createPassivePerk(Inventory inventory, Material material, boolean enchanteffect, String name, String description, String cost, String cooldown, int slot) {
+    //PassivePerk Constructor with hiddenEnchants
+    public static void createPassivePerk(Inventory inventory, Material material, boolean enchantEffect, String name, String description, String cost, String cooldown, int slot) {
         ItemStack item = new ItemStack(material);
         ItemMeta itemMeta = item.getItemMeta();
         itemMeta.setDisplayName(name);
-        if (enchanteffect) {
+        if (enchantEffect) {
             itemMeta.addEnchant(Enchantment.KNOCKBACK, 1, true);
             itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         }
 
-        ArrayList<String> lore = new ArrayList<>();
-        lore.add(ChatColor.GRAY + description);
+        List<Component> lore = new ArrayList<>();
+        lore.add(Component.text(ChatColor.GRAY + description));
         if (cost != null)
-            lore.add(cost);
+            lore.add(Component.text(cost));
         if (cooldown != null)
-            lore.add(cooldown);
-        itemMeta.setLore(lore);
+            lore.add(Component.text(cooldown));
+        itemMeta.lore(lore);
 
         item.setItemMeta(itemMeta);
         inventory.setItem(slot, item);
@@ -193,11 +196,11 @@ public class Items {
         ItemMeta itemMeta = item.getItemMeta();
         itemMeta.setDisplayName(name);
 
-        ArrayList<String> lore = new ArrayList<>();
-        lore.add(" ");
-        lore.add(text);
-        lore.add(" ");
-        itemMeta.setLore(lore);
+        List<Component> lore = new ArrayList<>();
+        lore.add(Component.text(" "));
+        lore.add(Component.text(text));
+        lore.add(Component.text(" "));
+        itemMeta.lore(lore);
 
         item.setItemMeta(itemMeta);
         inventory.setItem(slot, item);
@@ -208,20 +211,19 @@ public class Items {
         ItemMeta itemMeta = item.getItemMeta();
         itemMeta.setDisplayName(name);
 
-        ArrayList<String> lore = new ArrayList<>();
-        lore.add(" ");
-        lore.add(text);
-        lore.add(" ");
-        itemMeta.setLore(lore);
+        List<Component> lore = new ArrayList<>();
+        lore.add(Component.text(" "));
+        lore.add(Component.text(text));
+        lore.add(Component.text(" "));
+        itemMeta.lore(lore);
         itemMeta.addEnchant(Enchantment.KNOCKBACK, 1, true);
         itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-
 
         item.setItemMeta(itemMeta);
         inventory.setItem(slot, item);
     }
 
-    public static void createcooldown(Inventory inventory, Material material, int amount, String name, int slot) {
+    public static void createCooldown(Inventory inventory, Material material, int amount, String name, int slot) {
         ItemStack item = new ItemStack(material, amount);
         ItemMeta itemMeta = item.getItemMeta();
         itemMeta.setDisplayName(name);
@@ -271,7 +273,7 @@ public class Items {
 
             @Override
             public void run() {
-                Items.createcooldown(player.getInventory(), Material.GRAY_DYE, count, "Cooldown", slot);
+                Items.createCooldown(player.getInventory(), Material.GRAY_DYE, count, "Cooldown", slot);
                 count--;
                 if (count == 0) {
                     Items.create(player.getInventory(), perk, perkname, slot);

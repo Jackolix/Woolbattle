@@ -5,7 +5,6 @@ package codes.Elix.Woolbattle.gamestates;
 
 import codes.Elix.Woolbattle.countdowns.LobbyCountdown;
 import codes.Elix.Woolbattle.util.Console;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
 public class LobbyState extends GameState {

@@ -4,22 +4,20 @@
 package codes.Elix.Woolbattle.util;
 
 import codes.Elix.Woolbattle.game.LiveSystem;
-import codes.Elix.Woolbattle.items.LobbyItems;
-import org.bukkit.Bukkit;
+import com.xism4.sternalboard.SternalBoardHandler;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Objective;
 
 public class IngameScoreboard {
 
-    public static String Colorname1 = "§bBlau";
-    public static String Colorname2 = "§cRot";
+    public static String Colorname1 = "§cRot";
+    public static String Colorname2 = "§bBlau";
     public static String Colorname3 = "§aGreen";
     public static String Colorname4 = "§eGelb";
-    private static String MapName = "§3Custom";
+    private static final String MapName = "§3Custom";
 
     public static void setup(Player player) {
+        /*
         org.bukkit.scoreboard.Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
         Objective objective = scoreboard.registerNewObjective("abcd", "abcd");
         objective.setDisplayName("§f§lWOOLBATTLE");
@@ -39,7 +37,24 @@ public class IngameScoreboard {
         objective.getScore("§8» §7Dein Team").setScore(11);
         objective.getScore("   ").setScore(12);
         player.setScoreboard(scoreboard);
+         */
 
+        SternalBoardHandler board = new SternalBoardHandler(player);
+        board.updateTitle("§f§lWOOLBATTLE");
+        board.updateLine(0, "     ");
+        board.updateLine(1, "§8» §7Dein Team");
+        board.updateLine(2, " §7• " + team(player));
+        board.updateLine(3, "    ");
+        board.updateLine(4, "§8» §7Current Map");
+        board.updateLine(5, " §7• " + MapName);
+        board.updateLine(6, "     ");
+        board.updateLine(7, "§8» §7Leben");
+        board.updateLine(8, " §7• §4❤ " + LiveSystem.TeamLifes.get("red") + " §8- " + Colorname1);
+        board.updateLine(9, " §7• §4❤ " + LiveSystem.TeamLifes.get("blue") + " §8- " + Colorname2);
+        if (LiveSystem.Teams >=3)
+            board.updateLine(10, " §7• §4❤ " + LiveSystem.TeamLifes.get("green") + " §8- " + Colorname3);
+        if (LiveSystem.Teams >=4)
+            board.updateLine(11, " §7• §4❤ " + LiveSystem.TeamLifes.get("yellow") + " §8- " + Colorname4);
     }
 
     public static String team(Player player) {

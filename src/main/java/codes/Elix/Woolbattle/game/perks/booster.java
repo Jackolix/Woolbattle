@@ -3,6 +3,7 @@
 
 package codes.Elix.Woolbattle.game.perks;
 
+import codes.Elix.Woolbattle.game.PerkHelper;
 import codes.Elix.Woolbattle.items.Items;
 import codes.Elix.Woolbattle.main.Woolbattle;
 import org.bukkit.Bukkit;
@@ -14,6 +15,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.util.Vector;
 
+import java.util.Objects;
+
 
 public class booster implements Listener {
     int cooldown = 15;
@@ -23,7 +26,8 @@ public class booster implements Listener {
     public void onBoosterInteract(PlayerInteractEvent event) {
         if (event.getItem() == null)    return;
         if (event.getItem().getType() != Material.TRIPWIRE_HOOK) return;
-        if (!Items.cost(event.getPlayer(), cost)) return;
+        if (!Woolbattle.debug)
+            if (!Items.cost(event.getPlayer(), cost)) return;
         Player player = event.getPlayer();
 
         Vector vector = player.getLocation().getDirection().multiply(2.75D).setY(2D);
@@ -31,8 +35,11 @@ public class booster implements Listener {
         player.setVelocity(vector);
         player.playSound(player.getLocation(), Sound.ENTITY_CAT_HISS, 1F, 1F);
 
+        if (Objects.equals(PerkHelper.passive(player), "recharger"))
+            cooldown = 13;
         int slot = event.getPlayer().getInventory().getHeldItemSlot();
-        Items.visualCooldown(player, cooldown, Material.TRIPWIRE_HOOK, slot, "§3booster");
+        if (!Woolbattle.debug)
+            Items.visualCooldown(player, cooldown, Material.TRIPWIRE_HOOK, slot, "§3booster");
     }
     public static void enable() { Bukkit.getPluginManager().registerEvents(new booster(), Woolbattle.getPlugin()); }
     public static void disable() {}

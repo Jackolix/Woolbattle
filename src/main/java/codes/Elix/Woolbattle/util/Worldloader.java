@@ -3,6 +3,7 @@
 
 package codes.Elix.Woolbattle.util;
 
+import codes.Elix.Woolbattle.main.Woolbattle;
 import com.sk89q.worldedit.*;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
@@ -17,11 +18,15 @@ import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.session.ClipboardHolder;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
+import com.sk89q.worldedit.world.registry.BundledBlockData;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import com.sk89q.worldedit.world.World;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -66,7 +71,9 @@ public class Worldloader {
         }
     }
 
-    public static void remove(Location pos1, Location pos2) {
+    public static void remove() { // Location pos1, Location pos2
+        Location pos1 = new Location(Bukkit.getWorlds().get(0), -1, 69, -1);
+        Location pos2 = new Location(Bukkit.getWorlds().get(0), 1, 69, 1);
 
         World world = BukkitAdapter.adapt(pos1.getWorld());
         BlockState air = BukkitAdapter.adapt(Material.AIR.createBlockData());
@@ -77,29 +84,58 @@ public class Worldloader {
 
         EditSession editsession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(world, -1);
         try {
-            // editsession.setBlocks((Region) region, new BaseBlock(air));
             editsession.setBlocks((Region) region, new BaseBlock(air));
         } catch (MaxChangedBlocksException e) {
             e.printStackTrace();
         }
-
-        Console.send("Removed blocks");
-
-
-        /*
-        BlockVector3 blockVector3 = BlockVector3.at(location.getBlockX(), location.getBlockY(), location.getBlockZ());
-        World world = BukkitAdapter.adapt(location.getWorld());
-
-        EditSession editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(world, -1);
-        try {
-            editSession.setBlocks()
-        }
-
-         */
+        editsession.flushQueue(); // Das hier hat gefehlt damit es funktioniert ...
     }
 
     public static void teleport(Location location) {
         for (Player p : Bukkit.getOnlinePlayers())
             p.teleport(location);
+    }
+
+    public static void pasteProtocols(Player player, Location location, Location location1) {
+        /*
+        Bukkit.getScheduler().runTaskAsynchronously(Woolbattle.getPlugin(), new Runnable() {
+            @Override
+            public void run() {
+                player.sendBlockChange(location, Bukkit.createBlockData(Material.DIAMOND_BLOCK));
+
+                BlockData data = Bukkit.createBlockData(Material.DIAMOND_BLOCK);
+                Location pos1 = location;
+                Location pos2 = location1;
+                Vector max = Vector.getMaximum(pos1.toVector(), pos2.toVector());
+                Vector min = Vector.getMinimum(pos1.toVector(), pos2.toVector());
+                for (int i = min.getBlockX(); i <= max.getBlockX();i++) {
+                    for (int j = min.getBlockY(); j <= max.getBlockY(); j++) {
+                        for (int k = min.getBlockZ(); k <= max.getBlockZ();k++) {
+                            Block block = Bukkit.getServer().getWorlds().get(0).getBlockAt(i,j,k);
+                            block.setBlockData(data);
+                        }
+                    }
+                }
+            }
+        });
+
+         */
+        // player.sendBlockChange(location, Bukkit.createBlockData(Material.DIAMOND_BLOCK));
+
+        BlockData data = Bukkit.createBlockData(Material.DIAMOND_BLOCK);
+        Location pos1 = location;
+        Location pos2 = location1;
+        Vector max = Vector.getMaximum(pos1.toVector(), pos2.toVector());
+        Vector min = Vector.getMinimum(pos1.toVector(), pos2.toVector());
+        for (int i = min.getBlockX(); i <= max.getBlockX();i++) {
+            for (int j = min.getBlockY(); j <= max.getBlockY(); j++) {
+                for (int k = min.getBlockZ(); k <= max.getBlockZ();k++) {
+                    Block block = Bukkit.getWorlds().get(0).getBlockAt(i,j,k);
+                    // block.setBlockData(data);
+                    player.sendBlockChange(block.getLocation(), data);
+                }
+            }
+        }
+
     }
 }

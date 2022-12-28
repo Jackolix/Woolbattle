@@ -3,22 +3,23 @@
 
 package codes.Elix.Woolbattle.util;
 
-import codes.Elix.Woolbattle.countdowns.LobbyCountdown;
 import codes.Elix.Woolbattle.gamestates.GameStateManager;
 import codes.Elix.Woolbattle.gamestates.LobbyState;
 import codes.Elix.Woolbattle.main.Woolbattle;
-import org.bukkit.Bukkit;
+import com.xism4.sternalboard.SternalBoardHandler;
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Objective;
+
+import java.util.ArrayList;
 
 public class LobbyScoreboard {
 
-    private static String MapName = "§3Custom";
+    private final static String MapName = "§3Custom";
+    static ArrayList<SternalBoardHandler> boards = new ArrayList<>();
 
     public static void setup(Player player) {
         if (!(GameStateManager.getCurrentGameState() instanceof LobbyState lobbyState)) return;
-        org.bukkit.scoreboard.Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+        /*
+        Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
         Objective objective = scoreboard.registerNewObjective("abcd", "abcd");
         objective.setDisplayName("§f§lWOOLBATTLE");
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
@@ -41,7 +42,31 @@ public class LobbyScoreboard {
         objective.getScore("§8» §7Dein Team").setScore(12);
         objective.getScore("     ").setScore(13);
         player.setScoreboard(scoreboard);
+         */
+        SternalBoardHandler board = new SternalBoardHandler(player);
+        board.updateTitle("§f§lWOOLBATTLE");
+        board.updateLine(0, "     ");
+        board.updateLine(1, "§8» §7Dein Team");
+        board.updateLine(2, " §7• " + IngameScoreboard.team(player));
+        board.updateLine(3, "    ");
+        board.updateLine(4, "§8» §7Current Map");
+        board.updateLine(5, " §7• " + MapName);
+        board.updateLine(6, "   ");
+        board.updateLine(7, "§8» §7Wartezeit");
+        board.updateLine(8, " §7• §3" + lobbyState.getCountdown().getSeconds());
+        board.updateLine(9, "  ");
+        board.updateLine(10, "§8» §7Spieler");
+        board.updateLine(11, " §7• §3" + Woolbattle.players.size() + "/" + LobbyState.MAX_PLAYERS);
+        board.updateLine(12, " ");
+        boards.add(board);
+    }
 
+    public static void change(Player player) {
+        if (!(GameStateManager.getCurrentGameState() instanceof LobbyState lobbyState)) return;
+        for (SternalBoardHandler boar : boards) {
+            boar.updateLine(8, " §7• §3" +  lobbyState.getCountdown().getSeconds());
+            boar.updateLine(2, " §7• " + IngameScoreboard.team(player));
+        }
     }
 
 }

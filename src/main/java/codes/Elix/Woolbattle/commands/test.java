@@ -4,18 +4,25 @@
 package codes.Elix.Woolbattle.commands;
 
 import codes.Elix.Woolbattle.game.LiveSystem;
+import codes.Elix.Woolbattle.game.Perk;
 import codes.Elix.Woolbattle.gamestates.IngameState;
 import codes.Elix.Woolbattle.items.Items;
 import codes.Elix.Woolbattle.items.PerkItems;
 import codes.Elix.Woolbattle.main.Woolbattle;
 import codes.Elix.Woolbattle.util.Console;
-import codes.Elix.Woolbattle.util.ConsoleAnimator;
+import codes.Elix.Woolbattle.util.Worldloader;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -23,36 +30,55 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class test implements CommandExecutor {
+public class test implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         System.out.println("test");
+        if (!(sender instanceof Player player)) return false;
+        if (args[0] == null) args[0] = String.valueOf(player.getLocation().getX());
+        if (args[1] == null) args[1] = String.valueOf(player.getLocation().getY());
+        if (args[2] == null) args[2] = String.valueOf(player.getLocation().getZ());
+        double posX = Double.parseDouble(args[0]);
+        double posY = Double.parseDouble(args[1]);
+        double posZ = Double.parseDouble(args[2]);
+
+        Worldloader.pasteProtocols(player, player.getLocation(), new Location(player.getWorld(), posX, posY, posZ));
+
+        /*
+        HashMap<Player, Perk> perks = new HashMap<>();
+        String FirstPerk = "1Perk";
+        String SecondPerk = "2Perk";
+        String PassivePerk = "Passive";
+        Player player = Bukkit.getPlayer("Jackolix");
+
+        Perk hey = new Perk(player, FirstPerk, SecondPerk, PassivePerk);
+        perks.put(player, hey);
+        System.out.println(perks);
+
+        Perk playerperks = perks.get(player);
+        String FirstPerk1 = playerperks.getfirstPerk();
+        String SecondPerk1 = playerperks.getsecondtPerk();
+        String PassivePerk1 = playerperks.getpassivePerk();
+        System.out.println(FirstPerk1);
+        System.out.println(SecondPerk1);
+        System.out.println(PassivePerk1);
+
+         */
 
         return false;
     }
-}
 
-// Logger
-/*
-on load / paste the file
-[13:52:29 WARN]: java.util.zip.ZipException: Not in GZIP format
-[13:52:29 WARN]: 	at java.base/java.util.zip.GZIPInputStream.readHeader(GZIPInputStream.java:165)
-[13:52:29 WARN]: 	at java.base/java.util.zip.GZIPInputStream.<init>(GZIPInputStream.java:79)
-[13:52:29 WARN]: 	at java.base/java.util.zip.GZIPInputStream.<init>(GZIPInputStream.java:91)
-[13:52:29 WARN]: 	at FastAsyncWorldEdit-Bukkit-2.4.5-SNAPSHOT-273.jar//com.sk89q.worldedit.extent.clipboard.io.BuiltInClipboardFormat$1.getReader(BuiltInClipboardFormat.java:66)
-[13:52:29 WARN]: 	at Woolbattle-0.6.5.jar//codes.Elix.Woolbattle.util.Worldloader.paste(Worldloader.java:40)
-[13:52:29 WARN]: 	at Woolbattle-0.6.5.jar//codes.Elix.Woolbattle.main.Woolbattle.LobbyMap(Woolbattle.java:161)
-[13:52:29 WARN]: 	at Woolbattle-0.6.5.jar//codes.Elix.Woolbattle.main.Woolbattle.onEnable(Woolbattle.java:59)
-[13:52:29 WARN]: 	at org.bukkit.plugin.java.JavaPlugin.setEnabled(JavaPlugin.java:264)
-[13:52:29 WARN]: 	at org.bukkit.plugin.java.JavaPluginLoader.enablePlugin(JavaPluginLoader.java:370)
-[13:52:29 WARN]: 	at org.bukkit.plugin.SimplePluginManager.enablePlugin(SimplePluginManager.java:542)
-[13:52:29 WARN]: 	at org.bukkit.craftbukkit.v1_19_R1.CraftServer.enablePlugin(CraftServer.java:565)
-[13:52:29 WARN]: 	at org.bukkit.craftbukkit.v1_19_R1.CraftServer.enablePlugins(CraftServer.java:479)
-[13:52:29 WARN]: 	at net.minecraft.server.MinecraftServer.loadWorld0(MinecraftServer.java:636)
-[13:52:29 WARN]: 	at net.minecraft.server.MinecraftServer.loadLevel(MinecraftServer.java:422)
-[13:52:29 WARN]: 	at net.minecraft.server.dedicated.DedicatedServer.e(DedicatedServer.java:306)
-[13:52:29 WARN]: 	at net.minecraft.server.MinecraftServer.v(MinecraftServer.java:1126)
-[13:52:29 WARN]: 	at net.minecraft.server.MinecraftServer.lambda$spin$0(MinecraftServer.java:305)
-[13:52:29 WARN]: 	at java.base/java.lang.Thread.run(Thread.java:833)
- */
+    @Override
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
+        if (!(sender instanceof Player player)) return null;
+        ArrayList<String> completerlist = new ArrayList<>();
+        if (args.length == 1)
+            completerlist.add(String.valueOf(player.getLocation().getBlockX()));
+        if (args.length == 2)
+            completerlist.add(String.valueOf(player.getLocation().getBlockY()));
+        if (args.length == 3)
+            completerlist.add(String.valueOf(player.getLocation().getBlockZ()));
+        return completerlist;
+    }
+}

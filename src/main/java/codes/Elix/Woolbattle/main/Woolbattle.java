@@ -26,6 +26,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 import java.lang.management.ManagementFactory;
@@ -42,7 +43,6 @@ public class Woolbattle extends JavaPlugin {
 
     public static List<Block> blocks = new ArrayList<>();
     private static Woolbattle plugin;
-    private FileConfiguration customConfig;
     public static boolean debug = false;
 
 
@@ -51,14 +51,6 @@ public class Woolbattle extends JavaPlugin {
         plugin = this;
         gameStateManager = new GameStateManager(this);
         players = new ArrayList<>();
-
-        /*
-        try {
-            ExportResource("/Lobby1.schem");
-            ExportResource("/game1.schem");
-        } catch (Exception e) { throw new RuntimeException(e); }
-         */
-        createFiles();
 
         initmonitor();
         PluginMessage();
@@ -86,7 +78,7 @@ public class Woolbattle extends JavaPlugin {
         getCommand("switchteam").setExecutor(new Switchteam());
         getCommand("fix").setExecutor(new Fix());
 
-        pluginManager.registerEvents(new PlayerLobbyConnectionListener(this), this);
+        pluginManager.registerEvents(new PlayerLobbyConnectionListener(), this);
         pluginManager.registerEvents(new DoubleJump(), this);
         pluginManager.registerEvents(new GameProtectionListener(), this);
         pluginManager.registerEvents(new LobbyItems(), this);
@@ -94,7 +86,7 @@ public class Woolbattle extends JavaPlugin {
         pluginManager.registerEvents(new BowShoot(), this);
         pluginManager.registerEvents(chat, this);
 
-        BukkitTask keepDayTask = new KeepDayTask().runTaskTimer(this, 0L, 100L);
+        new KeepDayTask().runTaskTimer(this, 0L, 100L);
 
     }
 
@@ -106,7 +98,7 @@ public class Woolbattle extends JavaPlugin {
         // Log related items which are unchanging
         OperatingSystemMXBean os = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
         getLogger().info("Number of processors: " + Runtime.getRuntime().availableProcessors());
-        getLogger().info("Physical memory: " + os.getTotalPhysicalMemorySize()/1048576L + " MB");
+        getLogger().info("Physical memory: " + os.getTotalMemorySize()/1048576L + " MB");
         getLogger().info("Maximum heap: " + Runtime.getRuntime().maxMemory()/1048576L + " MB");
 
         // Log maximum metaspace
@@ -122,7 +114,6 @@ public class Woolbattle extends JavaPlugin {
                 break;
             }
         }
-
 
         // Log server view distance
         getLogger().info("server.properties view-distance: " + getServer().getViewDistance());
@@ -143,7 +134,7 @@ public class Woolbattle extends JavaPlugin {
 
 
     public static void safewool() {
-
+        boolean enabled = debug;
         World w = Bukkit.getServer().getWorlds().get(0);
         for (Chunk c : w.getLoadedChunks()) {
             int cx = c.getX() << 4;
@@ -153,38 +144,13 @@ public class Woolbattle extends JavaPlugin {
                     for (int y = 0; y < 128; y++) {
                         if (Tag.WOOL.isTagged(w.getBlockAt(x, y, z).getType())) {
                             blocks.add(w.getBlockAt(x,y,z));
-                            Console.send("X: " + x + " Y: " + y + " Z: " + z);
+                            if (enabled)
+                                Console.send("X: " + x + " Y: " + y + " Z: " + z);
                         }
                     }
                 }
             }
         }
-
-        /*
-        This is for multithreading
-        Bukkit.getScheduler().runTaskAsynchronously(Woolbattle.getPlugin(), new Runnable() {
-            @Override
-            public void run() {
-                World w = Bukkit.getServer().getWorlds().get(0);
-                for (Chunk c : w.getLoadedChunks()) {
-                    int cx = c.getX() << 4;
-                    int cz = c.getZ() << 4;
-                    for (int x = cx; x < cx + 16; x++) {
-                        for (int z = cz; z < cz + 16; z++) {
-                            for (int y = 0; y < 128; y++) {
-                                if (Tag.WOOL.isTagged(w.getBlockAt(x, y, z).getType())) {
-                                    blocks.add(w.getBlockAt(x,y,z));
-                                    Console.send("X: " + x + " Y: " + y + " Z: " + z);
-                                }
-                            }
-                        }
-                    }
-                }
-                Console.send("Safed all Woolblocks!");
-            }
-        });
-         */
-
         Console.send("Safed all Woolblocks!");
     }
 
@@ -206,49 +172,6 @@ public class Woolbattle extends JavaPlugin {
     private void LobbyMap() {
         Worldloader.paste(new Location(Bukkit.getServer().getWorlds().get(0), 2, 70, 1), new File("./plugins/Woolbattle/Lobby1.schem"));
     }
-    // new File("./plugins/Woolbattle/Lobby1.schem")
-    private void createFiles() {
-
-        File customConfigFile = new File(getDataFolder(), "PlayerPerkConfig.yml");
-        if (!customConfigFile.exists()) {
-            customConfigFile.getParentFile().mkdirs();
-            saveResource("PlayerPerkConfig.yml", false);
-        }
-
-        customConfig = new YamlConfiguration();
-        try {
-            customConfig.load(customConfigFile);
-        } catch (IOException | InvalidConfigurationException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    static public String ExportResource(String resourceName) throws Exception {
-        InputStream stream = null;
-        OutputStream resStreamOut = null;
-        String jarFolder;
-        try {
-            stream = Woolbattle.class.getResourceAsStream(resourceName);//note that each / is a directory down in the "jar tree" been the jar the root of the tree
-            if(stream == null) {
-                throw new Exception("Cannot get resource \"" + resourceName + "\" from Jar file.");
-            }
-
-            int readBytes;
-            byte[] buffer = new byte[4096];
-            jarFolder = new File(Woolbattle.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).getParentFile().getPath().replace('\\', '/');
-            resStreamOut = new FileOutputStream("./plugins/Woolbattle" + resourceName);
-            while ((readBytes = stream.read(buffer)) > 0) {
-                resStreamOut.write(buffer, 0, readBytes);
-            }
-        } catch (Exception ex) {
-            throw ex;
-        } finally {
-            stream.close();
-            resStreamOut.close();
-        }
-        return jarFolder + resourceName;
-    }
 
     public static ArrayList<Player> getPlayers() {
         return players;
@@ -257,23 +180,22 @@ public class Woolbattle extends JavaPlugin {
         return gameStateManager;
     }
     public static Woolbattle getPlugin() { return plugin; }
-    public FileConfiguration getCustomConfig() { return this.customConfig; }
-
     private void PluginMessage() {
-        Console.send("\n" +
-                "\n __          __         _             \n" +
-                " \\ \\        / /        | |            \n" +
-                "  \\ \\  /\\  / /__   ___ | |            \n" +
-                "   \\ \\/  \\/ / _ \\ / _ \\| |            \n" +
-                "    \\  /\\  / (_) | (_) | |            \n" +
-                "     \\/  \\/_\\___/ \\___/|_| _   _      \n" +
-                "          | |         | | | | | |     \n" +
-                "          | |__   __ _| |_| |_| | ___ \n" +
-                "          | '_ \\ / _` | __| __| |/ _ \\\n" +
-                "          | |_) | (_| | |_| |_| |  __/\n" +
-                "          |_.__/ \\__,_|\\__|\\__|_|\\___|\n" +
-                "                                      \n" +
-                "                                      \n");
+        Console.send("""
+
+                 __          __         _            \s
+                 \\ \\        / /        | |           \s
+                  \\ \\  /\\  / /__   ___ | |           \s
+                   \\ \\/  \\/ / _ \\ / _ \\| |           \s
+                    \\  /\\  / (_) | (_) | |           \s
+                     \\/  \\/_\\___/ \\___/|_| _   _     \s
+                          | |         | | | | | |    \s
+                          | |__   __ _| |_| |_| | ___\s
+                          | '_ \\ / _` | __| __| |/ _ \\
+                          | |_) | (_| | |_| |_| |  __/
+                          |_.__/ \\__,_|\\__|\\__|_|\\___|
+                                                     \s
+                """);
     }
 
 

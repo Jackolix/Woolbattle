@@ -51,6 +51,10 @@ public class IngameState extends GameState {
         woolbomb.enable();
         rope.enable();
         enterhaken.enable();
+
+        for (Player player : Items.perks.keySet())
+            if (!player.isOnline())
+                Items.perks.remove(player);
     }
 
     @Override

@@ -53,7 +53,6 @@ public class Chat implements Listener, CommandExecutor {
             send(true, player, msg);
         } else {
             ArrayList<Player> team = LiveSystem.VotedPlayers.get(player);
-            Console.send(String.valueOf(team.size()));
 
             if (team.size() <= 1) {
                 send(true, player, msg);

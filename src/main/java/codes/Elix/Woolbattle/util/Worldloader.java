@@ -122,6 +122,29 @@ public class Worldloader {
          */
         // player.sendBlockChange(location, Bukkit.createBlockData(Material.DIAMOND_BLOCK));
 
+        Bukkit.getScheduler().runTaskAsynchronously(Woolbattle.getPlugin(), new Runnable() {
+            @Override
+            public void run() {
+                BlockData data = Bukkit.createBlockData(Material.DIAMOND_BLOCK);
+                Location pos1 = location;
+                Location pos2 = location1;
+                Vector max = Vector.getMaximum(pos1.toVector(), pos2.toVector());
+                Vector min = Vector.getMinimum(pos1.toVector(), pos2.toVector());
+                for (int i = min.getBlockX(); i <= max.getBlockX(); i++) {
+                    for (int j = min.getBlockY(); j <= max.getBlockY(); j++) {
+                        for (int k = min.getBlockZ(); k <= max.getBlockZ(); k++) {
+                            Block block = Bukkit.getWorlds().get(0).getBlockAt(i, j, k);
+                            // block.setBlockData(data);
+                            player.sendBlockChange(block.getLocation(), data);
+                        }
+                    }
+                }
+            }
+        });
+    }}
+
+         /*
+
         BlockData data = Bukkit.createBlockData(Material.DIAMOND_BLOCK);
         Location pos1 = location;
         Location pos2 = location1;
@@ -139,3 +162,11 @@ public class Worldloader {
 
     }
 }
+/*
+public void sendBlockChange(Location loc, Material material, byte data) {
+        if (this.getHandle().connection == null) return;
+
+        ClientboundBlockUpdatePacket packet = new ClientboundBlockUpdatePacket(new BlockPos(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()), CraftMagicNumbers.getBlock(material, data));
+        this.getHandle().connection.send(packet);
+    }
+ */

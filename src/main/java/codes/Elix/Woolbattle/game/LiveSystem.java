@@ -22,5 +22,6 @@ public class LiveSystem {
     public static ArrayList<Player> hitted = new ArrayList<>();
     public static HashMap<String, Integer> TeamLifes = new HashMap<>();
 
-    public static ArrayList<Perk> players = new ArrayList<>();
+    // public static ArrayList<Perk> players = new ArrayList<>();
+    public static HashMap<Player, Perk> players= new HashMap<>();
 }

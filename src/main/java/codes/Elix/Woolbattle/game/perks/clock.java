@@ -24,7 +24,8 @@ public class clock implements Listener {
             if (!Items.cost(player, cost)) return;
 
         Location location = player.getLocation();
-        Woolbattle.getPlugin().getServer().getScheduler().scheduleAsyncDelayedTask(Woolbattle.getPlugin(),
+        // Can only be triggered synchronously //TODO is it possible asynchronous?
+        Woolbattle.getPlugin().getServer().getScheduler().scheduleSyncDelayedTask(Woolbattle.getPlugin(),
                 () -> player.teleport(location), 20 * teleportTime);
 
         player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1F, 1F);

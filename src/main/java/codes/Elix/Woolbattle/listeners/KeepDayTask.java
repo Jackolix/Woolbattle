@@ -11,6 +11,6 @@ public class KeepDayTask extends BukkitRunnable {
 
     @Override
     public void run() {
-        Bukkit.getServer().getWorlds().get(0).setTime(0L);
+        Bukkit.getServer().getWorlds().get(0).setTime(5000L);
     }
 }

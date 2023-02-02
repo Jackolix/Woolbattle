@@ -6,11 +6,10 @@ package codes.Elix.Woolbattle.listeners;
 
 import codes.Elix.Woolbattle.countdowns.LobbyCountdown;
 import codes.Elix.Woolbattle.game.LiveSystem;
-import codes.Elix.Woolbattle.game.Perk;
+import codes.Elix.Woolbattle.game.PerkHelper;
 import codes.Elix.Woolbattle.gamestates.GameStateManager;
 import codes.Elix.Woolbattle.gamestates.IngameState;
 import codes.Elix.Woolbattle.gamestates.LobbyState;
-import codes.Elix.Woolbattle.items.Items;
 import codes.Elix.Woolbattle.items.LobbyItems;
 import codes.Elix.Woolbattle.items.Voting;
 import codes.Elix.Woolbattle.main.Woolbattle;
@@ -25,13 +24,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -81,16 +78,9 @@ public class PlayerLobbyConnectionListener implements Listener {
                 countdown.start();
             }
         }
-        /*
+
         // Add player to perk database
-        FileConfiguration config = Woolbattle.getPlugin().getConfig();
-        String FirstPerk = (String) config.get(player.getName() + ".1Perk");
-        String SecondPerk = (String) config.get(player.getName() + ".2Perk");
-        String PassivePerk = (String) config.get(player.getName() + ".passive");
-        Perk perk = new Perk(player, FirstPerk, SecondPerk, PassivePerk);
-        Items.perks.put(player, perk);
-        System.out.println(Items.perks);
-         */
+        PerkHelper.onJoin(player);
     }
 
     @EventHandler
@@ -117,15 +107,16 @@ public class PlayerLobbyConnectionListener implements Listener {
                 countdown.startIdle();
             }
         }
-/*
+        // See IngameState:55
+        /*
         Bukkit.getScheduler().runTaskLaterAsynchronously(Woolbattle.getPlugin(), new Runnable() {
             @Override
             public void run() {
                 if (!player.isOnline())
                     Items.perks.remove(player);
             }
-        }, 20*5);
- */
+        }, 20*15);
+         */
 
         Voting.voted.remove(player);
         Voting.update();

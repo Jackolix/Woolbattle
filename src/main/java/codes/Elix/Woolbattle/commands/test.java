@@ -3,32 +3,24 @@
 
 package codes.Elix.Woolbattle.commands;
 
-import codes.Elix.Woolbattle.game.LiveSystem;
 import codes.Elix.Woolbattle.game.Perk;
-import codes.Elix.Woolbattle.gamestates.IngameState;
+import codes.Elix.Woolbattle.game.PerkHelper;
 import codes.Elix.Woolbattle.items.Items;
-import codes.Elix.Woolbattle.items.PerkItems;
-import codes.Elix.Woolbattle.main.Woolbattle;
-import codes.Elix.Woolbattle.util.Console;
 import codes.Elix.Woolbattle.util.Worldloader;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.UUID;
 
 public class test implements CommandExecutor, TabCompleter {
 
@@ -36,6 +28,16 @@ public class test implements CommandExecutor, TabCompleter {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         System.out.println("test");
         if (!(sender instanceof Player player)) return false;
+        PerkHelper.setPerk(player, new Perk("booster", "rope", "recharger", false, 6, 7));
+        player.sendMessage(Component.text("Injected to database"));
+        /*
+        // PerkHelper.getPerks(player);
+        System.out.println(Items.perks);
+        Perk perk = PerkHelper.getPerks(player);
+        System.out.println("Firstperk: " + perk.getfirstPerk());
+        System.out.println("SecondPerk: " + perk.getsecondPerk());
+        System.out.println("Passiveperk: " + perk.getpassivePerk());
+
         if (args[0] == null) args[0] = String.valueOf(player.getLocation().getX());
         if (args[1] == null) args[1] = String.valueOf(player.getLocation().getY());
         if (args[2] == null) args[2] = String.valueOf(player.getLocation().getZ());
@@ -44,6 +46,8 @@ public class test implements CommandExecutor, TabCompleter {
         double posZ = Double.parseDouble(args[2]);
 
         Worldloader.pasteProtocols(player, player.getLocation(), new Location(player.getWorld(), posX, posY, posZ));
+
+
 
         /*
         HashMap<Player, Perk> perks = new HashMap<>();
@@ -74,11 +78,20 @@ public class test implements CommandExecutor, TabCompleter {
         if (!(sender instanceof Player player)) return null;
         ArrayList<String> completerlist = new ArrayList<>();
         if (args.length == 1)
-            completerlist.add(String.valueOf(player.getLocation().getBlockX()));
+            if (player.getTargetBlockExact(5) == null) {
+                completerlist.add(String.valueOf(player.getLocation().getBlockX()));
+            } else
+                completerlist.add(String.valueOf(player.getTargetBlockExact(5).getLocation().getBlockX()));
         if (args.length == 2)
-            completerlist.add(String.valueOf(player.getLocation().getBlockY()));
+            if (player.getTargetBlockExact(5) == null) {
+                completerlist.add(String.valueOf(player.getLocation().getBlockY()));
+            } else
+                completerlist.add(String.valueOf(player.getTargetBlockExact(5).getLocation().getBlockY()));
         if (args.length == 3)
-            completerlist.add(String.valueOf(player.getLocation().getBlockZ()));
+            if (player.getTargetBlockExact(5) == null) {
+                completerlist.add(String.valueOf(player.getLocation().getBlockZ()));
+            } else
+                completerlist.add(String.valueOf(player.getTargetBlockExact(5).getLocation().getBlockZ()));
         return completerlist;
     }
 }

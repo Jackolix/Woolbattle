@@ -3,13 +3,18 @@
 
 package codes.Elix.Woolbattle.util;
 
+import codes.Elix.Woolbattle.main.Woolbattle;
+import codes.Elix.Woolbattle.util.mongo.Database;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
 public class Console {
 
     public static void send(String message) {
-        Bukkit.getConsoleSender().sendMessage(message);
+        if (message.contains(Database.PREFIX))
+            if (!Woolbattle.debug)
+                return;
+        Bukkit.getConsoleSender().sendMessage(Woolbattle.PREFIX + message);
     }
 
     public static void send(String message, ChatColor color) {

@@ -266,18 +266,24 @@ public class Items {
     }
 
     public static void visualCooldown(Player player, int cooldown, Material perk, int slot, String perkname) {
-        Items.interact.add(player);
+        interact.add(player);
+        ItemStack item = new ItemStack(perk);
+        ItemMeta itemMeta = item.getItemMeta();
+        itemMeta.displayName(Component.text(perkname));
+        itemMeta.setUnbreakable(true);
+        item.setItemMeta(itemMeta);
 
         int taskID = Bukkit.getScheduler().scheduleAsyncRepeatingTask(Woolbattle.getPlugin(), new Runnable() {
             int count = cooldown;
 
             @Override
             public void run() {
-                Items.createCooldown(player.getInventory(), Material.GRAY_DYE, count, "Cooldown", slot);
+                createCooldown(player.getInventory(), Material.GRAY_DYE, count, "Cooldown", slot);
                 count--;
                 if (count == 0) {
-                    Items.create(player.getInventory(), perk, perkname, slot);
-                    Items.interact.remove(player);
+                    // create(player.getInventory(), item, perkname, slot);
+                    player.getInventory().setItem(slot, item);
+                    interact.remove(player);
                     cancel(tasks.get(player).get(perkname));
                 }
             }

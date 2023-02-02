@@ -5,12 +5,12 @@ package codes.Elix.Woolbattle.items;
 
 import codes.Elix.Woolbattle.game.LiveSystem;
 import codes.Elix.Woolbattle.game.Perk;
+import codes.Elix.Woolbattle.game.PerkHelper;
 import codes.Elix.Woolbattle.gamestates.GameStateManager;
 import codes.Elix.Woolbattle.gamestates.IngameState;
 import codes.Elix.Woolbattle.gamestates.LobbyState;
 import codes.Elix.Woolbattle.main.Woolbattle;
 import codes.Elix.Woolbattle.util.Console;
-import dev.jackolix.WoolbattleFile;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -172,15 +172,16 @@ public class LobbyItems implements Listener {
         FileConfiguration config = Woolbattle.getPlugin().getConfig();
         Material clicked = event.getCurrentItem().getType();
 
+        /*
         String FirstPerk = (String) config.get(player.getName() + ".1Perk");
         String SecondPerk = (String) config.get(player.getName() + ".2Perk");
         String PassivePerk = (String) config.get(player.getName() + ".passive");
-
-        /*
-        String FirstPerk = player.getFirstPerk();
-        String SecondPerk = player.getSecondPerk();
-        String PassivePerk = player.getPassivePerk();
          */
+        Perk perk = PerkHelper.getPerks(player);
+        String FirstPerk = perk.getfirstPerk();
+        String SecondPerk = perk.getsecondPerk();
+        String PassivePerk = perk.getpassivePerk();
+
 
         if (event.getView().title().equals(Component.text("§3Wähle deine Perks!"))) {
             event.setCancelled(true); //Player kann das Item nicht aus dem Inventar ziehen
@@ -218,7 +219,7 @@ public class LobbyItems implements Listener {
                     return;
                 }
             }
-            Woolbattle.getPlugin().saveConfig();
+            // Woolbattle.getPlugin().saveConfig();
             PerkInventory(player, "§3Erstes Perk:");
         }
 
@@ -249,13 +250,14 @@ public class LobbyItems implements Listener {
                     return;
                 }
             }
-            Woolbattle.getPlugin().saveConfig();
+            // Woolbattle.getPlugin().saveConfig();
             PerkInventory(player, "§3Zweites Perk:");
         }
 
         if (event.getView().title().equals(Component.text("§3Verfügbare Perks:"))) {
             event.setCancelled(true);
             String name = event.getWhoClicked().getName();
+            /*
             switch (clicked) {
                 case LADDER -> config.set(name + ".passive", "aufzug");
                 case TNT -> config.set(name + ".passive", "explodierender_pfeil");
@@ -276,6 +278,26 @@ public class LobbyItems implements Listener {
                 }
             }
             Woolbattle.getPlugin().saveConfig();
+             */
+            switch (clicked) {
+                case LADDER -> PerkItems.selectPassive(player, "aufzug");
+                case TNT -> PerkItems.selectPassive(player, "exploding_arrow");
+                case FISHING_ROD -> PerkItems.selectPassive(player, "IDK");
+                case DISPENSER -> PerkItems.selectPassive(player, "arrowrain");
+                case IRON_CHESTPLATE -> PerkItems.selectPassive(player, "recharger");
+                case CACTUS -> PerkItems.selectPassive(player, "reflector");
+                case RABBIT_FOOT -> PerkItems.selectPassive(player, "rocket_jump");
+                case GOLD_INGOT -> PerkItems.selectPassive(player, "portal");
+                case BLAZE_ROD -> PerkItems.selectPassive(player, "shockarrow");
+                case ARROW -> PerkItems.selectPassive(player, "slowarrow");
+                case SPIDER_SPAWN_EGG -> PerkItems.selectPassive(player, "spider");
+                case DIAMOND_BOOTS -> PerkItems.selectPassive(player, "stomper");
+                case GOLDEN_HOE -> PerkItems.selectPassive(player, "slimeplattform");
+                case DARK_OAK_DOOR -> {
+                    PerkVorInventory(player);
+                    return;
+                }
+            }
             PassivePerkInventory(player);
         }
 
@@ -312,28 +334,31 @@ public class LobbyItems implements Listener {
             event.setCancelled(true);
         if (event.getCurrentItem().getType() == Material.LEATHER_BOOTS)
             event.setCancelled(true);
-        if (event.getCurrentItem().getItemMeta().hasItemFlag(ItemFlag.HIDE_DESTROYS))
+        if (event.getCurrentItem().hasItemFlag(ItemFlag.HIDE_DESTROYS))
             event.setCancelled(true);
     }
 
     public void checkSelectet(Player player, Inventory inventory) {
         FileConfiguration config = Woolbattle.getPlugin().getConfig();
+        /*
         Object Fperk = config.get(player.getName() + ".1Perk");
         Object Sperk = config.get(player.getName() + ".2Perk");
         Object Pperk = config.get(player.getName() + ".passive");
+         */
 
         Integer number = Voting.voted.get(player);
-        /*
-        String Fperk = player.getFirstPerk();
-        String Sperk = player.getSecondPerk();
-        String Pperk = player.getPassivePerk();
+        Perk perk = PerkHelper.getPerks(player);
 
-         */
+        String Fperk = perk.getfirstPerk();
+        String Sperk = perk.getsecondPerk();
+        String Pperk = perk.getpassivePerk();
+
 
         switch (Title.get(player)) {
             case "§3Erstes Perk:" -> {
                 if (Fperk == null) {
-                    config.set(player.getName() + ".1Perk", "booster");
+                    perk.setFirstPerk("booster");
+                    // config.set(player.getName() + ".1Perk", "booster");
                     Fperk = "booster";
                 }
                 switch (Fperk.toString()) {
@@ -356,12 +381,13 @@ public class LobbyItems implements Listener {
                     case "wandgenerator" -> Items.create(inventory, Material.RED_STAINED_GLASS_PANE, true, "§3Wandgenerator", "Baut eine Wand aus Wolle vor dir", 8, 10, 16);
                     case "woolbombe" -> Items.create(inventory, Material.TNT, true, "§3WoolBombe", "Booste deine Gegner mit einem werfbaren TNT weg!", 8, 13, 17);
                     case "thegrabber" -> Items.create(inventory, Material.FISHING_ROD, true, "§3The Grabber", "Ziehe Gegner zu dir!", 8, 5, 18);
-                    default -> System.out.println("[NO_FIRST_PERK]: " + player.getName());
+                    default -> Console.send("[NO_FIRST_PERK]: " + player.getName());
                 }
             }
             case "§3Zweites Perk:" -> {
                 if (Sperk == null) {
-                    config.set(player.getName() + ".2Perk", "enterhaken");
+                    perk.setSecondPerk("enterhaken");
+                    // config.set(player.getName() + ".2Perk", "enterhaken");
                     Sperk = "enterhaken";
                 }
                 switch (Objects.requireNonNull(Sperk).toString()) {
@@ -384,29 +410,32 @@ public class LobbyItems implements Listener {
                     case "wandgenerator" -> Items.create(inventory, Material.RED_STAINED_GLASS_PANE, true, "§3Wandgenerator", "Baut eine Wand aus Wolle vor dir", 8, 10, 16);
                     case "woolbombe" -> Items.create(inventory, Material.TNT, true, "§3WoolBombe", "Booste deine Gegner mit einem werfbaren TNT weg!", 8, 13, 17);
                     case "thegrabber" -> Items.create(inventory, Material.FISHING_ROD, true, "§3The Grabber", "Ziehe Gegner zu dir!", 8, 5, 18);
-                    default -> System.out.println("[NO_SECOND_PERK]: " + player.getName());
+                    default -> Console.send("[NO_SECOND_PERK]: " + player.getName());
                 }
             }
             case "§3Verfügbare Perks:" -> {
                 if (Pperk == null) {
-                    config.set(player.getName() + ".passive", "aufzug");
+                    if (!Woolbattle.useDB) {
+                        config.set(player.getName() + ".passive", "aufzug");
+                    } else
+                        perk.setPassivePerk("aufzug");
                     Pperk = "aufzug";
                 }
                 switch (Objects.requireNonNull(Pperk).toString()) {
                     case "aufzug" -> Items.createPassivePerk(inventory, Material.LADDER, true, "§3Aufzug", "Teleportiere dich mit der Enderperle auf den getroffenen Block!", null, "§6Cooldown: 3 Enderperlen", 0);
-                    case "explodierender_pfeil" -> Items.createPassivePerk(inventory, Material.TNT, true, "§3Explodierender Pfeil", "Ein besonderer Pfeil der alles in die Luft sprengt!", "§6Preis: 8 Wolle", "Nach Pfeilen: 8", 1);
+                    case "exploding_arrow" -> Items.createPassivePerk(inventory, Material.TNT, true, "§3Explodierender Pfeil", "Ein besonderer Pfeil der alles in die Luft sprengt!", "§6Preis: 8 Wolle", "Nach Pfeilen: 8", 1);
                     case "IDK" -> Items.createPassivePerk(inventory, Material.FISHING_ROD, true, "§3IDK", "IDK", "IDK", "IDK", 2);
-                    case "pfeilregen" -> Items.createPassivePerk(inventory, Material.DISPENSER, true, "§3Pfeilregen", "Lässt einen Pfeilegen herunter prasseln", "§6Preis: 4 Wolle", "§cCooldown: 6", 3);
+                    case "arrowrain" -> Items.createPassivePerk(inventory, Material.DISPENSER, true, "§3Pfeilregen", "Lässt einen Pfeilegen herunter prasseln", "§6Preis: 4 Wolle", "§cCooldown: 6", 3);
                     case "recharger" -> Items.createPassivePerk(inventory, Material.IRON_CHESTPLATE, true, "§3Recharger", "Verringert den Cooldown deiner Perks um 20%", "§6Preis: 20 Wolle", null, 4);
                     case "reflector" -> Items.createPassivePerk(inventory, Material.CACTUS, true, "§3Reflector", "Gibt das dir zugefügte Knockback zu 30% an deinen Gegner zurück!", "§6Preis: 15 Wolle", "§6Cooldown: 13", 5);
                     case "rocket_jump" -> Items.createPassivePerk(inventory, Material.RABBIT_FOOT, true, "§3Rocket Jump", "Lässt dich einen höheren Doppelsprung machen!", "§6Preis: 14 Wolle", null, 6);
                     case "portal" -> Items.createPassivePerk(inventory, Material.GOLD_INGOT, true, "§3IDK", "", "§6Preis: 8 Wolle", "§6Cooldown: 2", 7);
-                    case "schock_pfeil" -> Items.create(inventory, Material.RED_STAINED_GLASS, true, "§3Rettungskapsel", "Umhüllt dich mit Blöcken", 15, 30, 8);
+                    case "shockarrow" -> Items.create(inventory, Material.RED_STAINED_GLASS, true, "§3Rettungskapsel", "Umhüllt dich mit Blöcken", 15, 30, 8);
                     case "slowarrow" -> Items.createPassivePerk(inventory, Material.ARROW, true, "§3SlowArrow", "Verlangsame den Gegener!", "§6Preis: 2 Wolle", "§6Nach Pfeilen: 3", 9);
-                    case "spinne" -> Items.createPassivePerk(inventory, Material.SPIDER_SPAWN_EGG, true, "§3Spinne", "Klettere wie eine Spinne an einer Wand hoch!", "§6Preis: 2 Wolle je Sekunde klettern", null, 10);
+                    case "spider" -> Items.createPassivePerk(inventory, Material.SPIDER_SPAWN_EGG, true, "§3Spinne", "Klettere wie eine Spinne an einer Wand hoch!", "§6Preis: 2 Wolle je Sekunde klettern", null, 10);
                     case "stomper" -> Items.createPassivePerk(inventory, Material.DIAMOND_BOOTS, true, "§3Stomper", "Katapultiert alle Gegner in deiner Nähe nach einem Doppelsprung weg!", "§6Preis: 10 Wolle", "§6Nach Sprüngen: 2", 11);
                     case "slimeplattform" -> Items.create(inventory, Material.GOLDEN_HOE, true, "§3SlimePlattform", 12);
-                    default -> System.out.println("[NO_PASSIVE_PERK]: " + player.getName());
+                    default -> Console.send("[NO_PASSIVE_PERK]: " + player.getName());
                 }
             }
             case "§aLebensanzahl" -> {
@@ -417,43 +446,68 @@ public class LobbyItems implements Listener {
                     case 12 -> Items.createMapEffect(inventory, Material.PURPLE_DYE, 12, "§e12 Leben", "§8» §7Votes: §5" + Voting.twelve.size(), 12);
                     case 18 -> Items.createMapEffect(inventory, Material.PURPLE_DYE, 18, "§e18 Leben", "§8» §7Votes: §5" + Voting.eighteen.size(), 14);
                     case 23 -> Items.createMapEffect(inventory, Material.PURPLE_DYE, 23, "§e23 Leben", "§8» §7Votes: §5" + Voting.twentythree.size(), 16);
-                    default -> System.out.println("[NO_LIVE_SELECTED]: " + player.getName());
+                    default -> Console.send("[NO_LIVE_SELECTED]: " + player.getName());
                 }
             }
-            default -> System.out.println("[ERROR] NO_INVENTORY_FOUND");
+            default -> Console.send("[ERROR] NO_INVENTORY_FOUND");
         }
         player.openInventory(inventory);
+        if (!Woolbattle.useDB)
+            Woolbattle.getPlugin().saveConfig();
     }
 
 
     public static void particleitem(Player player) {
-        FileConfiguration config = Woolbattle.getPlugin().getConfig();
-        Object particels = config.get(player.getName() + ".particels");
-        if (particels == null) {
-            config.set(player.getName() + ".particels", "true");
-            Items.create(player.getInventory(), Material.BLAZE_ROD, null, 5, "§ePartikel sind §aAN", 3);
+        if (!Woolbattle.useDB) {
+            FileConfiguration config = Woolbattle.getPlugin().getConfig();
+            Object particels = config.get(player.getName() + ".particels");
+
+            if (particels == null) {
+                config.set(player.getName() + ".particels", "true");
+                Items.create(player.getInventory(), Material.BLAZE_ROD, null, 5, "§ePartikel sind §aAN", 3);
+                Woolbattle.getPlugin().saveConfig();
+                return;
+                }
+
+            switch (particels.toString()) {
+                case "true" -> Items.create(player.getInventory(), Material.BLAZE_ROD, null, 5, "§ePartikel sind §aAN", 3);
+                case "false" -> Items.create(player.getInventory(), Material.BLAZE_ROD, null, 5, "§ePartikel sind §cAUS", 3);
+                default -> {
+                    config.set(player.getName() + ".particels", "true");
+                    Items.create(player.getInventory(), Material.BLAZE_ROD, null, 5, "§ePartikel sind §aAN", 3);
+                }
+            }
             Woolbattle.getPlugin().saveConfig();
             return;
         }
-        switch (particels.toString()) {
-            case "true" -> Items.create(player.getInventory(), Material.BLAZE_ROD, null, 5, "§ePartikel sind §aAN", 3);
-            case "false" -> Items.create(player.getInventory(), Material.BLAZE_ROD, null, 5, "§ePartikel sind §cAUS", 3);
-            default -> {
-                config.set(player.getName() + ".particels", "true");
-                Items.create(player.getInventory(), Material.BLAZE_ROD, null, 5, "§ePartikel sind §aAN", 3);
-            }
-        }
-        Woolbattle.getPlugin().saveConfig();
+
+        Perk perk = PerkHelper.getPerks(player);
+        boolean particels = perk.hasParticles();
+        if (particels) {
+            Items.create(player.getInventory(), Material.BLAZE_ROD, null, 5, "§ePartikel sind §aAN", 3);
+        } else
+            Items.create(player.getInventory(), Material.BLAZE_ROD, null, 5, "§ePartikel sind §cAUS", 3);
     }
 
     private void PartikelAction(Player player) {
-        FileConfiguration config = Woolbattle.getPlugin().getConfig();
-        if (config.get(player.getName() + ".particels") == null) {
-            config.set(player.getName()+ ".particels", "true");
-        } else if (config.get(player.getName() + ".particels") == "true") {
-            config.set(player.getName()+ ".particels", "false");
-        } else config.set(player.getName()+ ".particels", "true");
-        Woolbattle.getPlugin().saveConfig();
+        if (!Woolbattle.useDB) {
+            FileConfiguration config = Woolbattle.getPlugin().getConfig();
+            if (config.get(player.getName() + ".particels") == null) {
+                config.set(player.getName()+ ".particels", "true");
+            } else if (config.get(player.getName() + ".particels") == "true") {
+                config.set(player.getName()+ ".particels", "false");
+            } else config.set(player.getName()+ ".particels", "true");
+            Woolbattle.getPlugin().saveConfig();
+            return;
+        }
+
+        Perk perk = PerkHelper.getPerks(player);
+        Perk oldPerk = new Perk(perk.getfirstPerk(), perk.getsecondPerk(), perk.getpassivePerk(), perk.hasParticles(), perk.getfirstPerkSlot(), perk.getsecondPerkSlot());
+        boolean particles = perk.hasParticles();
+        if (particles) {
+            perk.setParticles(false);
+        } else perk.setParticles(true);
+        PerkHelper.updatePerks(player, oldPerk, perk);
         Lobby(player);
     }
 

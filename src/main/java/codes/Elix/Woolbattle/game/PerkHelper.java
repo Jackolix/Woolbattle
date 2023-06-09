@@ -1,5 +1,6 @@
 package codes.Elix.Woolbattle.game;
 
+import codes.Elix.Woolbattle.game.HelpClasses.Perk;
 import codes.Elix.Woolbattle.items.Items;
 import codes.Elix.Woolbattle.main.Woolbattle;
 import codes.Elix.Woolbattle.util.Console;
@@ -21,7 +22,6 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import reactor.core.publisher.Mono;
 
-import java.util.HashMap;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -33,9 +33,8 @@ public class PerkHelper {
     private static final Perk nullperk = new Perk("booster", "enterhaken", "rocket_jump", true, 6, 7);
 
     public static String passive(Player player) {
-        Object Pperk = config.get(player.getName() + ".passive");
-        assert Pperk != null;
-        return Pperk.toString();
+        Perk perk = getPerks(player);
+        return perk.getpassivePerk();
     }
 
     interface Callback {
@@ -71,11 +70,12 @@ public class PerkHelper {
     public static void onJoin(Player player) {
         //connect to the server/database/collection
         if (!Database.hasConnection()) return;
+        System.out.println("Database is connected");
         MongoClient mongoClient = Database.getConnection();
         MongoDatabase database = mongoClient.getDatabase("minecraft");
         MongoCollection<Document> collection = database.getCollection("players");
 
-        find(collection, player.getUniqueId());
+        // find(collection, player.getUniqueId());
         exists(player.getUniqueId().toString(), new Callback() {
             @Override
             public void onSuccess(boolean value) {
@@ -97,7 +97,7 @@ public class PerkHelper {
             update(collection, player.getUniqueId(), "perks.secondperk", newPerk.getsecondPerk());
         if (oldPerk.getpassivePerk() != newPerk.getpassivePerk())
             update(collection, player.getUniqueId(), "perks.passiveperk", newPerk.getpassivePerk());
-        if (oldPerk.hasParticles() != newPerk.hasParticles())
+        if (oldPerk.getsecondPerkSlot() != newPerk.getfirstPerkSlot())
             update(collection, player.getUniqueId(), "perks.firstperkslot", String.valueOf(newPerk.getfirstPerkSlot()));
         if (oldPerk.getfirstPerkSlot() != newPerk.getsecondPerkSlot())
             update(collection, player.getUniqueId(), "perks.secondperkslot", String.valueOf(newPerk.getsecondPerkSlot()));
@@ -134,6 +134,8 @@ public class PerkHelper {
                 Document perks = (Document) doc.get("perks");
                 Perk perk = new Perk(perks.getString("firstperk"), perks.getString("secondperk"), perks.getString("passiveperk"), doc.getBoolean("particles"), perks.getInteger("firstperkslot"), perks.getInteger("secondperkslot"));
                 Items.perks.put(Bukkit.getPlayer(uuid), perk);
+                System.out.println("Found doc");
+                System.out.println(doc.get("perks"));
             }
             @Override
             public void onError(Throwable t) {

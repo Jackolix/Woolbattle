@@ -1,8 +1,12 @@
 package codes.Elix.Woolbattle.commands;
 
+import codes.Elix.Woolbattle.game.HelpClasses.CustomPlayer;
+import codes.Elix.Woolbattle.game.HelpClasses.Team;
 import codes.Elix.Woolbattle.game.LiveSystem;
 import codes.Elix.Woolbattle.gamestates.IngameState;
 import codes.Elix.Woolbattle.items.Items;
+import codes.Elix.Woolbattle.util.Console;
+import codes.Elix.Woolbattle.util.LobbyScoreboard;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -21,46 +25,52 @@ public class Switchteam implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        ArrayList<Player> arrayList = null;
+        Team team = null;
         Player player = null;
         switch (args[0]) {
-            case "red" -> arrayList = LiveSystem.TeamRed;
-            case "blue" -> arrayList = LiveSystem.TeamBlue;
-            case "green" -> arrayList = LiveSystem.TeamGreen;
-            case "yellow" -> arrayList = LiveSystem.TeamYellow;
+            case "red" -> team = LiveSystem.NewTeams.get("red");
+            case "blue" -> team = LiveSystem.NewTeams.get("blue");
+            case "green" -> team = LiveSystem.NewTeams.get("green");
+            case "yellow" -> team = LiveSystem.NewTeams.get("yellow");
             default -> args[0] = null;
         }
 
         if (args[0] == null) return false;
-        if (arrayList == null) return false;
+        if (team == null) return false;
 
         if (sender instanceof Player) {
             if (args.length == 1) {
                 player = (Player) sender;
-                System.out.println(player + " is the player himself");
-
+                Console.send(player + " is the player himself");
             } else if (args.length == 2) {
                 player = Bukkit.getPlayer(args[1]);
                 player.sendMessage(ChatColor.GREEN + "The Player " +  args[1] + "is now in Team " + Items.getColor(args[0]) + args[0]);
-                System.out.println(player + " is another player");
+                Console.send(player + " is another player");
             } else
                 sender.sendMessage("Use /switchteam <team> (player)");
         } else if (args.length == 2) {
             player = Bukkit.getPlayer(args[1]);
-            System.out.println(args[1] + " is another player");
+            Console.send(args[1] + " is another player");
             player.sendMessage(ChatColor.GREEN + "The Player " +  args[1] + "is now in Team " + Items.getColor(args[0]) + args[0]);
         } else
             sender.sendMessage("Use /switchteam <team> <player>");
 
         if (player == null) return false;
-        arrayList.add(player);
+        CustomPlayer customPlayer = CustomPlayer.getCustomPlayer(player);
+        customPlayer.getTeam().removeMembers(player);
+        team.addMember(player);
+        /*
         ArrayList<Player> team = LiveSystem.VotedPlayers.get(player);
         if (team != null)
             team.remove(player);
         LiveSystem.Team.put(player, args[0]);
         LiveSystem.VotedPlayers.put(player, arrayList);
+         */
+        customPlayer.setTeam(team);
 
-        IngameState.teamUpdate();
+        // IngameState.teamUpdate();
+        for (Player current : Bukkit.getOnlinePlayers())
+            LobbyScoreboard.change(current);
         IngameState.boots();
 
         player.sendMessage(ChatColor.GREEN + "You are now in Team " + Items.getColor(args[0]) + args[0]);

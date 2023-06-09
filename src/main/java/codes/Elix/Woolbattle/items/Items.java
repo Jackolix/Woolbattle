@@ -3,8 +3,9 @@
 
 package codes.Elix.Woolbattle.items;
 
+import codes.Elix.Woolbattle.game.HelpClasses.CustomPlayer;
 import codes.Elix.Woolbattle.game.LiveSystem;
-import codes.Elix.Woolbattle.game.Perk;
+import codes.Elix.Woolbattle.game.HelpClasses.Perk;
 import codes.Elix.Woolbattle.main.Woolbattle;
 import codes.Elix.Woolbattle.util.Console;
 import net.kyori.adventure.text.Component;
@@ -294,7 +295,7 @@ public class Items {
     }
 
     public static Material getWoolColor(Player player) {
-        return switch (LiveSystem.Team.get(player)) {
+        return switch (CustomPlayer.getCustomPlayer(player).getTeam().getColor()) {
             case "red" -> Material.RED_WOOL;
             case "blue" -> Material.BLUE_WOOL;
             case "green" -> Material.GREEN_WOOL;

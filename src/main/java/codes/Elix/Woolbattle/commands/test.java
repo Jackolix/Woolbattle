@@ -3,33 +3,57 @@
 
 package codes.Elix.Woolbattle.commands;
 
-import codes.Elix.Woolbattle.game.Perk;
+import codes.Elix.Woolbattle.game.HelpClasses.Perk;
 import codes.Elix.Woolbattle.game.PerkHelper;
-import codes.Elix.Woolbattle.items.Items;
-import codes.Elix.Woolbattle.util.Worldloader;
+import codes.Elix.Woolbattle.util.Console;
+import codes.Elix.Woolbattle.util.CustomInventory;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
+import net.kyori.adventure.title.Title;
+import net.kyori.adventure.title.TitlePart;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnknownNullability;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class test implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        System.out.println("test");
+        Console.send("test");
         if (!(sender instanceof Player player)) return false;
-        PerkHelper.setPerk(player, new Perk("booster", "rope", "recharger", false, 6, 7));
-        player.sendMessage(Component.text("Injected to database"));
+        Title title = Title.title(Component.text("KEKW"), Component.text("KEKW"));
+        player.showTitle(title);
+        /*
+
+        Inventory minecraftInventory = null; // Das ursprüngliche net.minecraft.world.entity.player.Inventory-Objekt
+        CustomInventory customInventory = new CustomInventory(minecraftInventory);
+
+        customInventory.setSlotHandler(0, (player, item) -> {
+            // Aktion, wenn der Spieler den Slot 0 klickt
+        });
+
+        customInventory.setSlotHandler(1, (player, item) -> {
+            // Aktion, wenn der Spieler den Slot 1 klickt
+        });
+
+        // Weitere Slot-Handler hinzufügen...
+
+        Player player = // Der Spieler, für den das benutzerdefinierte Inventar erstellt wird
+        int clickedSlot = // Der geklickte Slot
+
+                customInventory.handleClick(player, clickedSlot);
+
+        // PerkHelper.setPerk(player, new Perk("booster", "rope", "recharger", false, 6, 7));
+        // player.sendMessage(Component.text("Injected to database"));
         /*
         // PerkHelper.getPerks(player);
         System.out.println(Items.perks);

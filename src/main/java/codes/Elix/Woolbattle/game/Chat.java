@@ -4,6 +4,7 @@
 package codes.Elix.Woolbattle.game;
 
 
+import codes.Elix.Woolbattle.game.HelpClasses.CustomPlayer;
 import codes.Elix.Woolbattle.gamestates.GameStateManager;
 import codes.Elix.Woolbattle.gamestates.IngameState;
 import codes.Elix.Woolbattle.util.Console;
@@ -20,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 
 public class Chat implements Listener, CommandExecutor {
@@ -52,7 +54,8 @@ public class Chat implements Listener, CommandExecutor {
             msg = msg.replace("@a ", "");
             send(true, player, msg);
         } else {
-            ArrayList<Player> team = LiveSystem.VotedPlayers.get(player);
+            CustomPlayer customPlayer = CustomPlayer.getCustomPlayer(player);
+            List<Player> team = customPlayer.getTeam().getMembers();
 
             if (team.size() <= 1) {
                 send(true, player, msg);

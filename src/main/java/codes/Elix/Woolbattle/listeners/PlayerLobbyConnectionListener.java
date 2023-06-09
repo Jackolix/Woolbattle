@@ -5,6 +5,8 @@ package codes.Elix.Woolbattle.listeners;
 
 
 import codes.Elix.Woolbattle.countdowns.LobbyCountdown;
+import codes.Elix.Woolbattle.game.HelpClasses.CustomPlayer;
+import codes.Elix.Woolbattle.game.HelpClasses.Team;
 import codes.Elix.Woolbattle.game.LiveSystem;
 import codes.Elix.Woolbattle.game.PerkHelper;
 import codes.Elix.Woolbattle.gamestates.GameStateManager;
@@ -29,6 +31,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.checkerframework.checker.units.qual.C;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -78,6 +81,8 @@ public class PlayerLobbyConnectionListener implements Listener {
                 countdown.start();
             }
         }
+        // Add CustomPlayer
+        new CustomPlayer(player);
 
         // Add player to perk database
         PerkHelper.onJoin(player);
@@ -120,7 +125,17 @@ public class PlayerLobbyConnectionListener implements Listener {
 
         Voting.voted.remove(player);
         Voting.update();
+        CustomPlayer customPlayer = CustomPlayer.getCustomPlayer(player);
+        if (LiveSystem.newVotedPlayers.contains(customPlayer))
+            return;
+        if (customPlayer.getTeam() != null)
+            Console.send(ChatColor.RED + "Player is in team " + customPlayer.getTeam().getColor());
+        Console.send(ChatColor.GREEN + "Trying to remove " + ChatColor.WHITE + player.getName());
 
+        Team team = customPlayer.getTeam();
+        team.removeMembers(player);
+        LiveSystem.newVotedPlayers.remove(customPlayer);
+        /*
          if (!LiveSystem.VotedPlayers.containsKey(player))
              return;
          Console.send(ChatColor.RED + "Player is in a team");
@@ -131,6 +146,7 @@ public class PlayerLobbyConnectionListener implements Listener {
             team.remove(player); //remove the player from the team
         LiveSystem.VotedPlayers.remove(player);
         IngameState.teamUpdate();
+         */
         Console.send(ChatColor.GREEN + "Successfully removed " + ChatColor.WHITE + player.getName());
     }
 

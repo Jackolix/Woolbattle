@@ -7,6 +7,7 @@ import codes.Elix.Woolbattle.game.LiveSystem;
 import codes.Elix.Woolbattle.gamestates.GameStateManager;
 import codes.Elix.Woolbattle.gamestates.IngameState;
 import codes.Elix.Woolbattle.util.IngameScoreboard;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -27,7 +28,15 @@ public class SetLive implements CommandExecutor, TabCompleter {
         if (!(GameStateManager.getCurrentGameState() instanceof IngameState)) return false;
         if (!(sender instanceof Player player)) return false;
         if (!(args.length >= 1)) return false;
-        LiveSystem.TeamLifes.put(args[0], Integer.parseInt(args[1]));
+        /*
+        if (!args[0].equals("red")) {
+            player.sendMessage(Component.text(ChatColor.RED + "This is not a Team"));
+            return false;
+        }
+         */
+
+        LiveSystem.NewTeams.get(args[0]).setLifes(Integer.parseInt(args[1]));
+        //LiveSystem.TeamLifes.put(args[0], Integer.parseInt(args[1]));
         for (Player players : Bukkit.getOnlinePlayers())
             IngameScoreboard.setup(players);
         return false;

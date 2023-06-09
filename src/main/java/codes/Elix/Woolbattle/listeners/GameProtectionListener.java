@@ -4,7 +4,8 @@
 package codes.Elix.Woolbattle.listeners;
 
 import codes.Elix.Woolbattle.commands.Build;
-import codes.Elix.Woolbattle.game.LiveSystem;
+import codes.Elix.Woolbattle.game.HelpClasses.CustomPlayer;
+import codes.Elix.Woolbattle.game.HelpClasses.Team;
 import codes.Elix.Woolbattle.gamestates.GameStateManager;
 import codes.Elix.Woolbattle.gamestates.IngameState;
 import codes.Elix.Woolbattle.gamestates.LobbyState;
@@ -22,6 +23,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerRecipeDiscoverEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -105,15 +107,17 @@ public class GameProtectionListener implements Listener {
         } else
             causePlayer = event.getDamager();
 
+        CustomPlayer customPlayer = CustomPlayer.getCustomPlayer((Player) causePlayer);
+        Team team = customPlayer.getTeam();
+        // ArrayList<Player> team = LiveSystem.VotedPlayers.get((Player) causePlayer);
 
-        ArrayList<Player> team = LiveSystem.VotedPlayers.get((Player) causePlayer);
-
-        if (team.contains((Player) event.getEntity())) {
+        if (team.getMembers().contains((Player) event.getEntity())) {
             event.setCancelled(true);
             return;
         }
 
-        LiveSystem.hitted.add((Player) event.getEntity());
+        // LiveSystem.hitted.add((Player) event.getEntity());
+        CustomPlayer.getCustomPlayer((Player) event.getEntity()).addHitted((Player) causePlayer);
 
         event.setDamage(0.00000000001D);
         ((Player) event.getEntity()).setHealth(20);
@@ -121,7 +125,8 @@ public class GameProtectionListener implements Listener {
         Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Woolbattle.getPlugin(), new Runnable() {
             @Override
             public void run() {
-                LiveSystem.hitted.remove((Player) event.getEntity());
+                //LiveSystem.hitted.remove((Player) event.getEntity());
+                CustomPlayer.getCustomPlayer((Player) event.getEntity()).removeHitted();
             }
         }, 20 * 10);
     }
@@ -201,6 +206,16 @@ public class GameProtectionListener implements Listener {
             }
             event.setYield(0);
         }
+    }
+    /*
+    @EventHandler
+    public void onAdvancement(PlayerAdvancementDoneEvent event) {
+        event.message(Component.text(""));
+    }
+     */
+    @EventHandler
+    public void onRecipeDiscover(PlayerRecipeDiscoverEvent event) {
+        event.setCancelled(true);
     }
 
     private static final Set<Material> toDestroy = new HashSet<Material>();

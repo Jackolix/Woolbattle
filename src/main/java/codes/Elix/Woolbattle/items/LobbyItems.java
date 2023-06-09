@@ -3,8 +3,10 @@
 
 package codes.Elix.Woolbattle.items;
 
+import codes.Elix.Woolbattle.game.HelpClasses.CustomPlayer;
+import codes.Elix.Woolbattle.game.HelpClasses.Team;
 import codes.Elix.Woolbattle.game.LiveSystem;
-import codes.Elix.Woolbattle.game.Perk;
+import codes.Elix.Woolbattle.game.HelpClasses.Perk;
 import codes.Elix.Woolbattle.game.PerkHelper;
 import codes.Elix.Woolbattle.gamestates.GameStateManager;
 import codes.Elix.Woolbattle.gamestates.IngameState;
@@ -109,13 +111,13 @@ public class LobbyItems implements Listener {
     private void TeamsInventory(Player player) {
         Inventory inventory = Bukkit.createInventory(null, 9, Component.text("§bWähle dein Team!"));
         if (LiveSystem.Teams == 2) {
-            checkTeam(LiveSystem.TeamRed, inventory, Material.RED_DYE, "§cTeam Rot", 3, ChatColor.RED);
-            checkTeam(LiveSystem.TeamBlue, inventory, Material.BLUE_DYE, "§bTeam Blau", 5, ChatColor.AQUA);
+            checkTeam(LiveSystem.NewTeams.get("red"), inventory, Material.RED_DYE, "§cTeam Rot", 3, ChatColor.RED);
+            checkTeam(LiveSystem.NewTeams.get("blue"), inventory, Material.BLUE_DYE, "§bTeam Blau", 5, ChatColor.AQUA);
         } else {
-            checkTeam(LiveSystem.TeamRed, inventory, Material.RED_DYE, "§cTeam Rot", 1, ChatColor.RED);
-            checkTeam(LiveSystem.TeamBlue, inventory, Material.BLUE_DYE, "§bTeam Blau", 3, ChatColor.AQUA);
-            checkTeam(LiveSystem.TeamYellow, inventory, Material.YELLOW_DYE, "§eTeam Gelb", 5, ChatColor.YELLOW);
-            checkTeam(LiveSystem.TeamGreen, inventory, Material.GREEN_DYE, "§aTeam Grün", 7, ChatColor.GREEN);
+            checkTeam(LiveSystem.NewTeams.get("red"), inventory, Material.RED_DYE, "§cTeam Rot", 1, ChatColor.RED);
+            checkTeam(LiveSystem.NewTeams.get("blue"), inventory, Material.BLUE_DYE, "§bTeam Blau", 3, ChatColor.AQUA);
+            checkTeam(LiveSystem.NewTeams.get("yellow"), inventory, Material.YELLOW_DYE, "§eTeam Gelb", 5, ChatColor.YELLOW);
+            checkTeam(LiveSystem.NewTeams.get("green"), inventory, Material.GREEN_DYE, "§aTeam Grün", 7, ChatColor.GREEN);
         }
         player.openInventory(inventory);
     }
@@ -304,10 +306,10 @@ public class LobbyItems implements Listener {
         if (event.getView().title().equals(Component.text("§bWähle dein Team!"))) {
             event.setCancelled(true);
             switch (event.getCurrentItem().getItemMeta().getDisplayName()) {
-                case "§cTeam Rot" -> addToTeam(LiveSystem.TeamRed, player);
-                case "§bTeam Blau" -> addToTeam(LiveSystem.TeamBlue, player);
-                case "§eTeam Gelb" -> addToTeam(LiveSystem.TeamYellow, player);
-                case "§aTeam Grün" -> addToTeam(LiveSystem.TeamGreen, player);
+                case "§cTeam Rot" -> addToTeam(LiveSystem.NewTeams.get("red"), player);
+                case "§bTeam Blau" -> addToTeam(LiveSystem.NewTeams.get("blue"), player);
+                case "§eTeam Gelb" -> addToTeam(LiveSystem.NewTeams.get("yellow"), player);
+                case "§aTeam Grün" -> addToTeam(LiveSystem.NewTeams.get("green"), player);
             }
             TeamsInventory(player);
         }
@@ -511,7 +513,20 @@ public class LobbyItems implements Listener {
         Lobby(player);
     }
 
-    private void addToTeam(ArrayList<Player> arrayList, Player player) {
+    private void addToTeam(Team team, Player player) {
+        CustomPlayer customPlayer = CustomPlayer.getCustomPlayer(player);
+        if (team.getMembers().isEmpty()) {
+            team.addMember(player);
+            return;
+        }
+        if (team.getMembers().contains(player)) return;
+        // Abragen ob der player nicht in einem anderen team ist
+        if (team.getMembers().size() < LiveSystem.TeamSize) {
+            team.addMember(player);
+            Console.send("Added Player to " + team.getColor());
+        } else Console.send(ChatColor.RED + "Team is full");
+
+        /*
         if (arrayList.contains(player)) return;
         ArrayList<Player> team = LiveSystem.VotedPlayers.get(player); //get the arrayList (team) where the player was before
         if (team != null)
@@ -522,12 +537,13 @@ public class LobbyItems implements Listener {
             LiveSystem.VotedPlayers.put(player, arrayList);
             IngameState.teamUpdate();
         } else Console.send(ChatColor.RED + "Team is full");
+         */
     }
 
-    private void checkTeam(ArrayList<Player> arrayList, Inventory inventory, Material material, String Team, int slot, ChatColor color) {
+    private void checkTeam(Team team, Inventory inventory, Material material, String Team, int slot, ChatColor color) {
         ArrayList<String> lore = new ArrayList<>();
-        for (Player team : arrayList)
-            lore.add(color + team.getName());
+        for (Player player : team.getMembers())
+            lore.add(color + player.getName());
         Items.createTeam(inventory, material, Team, lore, slot);
     }
 

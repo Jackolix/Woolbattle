@@ -3,6 +3,7 @@
 
 package codes.Elix.Woolbattle.util;
 
+import codes.Elix.Woolbattle.game.HelpClasses.CustomPlayer;
 import codes.Elix.Woolbattle.game.LiveSystem;
 import com.xism4.sternalboard.SternalBoardHandler;
 import org.bukkit.ChatColor;
@@ -49,16 +50,20 @@ public class IngameScoreboard {
         board.updateLine(5, " §7• " + MapName);
         board.updateLine(6, "     ");
         board.updateLine(7, "§8» §7Leben");
-        board.updateLine(8, " §7• §4❤ " + LiveSystem.TeamLifes.get("red") + " §8- " + Colorname1);
-        board.updateLine(9, " §7• §4❤ " + LiveSystem.TeamLifes.get("blue") + " §8- " + Colorname2);
+        board.updateLine(8, " §7• §4❤ " + LiveSystem.NewTeams.get("red").getLifes() + " §8- " + Colorname1);
+        board.updateLine(9, " §7• §4❤ " + LiveSystem.NewTeams.get("blue").getLifes() + " §8- " + Colorname2);
         if (LiveSystem.Teams >=3)
-            board.updateLine(10, " §7• §4❤ " + LiveSystem.TeamLifes.get("green") + " §8- " + Colorname3);
+            board.updateLine(10, " §7• §4❤ " + LiveSystem.NewTeams.get("green").getLifes() + " §8- " + Colorname3);
         if (LiveSystem.Teams >=4)
-            board.updateLine(11, " §7• §4❤ " + LiveSystem.TeamLifes.get("yellow") + " §8- " + Colorname4);
+            board.updateLine(11, " §7• §4❤ " + LiveSystem.NewTeams.get("yellow").getLifes() + " §8- " + Colorname4);
     }
 
     public static String team(Player player) {
-        String color = LiveSystem.Team.get(player);
+        String color = null;
+        CustomPlayer customPlayer = CustomPlayer.getCustomPlayer(player);
+        if (customPlayer != null)
+            if (customPlayer.getTeam() != null)
+                color = customPlayer.getTeam().getColor();
         if (color == null) return "nicht ausgewählt";
 
         switch (color) {

@@ -33,8 +33,9 @@ public class rettungsplattform implements Listener {
         if (Objects.equals(PerkHelper.passive(player), "recharger"))
             cooldown = 13;
         int slot = player.getInventory().getHeldItemSlot();
-        placeBlocks(player.getLocation(), Items.getWoolColor(player));
-        player.teleport(player.getLocation());
+        Location placelocation = player.getLocation();
+        placeBlocks(placelocation, Items.getWoolColor(player));
+        //player.teleport(placelocation);
         Items.visualCooldown(player, cooldown, Material.RED_STAINED_GLASS, slot, "§3Rettungsplattform");
 
     }

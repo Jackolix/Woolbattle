@@ -4,6 +4,7 @@
 package codes.Elix.Woolbattle.commands;
 
 
+import codes.Elix.Woolbattle.game.HelpClasses.CustomPlayer;
 import codes.Elix.Woolbattle.game.LiveSystem;
 import codes.Elix.Woolbattle.main.Woolbattle;
 import codes.Elix.Woolbattle.util.Console;
@@ -27,27 +28,33 @@ public class SetHitted implements CommandExecutor, TabCompleter {
         if (sender instanceof Player player) {
             if (player.hasPermission("Woolbattle.hitted")) {
                 if (args.length == 0) {
-                    if (!(LiveSystem.hitted.contains(player))) {
-                        LiveSystem.hitted.add(player);
+                    CustomPlayer customPlayer = CustomPlayer.getCustomPlayer(player);
+                    if (!customPlayer.isHitted()) {
+                        customPlayer.addHitted(null);
                         Console.send("Added " + player.getName() + " to hitted");
 
                     } else
                         LiveSystem.hitted.remove(player);
 
                 } else if (args.length == 1) {
-                    if (!(LiveSystem.hitted.contains(args[0]))) {
-                        Player p = Bukkit.getPlayer(args[0]);
-                        LiveSystem.hitted.add(p);
+                    CustomPlayer customPlayer = CustomPlayer.getCustomPlayer(Bukkit.getPlayer(args[0]));
+                    if (!customPlayer.isHitted()) {
+                        // Player p = Bukkit.getPlayer(args[0]);
+                        // LiveSystem.hitted.add(p);
+                        customPlayer.addHitted(null);
                     }
 
                 } else if (args.length == 2) {
-                    Player p = Bukkit.getPlayer(args[0]);
-                    LiveSystem.hitted.add(p);
+
+                    CustomPlayer p = CustomPlayer.getCustomPlayer(Bukkit.getPlayer(args[0]));
+                    // LiveSystem.hitted.add(p);
+                    p.addHitted(null);
 
                     Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Woolbattle.getPlugin(), new Runnable() {
                         @Override
                         public void run() {
-                            LiveSystem.hitted.remove(args[0]);
+                            // LiveSystem.hitted.remove(args[0]);
+                            p.removeHitted();
                             Console.send("Removed " + args[0].toString() + " from hitted.");
                         }}, 20L *Integer.parseInt(args[1]));
 

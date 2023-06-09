@@ -3,10 +3,8 @@ package codes.Elix.Woolbattle.main;
 
 import codes.Elix.Woolbattle.commands.*;
 import codes.Elix.Woolbattle.countdowns.LobbyCountdown;
-import codes.Elix.Woolbattle.game.BowShoot;
-import codes.Elix.Woolbattle.game.Chat;
-import codes.Elix.Woolbattle.game.DoubleJump;
-import codes.Elix.Woolbattle.game.VoidTeleport;
+import codes.Elix.Woolbattle.game.*;
+import codes.Elix.Woolbattle.game.HelpClasses.Team;
 import codes.Elix.Woolbattle.gamestates.GameState;
 import codes.Elix.Woolbattle.gamestates.GameStateManager;
 import codes.Elix.Woolbattle.gamestates.LobbyState;
@@ -85,7 +83,8 @@ public class Woolbattle extends JavaPlugin {
 
         new KeepDayTask().runTaskTimer(this, 0L, 100L);
         new Database();
-
+        initTeams();
+        cloudStartMessenger();
     }
 
     private void initmonitor() {
@@ -167,8 +166,29 @@ public class Woolbattle extends JavaPlugin {
         }
     }
 
+    private void initTeams() {
+        Team red = new Team(new ArrayList<>(), "red", 0, false, "§c");
+        Team blue = new Team(new ArrayList<>(), "blue", 0, false, "§9");
+        Team green = new Team(new ArrayList<>(), "green", 0, false, "§a");
+        Team yellow = new Team(new ArrayList<>(), "yellow", 0, false, "§e");
+        LiveSystem.NewTeams.put("red", red);
+        LiveSystem.NewTeams.put("blue", blue);
+        LiveSystem.NewTeams.put("green", green);
+        LiveSystem.NewTeams.put("yellow", yellow);
+    }
+
     private void LobbyMap() {
         Worldloader.paste(new Location(Bukkit.getServer().getWorlds().get(0), 2, 70, 1), new File("./plugins/Woolbattle/Lobby1.schem"));
+    }
+
+    private void cloudStartMessenger() {
+        /*
+        ServerObject server = TimoCloudAPI.getBukkitAPI().getThisServer();
+        PluginMessage pluginMessage = new PluginMessage("START").set("name", server.getName());
+
+        TimoCloudAPI.getMessageAPI().sendMessageToServer(pluginMessage, "Lobby");
+
+         */
     }
 
     public static ArrayList<Player> getPlayers() {

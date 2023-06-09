@@ -3,11 +3,14 @@
 
 package codes.Elix.Woolbattle.game;
 
+import codes.Elix.Woolbattle.game.HelpClasses.CustomPlayer;
+import codes.Elix.Woolbattle.game.HelpClasses.Perk;
+import codes.Elix.Woolbattle.game.HelpClasses.Team;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 public class LiveSystem {
 
@@ -24,4 +27,12 @@ public class LiveSystem {
 
     // public static ArrayList<Perk> players = new ArrayList<>();
     public static HashMap<Player, Perk> players= new HashMap<>();
+
+    // New Stuff
+    public static HashMap<String, codes.Elix.Woolbattle.game.HelpClasses.Team> NewTeams = new HashMap<>();
+    public static List<CustomPlayer> newVotedPlayers = new ArrayList<>();
+
+    public static void teamalive() {
+
+    }
 }

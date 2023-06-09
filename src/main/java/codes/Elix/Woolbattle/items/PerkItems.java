@@ -3,7 +3,7 @@
 
 package codes.Elix.Woolbattle.items;
 
-import codes.Elix.Woolbattle.game.Perk;
+import codes.Elix.Woolbattle.game.HelpClasses.Perk;
 import codes.Elix.Woolbattle.game.PerkHelper;
 import codes.Elix.Woolbattle.main.Woolbattle;
 import codes.Elix.Woolbattle.util.Console;
@@ -160,7 +160,8 @@ public class PerkItems {
 
     public static void selectPassive(Player player, String passive) {
         Perk perk = PerkHelper.getPerks(player);
+        Perk oldperk = new Perk(perk.getfirstPerk(), perk.getsecondPerk(), perk.getpassivePerk(), perk.hasParticles(), perk.getfirstPerkSlot(), perk.getsecondPerkSlot());
         perk.setPassivePerk(passive);
-        PerkHelper.updatePerks(player, PerkHelper.getPerks(player), perk);
+        PerkHelper.updatePerks(player, oldperk, perk);
     }
 }

@@ -1,7 +1,7 @@
 // This class was created by Elix on 30.08.22
 
 
-package codes.Elix.Woolbattle.game;
+package codes.Elix.Woolbattle.game.HelpClasses;
 
 
 public class Perk {

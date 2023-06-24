@@ -3,6 +3,7 @@
 
 package codes.Elix.Woolbattle.gamestates;
 
+import codes.Elix.Woolbattle.game.BowShoot;
 import codes.Elix.Woolbattle.game.DoubleJump;
 import codes.Elix.Woolbattle.game.EnderPearl;
 import codes.Elix.Woolbattle.game.HelpClasses.CustomPlayer;
@@ -15,12 +16,16 @@ import codes.Elix.Woolbattle.items.Voting;
 import codes.Elix.Woolbattle.main.Woolbattle;
 import codes.Elix.Woolbattle.util.Console;
 import codes.Elix.Woolbattle.util.IngameScoreboard;
-import codes.Elix.Woolbattle.util.LobbyScoreboard;
-import org.bukkit.*;
+import codes.Elix.Woolbattle.util.mongo.UpdateObjekt;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Color;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class IngameState extends GameState {
     public static ArrayList<Player> spectator;
@@ -55,10 +60,13 @@ public class IngameState extends GameState {
         woolbomb.enable();
         rope.enable();
         enterhaken.enable();
+        BowShoot.enable();
+        grabber.enable();
 
         for (Player player : Items.perks.keySet())
             if (!player.isOnline())
                 Items.perks.remove(player);
+        UpdateObjekt.update();
     }
 
     @Override
@@ -70,10 +78,10 @@ public class IngameState extends GameState {
         int lives = Voting.winner();
         if (lives == 0)
             lives = 6;
-        LiveSystem.NewTeams.get("red").setLifes(lives);
-        LiveSystem.NewTeams.get("blue").setLifes(lives);
-        LiveSystem.NewTeams.get("green").setLifes(lives);
-        LiveSystem.NewTeams.get("yellow").setLifes(lives);
+        LiveSystem.Team.get("red").setLifes(lives);
+        LiveSystem.Team.get("blue").setLifes(lives);
+        LiveSystem.Team.get("green").setLifes(lives);
+        LiveSystem.Team.get("yellow").setLifes(lives);
 
         /*
         LiveSystem.TeamLifes.put("red", lives);
@@ -84,8 +92,8 @@ public class IngameState extends GameState {
     }
 
     public void checkTeams() {
-        Console.send(ChatColor.GOLD + "---------- Teams ----------");
-        Console.send("Checking teams...");
+        Console.send(Component.text("---------- Teams ----------", NamedTextColor.GOLD));
+        Console.send(Component.text("Checking teams...", NamedTextColor.WHITE));
         /*
         Team red = new Team(new ArrayList<>(), "red", 0, false);
         Team blue = new Team(new ArrayList<>(), "blue", 0, false);
@@ -100,15 +108,19 @@ public class IngameState extends GameState {
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             // if (LiveSystem.VotedPlayers.containsKey(player)) continue;
-            if (LiveSystem.newVotedPlayers.contains(CustomPlayer.getCustomPlayer(player))) continue;
-            Console.send("Trying to add " + ChatColor.DARK_AQUA + player.getName() + ChatColor.GRAY + " to team");
+            //if (LiveSystem.newVotedPlayers.contains(CustomPlayer.getCustomPlayer(player))) continue;
+            if (CustomPlayer.getCustomPlayer(player).getTeam() != null) continue;
+            // Console.send(("Trying to add " + ChatColor.DARK_AQUA + player.getName() + ChatColor.GRAY + " to team"));
+            // Console.send(Component.text("Trying to add ", NamedTextColor.WHITE)
+                    // .append(Component.text(player.getName(), NamedTextColor.GREEN))
+                    // .append(Component.text(" to team", NamedTextColor.WHITE)));
             addToEmptyTeam(player);
         }
         Console.send(" ");
-        Console.send(ChatColor.RED + "Team Red: " + LiveSystem.NewTeams.get("red").getMembers().size());
-        Console.send(ChatColor.BLUE + "Team Blue: " + LiveSystem.NewTeams.get("blue").getMembers().size());
-        Console.send(ChatColor.GREEN + "Team Green: " + LiveSystem.NewTeams.get("green").getMembers().size());
-        Console.send(ChatColor.YELLOW + "Team Yellow: " + LiveSystem.NewTeams.get("yellow").getMembers().size());
+        Console.send(Component.text("Team Red: " + LiveSystem.Team.get("red").getMembers().size(), NamedTextColor.RED));
+        Console.send(Component.text("Team Blue: " + LiveSystem.Team.get("blue").getMembers().size(), NamedTextColor.BLUE));
+        Console.send(Component.text("Team Green: " + LiveSystem.Team.get("green").getMembers().size(), NamedTextColor.GREEN));
+        Console.send(Component.text("Team Yellow: " + LiveSystem.Team.get("yellow").getMembers().size(), NamedTextColor.YELLOW));
 
         // teamUpdate();
     }
@@ -136,42 +148,64 @@ public class IngameState extends GameState {
 
     public void addToEmptyTeam(Player player) {
         CustomPlayer customPlayer = CustomPlayer.getCustomPlayer(player);
-        Team red = LiveSystem.NewTeams.get("red");
-        Team blue = LiveSystem.NewTeams.get("blue");
-        Team green = LiveSystem.NewTeams.get("green");
-        Team yellow = LiveSystem.NewTeams.get("yellow");
+        Team red = LiveSystem.Team.get("red");
+        Team blue = LiveSystem.Team.get("blue");
+        Team green = LiveSystem.Team.get("green");
+        Team yellow = LiveSystem.Team.get("yellow");
+
+        if (LiveSystem.Teams == 2) { // TODO
+            if (Bukkit.getOnlinePlayers().size() == 2)
+                for (Player players : Bukkit.getOnlinePlayers()) {
+                    if (players.getName().equals(player.getName()))
+                        return;
+                    CustomPlayer customPlayer1 = CustomPlayer.getCustomPlayer(players);
+                    if (customPlayer1.getTeam() == null) {
+                        customPlayer.setTeam(red);
+                        customPlayer1.setTeam(blue);
+                    } else {
+                        if (customPlayer1.getTeam() == red) {
+                            customPlayer.setTeam(blue);
+                        } else
+                            customPlayer.setTeam(red);
+                    }
+                }
+        }
 
 
         if (red.getMembers().size() < LiveSystem.TeamSize) {
             red.addMember(player);
             customPlayer.setTeam(red);
-            customPlayer.setTeamName("red");
-            LiveSystem.newVotedPlayers.add(customPlayer);
-            Console.send("Added " + ChatColor.DARK_AQUA + player.getName() + ChatColor.GRAY + " to Team" + ChatColor.RED + " Red");
+            Console.send(Component.text("Added ", NamedTextColor.WHITE)
+                    .append(Component.text(player.getName(), NamedTextColor.GREEN))
+                    .append(Component.text(" to Team", NamedTextColor.WHITE))
+                    .append(Component.text(" Red", NamedTextColor.RED)));
         } else if (blue.getMembers().size() < LiveSystem.TeamSize) {
             blue.addMember(player);
             customPlayer.setTeam(blue);
-            customPlayer.setTeamName("blue");
-            LiveSystem.newVotedPlayers.add(customPlayer);
-            Console.send("Added " + ChatColor.DARK_AQUA + player.getName() + ChatColor.GRAY + " to Team" + ChatColor.BLUE + " Blue");
+            Console.send(Component.text("Added ", NamedTextColor.WHITE)
+                    .append(Component.text(player.getName(), NamedTextColor.GREEN))
+                    .append(Component.text(" to Team", NamedTextColor.WHITE))
+                    .append(Component.text(" Blue", NamedTextColor.BLUE)));
         } else if (LiveSystem.Teams >= 3) {
             if (green.getMembers().size() < LiveSystem.TeamSize) {
                 green.addMember(player);
                 customPlayer.setTeam(green);
-                customPlayer.setTeamName("green");
-                LiveSystem.newVotedPlayers.add(customPlayer);
-                Console.send("Added " + ChatColor.DARK_AQUA + player.getName() + ChatColor.GRAY + " to Team" + ChatColor.GREEN + " Green");
+                Console.send(Component.text("Added ", NamedTextColor.WHITE)
+                        .append(Component.text(player.getName(), NamedTextColor.GREEN))
+                        .append(Component.text(" to Team", NamedTextColor.WHITE))
+                        .append(Component.text(" Green", NamedTextColor.GREEN)));
             }
         } else if (LiveSystem.Teams >= 3) {
             if (yellow.getMembers().size() < LiveSystem.TeamSize) {
                 yellow.addMember(player);
                 customPlayer.setTeam(yellow);
-                customPlayer.setTeamName("yellow");
-                LiveSystem.newVotedPlayers.add(customPlayer);
-                Console.send("Added " + ChatColor.DARK_AQUA + player.getName() + ChatColor.GRAY + " to Team" + ChatColor.YELLOW + " Yellow");
+                Console.send(Component.text("Added ", NamedTextColor.WHITE)
+                        .append(Component.text(player.getName(), NamedTextColor.GREEN))
+                        .append(Component.text(" to Team", NamedTextColor.WHITE))
+                        .append(Component.text(" Yellow", NamedTextColor.YELLOW)));
             }
         } else {
-            Console.send(ChatColor.RED + "All Teams are full!");
+            Console.send(Component.text("All Teams are full!", NamedTextColor.RED));
             addSpectator(player);
         }
 
@@ -184,7 +218,8 @@ public class IngameState extends GameState {
 
             Console.send(" ");
             Console.send("CustomPlayer list");
-            for (CustomPlayer players : LiveSystem.newVotedPlayers) {
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                CustomPlayer players = CustomPlayer.getCustomPlayer(p);
                 Console.send(ChatColor.AQUA + "Player " + ChatColor.RESET + players.getPlayer().getName());
                 Console.send(ChatColor.AQUA + "TeamName " + ChatColor.RESET + players.getTeamName());
                 Console.send(ChatColor.AQUA + "Team " + ChatColor.RESET + players.getTeam());
@@ -221,6 +256,8 @@ public class IngameState extends GameState {
     }
 
     public static void addSpectator(Player player) {
+        CustomPlayer p = CustomPlayer.getCustomPlayer(player);
+        p.getTeam().addMember(player);
         spectator.add(player);
         player.setAllowFlight(true);
         player.getInventory().clear();
@@ -229,15 +266,15 @@ public class IngameState extends GameState {
             current.hidePlayer(Woolbattle.getPlugin(), player);
 
         player.teleport(new Location(Bukkit.getServer().getWorlds().get(0), 0, 50, 0));
-        LiveSystem.Team.put(player, "spectator");
+        // LiveSystem.Team.put(player, "spectator");
         IngameScoreboard.setup(player);
     }
 
     public static void boots() {
-        Team red = LiveSystem.NewTeams.get("red");
-        Team blue = LiveSystem.NewTeams.get("blue");
-        Team green = LiveSystem.NewTeams.get("green");
-        Team yellow = LiveSystem.NewTeams.get("yellow");
+        Team red = LiveSystem.Team.get("red");
+        Team blue = LiveSystem.Team.get("blue");
+        Team green = LiveSystem.Team.get("green");
+        Team yellow = LiveSystem.Team.get("yellow");
 
         for (Player player : red.getMembers())
             player.getInventory().setBoots(Items.boots(Color.RED));

@@ -84,7 +84,7 @@ public class PerkItems {
             case "klospülung" -> Items.create(player.getInventory(), Material.GLASS_BOTTLE, "§3Klospülung", Fperkslot);
             case "wandgenerator" -> Items.create(player.getInventory(), Material.RED_STAINED_GLASS_PANE, "§3Wandgenerator", Fperkslot);
             case "woolbombe" -> Items.create(player.getInventory(), Material.TNT, "§3WoolBombe", Fperkslot);
-            case "thegrabber" -> Items.create(player.getInventory(), Material.FISHING_ROD, "§3The Grabber", Fperkslot);
+            case "grabber" -> Items.create(player.getInventory(), Material.CARROT_ON_A_STICK, "§3The Grabber", Fperkslot);
         }
         switch (Objects.requireNonNull(Sperk != null ? Sperk.toString() : null)) {
             case "booster" -> Items.create(player.getInventory(), Material.TRIPWIRE_HOOK, "§3Booster", Sperkslot);
@@ -105,7 +105,7 @@ public class PerkItems {
             case "klospülung" -> Items.create(player.getInventory(), Material.GLASS_BOTTLE, "§3Klospülung", Sperkslot);
             case "wandgenerator" -> Items.create(player.getInventory(), Material.RED_STAINED_GLASS_PANE, "§3Wandgenerator", Sperkslot);
             case "woolbombe" -> Items.create(player.getInventory(), Material.TNT, "§3WoolBombe", Sperkslot);
-            case "thegrabber" -> Items.create(player.getInventory(), Material.FISHING_ROD, "§3The Grabber", Sperkslot);
+            case "grabber" -> Items.create(player.getInventory(), Material.CARROT_ON_A_STICK, "§3The Grabber", Sperkslot);
         }
 
         switch (Objects.requireNonNull(Pperk != null ? Pperk.toString() : null)) {

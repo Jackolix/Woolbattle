@@ -1,16 +1,13 @@
-// import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
-
 plugins {
   `java-library`
   id("io.papermc.paperweight.userdev") version "1.3.8"
-  id("xyz.jpenilla.run-paper") version "1.0.6" // Adds runServer and runMojangMappedServer tasks for testing
-  //id("net.minecrell.plugin-yml.bukkit") version "0.5.2" // Generates plugin.yml
+  id("xyz.jpenilla.run-paper") version "1.0.6"
   id("com.github.johnrengelman.shadow") version "7.1.2"
   id("io.spring.dependency-management") version "1.0.7.RELEASE"
 }
 
 group = "codes.Elix"
-version = "0.8"
+version = "1.0"
 description = "Gamemode for Minecraft"
 
 
@@ -19,19 +16,16 @@ java {
 }
 
 dependencies {
-  // You will need to manually specify the full dependency if using the groovy gradle dsl
-  // (paperDevBundle and paperweightDevBundle functions do not work in groovy)
-  // paperweightDevelopmentBundle("io.papermc.paper:dev-bundle:1.19.2-R0.1-SNAPSHOT")
-  // paperweightDevBundle("com.example.paperfork", "1.19.2-R0.1-SNAPSHOT")
 
-  paperDevBundle("1.19.3-R0.1-SNAPSHOT")
-  implementation(platform("com.intellectualsites.bom:bom-1.18.x:1.20")) //Fawe
-  compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.5.0") //Fawe
-  compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.5.0") //Fawe
-  implementation("com.github.ShieldCommunity:SternalBoard:2.1.0") // ScoreBoard
-  implementation("org.mongodb:mongodb-driver-reactivestreams:4.8.1")
-  implementation("org.springframework.data:spring-data-mongodb:4.0.1")
-  implementation("io.projectreactor:reactor-core")
+  paperDevBundle("1.20-R0.1-SNAPSHOT")
+  implementation(platform("com.intellectualsites.bom:bom-1.18.x:1.20")) //FAWE
+  compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.5.0") //FAWE
+  compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.5.0") //FAWE
+
+  // implementation("com.github.ShieldCommunity:SternalBoard:2.1.0") // ScoreBoard
+  implementation("org.mongodb:mongodb-driver-reactivestreams:4.8.1") // Database
+  implementation("org.springframework.data:spring-data-mongodb:4.0.1") // Database
+  implementation("io.projectreactor:reactor-core") // Database
   // implementation("org.mongodb:mongodb-driver-async:3.12.11")
   // implementation("mysql:mysql-connector-java:8.0.31")
   // implementation("pro.husk:mysql:1.4.1")
@@ -55,18 +49,9 @@ repositories {
 
 tasks {
   // Configure reobfJar to run when invoking the build task
-  /*
   assemble {
     dependsOn(reobfJar)
   }
-
-  shadowJar {
-    // relocate("com.shieldcommunity.sternalboard", "com.shieldcommunity.sternalboard1")
-    mergeServiceFiles()
-    finalizedBy("push")
-   }
-   */
-
   compileJava {
     options.encoding = Charsets.UTF_8.name()
     options.release.set(17)
@@ -79,29 +64,20 @@ tasks {
   }
 
   jar {
-    destinationDirectory.set(file("/Users/jackolix/Development/Server/Paper1.19/plugins"))
-    finalizedBy("push")
+    // destinationDirectory.set(file("/Users/jackolix/Development/Server/Paper1.19/plugins"))
+    // finalizedBy("push")
   }
 
   register<Exec>("push") {
-    commandLine("sh", "/Users/jackolix/IdeaProjects/Woolbattle/push.sh")
+    commandLine("sh", "/Users/jackolix/IdeaProjects/WoolbattleOLD/push.sh")
   }
 
-  /*
+
   reobfJar {
     // This is an example of how you might change the output location for reobfJar. It's recommended not to do this
     // for a variety of reasons, however it's asked frequently enough that an example of how to do it is included here.
-    outputJar.set(layout.buildDirectory.file("libs/PaperweightTestPlugin-${project.version}.jar"))
+    // outputJar.set(layout.buildDirectory.file("libs/PaperweightTestPlugin-${project.version}.jar"))
+    finalizedBy("push")
   }
-   */
-}
 
-/*
-// Configure plugin.yml generation
-bukkit {
-  load = BukkitPluginDescription.PluginLoadOrder.STARTUP
-  main = "io.papermc.paperweight.testplugin.TestPlugin"
-  apiVersion = "1.19"
-  authors = listOf("Author")
 }
- */

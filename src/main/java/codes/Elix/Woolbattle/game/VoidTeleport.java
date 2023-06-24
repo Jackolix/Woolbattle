@@ -20,13 +20,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.material.Wool;
-import org.checkerframework.checker.units.qual.C;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
-
-import java.util.ArrayList;
 
 public class VoidTeleport implements Listener {
 
@@ -77,22 +73,22 @@ public class VoidTeleport implements Listener {
     }
 
     private Team checkTeams() {
-        boolean red = LiveSystem.NewTeams.get("red").isDead();
-        boolean blue = LiveSystem.NewTeams.get("blue").isDead();
-        boolean green = LiveSystem.NewTeams.get("green").isDead();
-        boolean yellow = LiveSystem.NewTeams.get("yellow").isDead();
+        boolean red = LiveSystem.Team.get("red").isDead();
+        boolean blue = LiveSystem.Team.get("blue").isDead();
+        boolean green = LiveSystem.Team.get("green").isDead();
+        boolean yellow = LiveSystem.Team.get("yellow").isDead();
 
         if (!red && !blue && !green) {
-            return LiveSystem.NewTeams.get("yellow");
+            return LiveSystem.Team.get("yellow");
         }
         if (!red && !blue && !yellow) {
-            return LiveSystem.NewTeams.get("green");
+            return LiveSystem.Team.get("green");
         }
         if (!red && !green && !yellow) {
-            return LiveSystem.NewTeams.get("blue");
+            return LiveSystem.Team.get("blue");
         }
         if (!blue && !green && !yellow) {
-            return LiveSystem.NewTeams.get("red");
+            return LiveSystem.Team.get("red");
         }
         return null;
     }
@@ -106,7 +102,7 @@ public class VoidTeleport implements Listener {
 
             @Override
             public @NotNull Component subtitle() {
-                return Component.text(team.getColor() + ChatColor.GREEN + " WINS");
+                return Component.text(team.getName() + ChatColor.GREEN + " WINS");
             }
 
             @Override

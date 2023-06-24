@@ -5,11 +5,13 @@ package codes.Elix.Woolbattle.gamestates;
 
 import codes.Elix.Woolbattle.countdowns.LobbyCountdown;
 import codes.Elix.Woolbattle.util.Console;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 public class LobbyState extends GameState {
 
-    public static final int MIN_PLAYERS = 1, MAX_PLAYERS = 4;
+    public static int MIN_PLAYERS;
+    public static int MAX_PLAYERS;
     private final LobbyCountdown countdown;
 
     public LobbyState(GameStateManager gameStateManager) {
@@ -23,7 +25,7 @@ public class LobbyState extends GameState {
 
     @Override
     public void stop() {
-        Console.send(ChatColor.GOLD + "Game has started");
+        Console.send(Component.text("Game has started", NamedTextColor.GOLD));
         Console.send(" ");
     }
 

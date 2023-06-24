@@ -4,12 +4,11 @@
 package codes.Elix.Woolbattle.items;
 
 import codes.Elix.Woolbattle.game.HelpClasses.CustomPlayer;
+import codes.Elix.Woolbattle.game.HelpClasses.Perk;
 import codes.Elix.Woolbattle.game.HelpClasses.Team;
 import codes.Elix.Woolbattle.game.LiveSystem;
-import codes.Elix.Woolbattle.game.HelpClasses.Perk;
 import codes.Elix.Woolbattle.game.PerkHelper;
 import codes.Elix.Woolbattle.gamestates.GameStateManager;
-import codes.Elix.Woolbattle.gamestates.IngameState;
 import codes.Elix.Woolbattle.gamestates.LobbyState;
 import codes.Elix.Woolbattle.main.Woolbattle;
 import codes.Elix.Woolbattle.util.Console;
@@ -32,12 +31,12 @@ public class LobbyItems implements Listener {
     private HashMap<Player, String> Title = new HashMap<>();
 
     public static void Lobby(Player player) {
-        Items.create(player.getInventory(), Material.BOW, null, 5, "§3Perks", 0);
-        Items.create(player.getInventory(), Material.BOOK, null, 5, "§5Team wählen", 1);
+        Items.create(player.getInventory(), Material.BOW, "§3Perks", 0);
+        Items.create(player.getInventory(), Material.BOOK, "§5Team wählen", 1);
         particleitem(player);
-        Items.create(player.getInventory(), Material.CHEST, null, 5, "§6Inventarsortierung", 5);
-        Items.create(player.getInventory(), Material.NAME_TAG, null, 5, "§aLebensanzahl ändern", 7);
-        Items.create(player.getInventory(), Material.PAPER, null, 5, "§6Maps", 8);
+        Items.create(player.getInventory(), Material.CHEST, "§6Inventarsortierung", 5);
+        Items.create(player.getInventory(), Material.NAME_TAG, "§aLebensanzahl ändern", 7);
+        Items.create(player.getInventory(), Material.PAPER,"§6Maps", 8);
     }
 
     @EventHandler
@@ -56,9 +55,9 @@ public class LobbyItems implements Listener {
 
     private void PerkVorInventory(Player player) {
         Inventory inventory = Bukkit.createInventory(null, 9, Component.text("§3Wähle deine Perks!"));
-        Items.create(inventory, Material.CHEST, null, 5, "§6Aktiv-Perk #1", 3);
-        Items.create(inventory, Material.TRAPPED_CHEST, null, 5, "§6Aktiv-Perk #2", 4);
-        Items.create(inventory, Material.ENDER_CHEST, null, 5, "§3Passiv-Perk", 5);
+        Items.create(inventory, Material.CHEST,"§6Aktiv-Perk #1", 3);
+        Items.create(inventory, Material.TRAPPED_CHEST,"§6Aktiv-Perk #2", 4);
+        Items.create(inventory, Material.ENDER_CHEST,"§3Passiv-Perk", 5);
         player.openInventory(inventory);
     }
 
@@ -83,7 +82,7 @@ public class LobbyItems implements Listener {
         Items.create(inventory, Material.GLASS_BOTTLE, false, "§3Klospülung", "Spült dich und deine Gegner weg!", 10, 16, 15);
         Items.create(inventory, Material.RED_STAINED_GLASS_PANE, false, "§3Wandgenerator", "Baut eine Wand aus Wolle vor dir", 8, 10, 16);
         Items.create(inventory, Material.TNT, false, "§3WoolBombe", "Booste deine Gegner mit einem werfbaren TNT weg!", 8, 13, 17);
-        Items.create(inventory, Material.FISHING_ROD, false, "§3The Grabber", "Ziehe Gegner zu dir!", 8, 5, 18);
+        Items.create(inventory, Material.CARROT_ON_A_STICK, false, "§3The Grabber", "Ziehe Gegner zu dir!", 8, 5, 18);
         Items.create(inventory, Material.DARK_OAK_DOOR, false, "§3Back", 35);
         checkSelectet(player, inventory);
     }
@@ -103,7 +102,7 @@ public class LobbyItems implements Listener {
         Items.createPassivePerk(inventory, Material.ARROW, false, "§3SlowArrow", "Verlangsame den Gegner!", "§6Preis: 2 Wolle", "§6Nach Pfeilen: 3", 9);
         Items.createPassivePerk(inventory, Material.SPIDER_SPAWN_EGG,false, "§3Spinne", "Klettere wie eine Spinne an einer Wand hoch!", "§6Preis: 2 Wolle je Sekunde klettern", null, 10); //TODO Falscher Byte Code
         Items.createPassivePerk(inventory, Material.DIAMOND_BOOTS, false, "§3Stomper", "Katapultiert alle Gegner in deiner Nähe nach einem Doppelsprung weg!", "§6Preis: 10 Wolle", "§6Nach Sprüngen: 2", 11);
-        Items.create(inventory, Material.GOLDEN_HOE, null, 5, "§3SlimePlattform", 12);
+        Items.create(inventory, Material.GOLDEN_HOE,"§3SlimePlattform", 12);
         Items.create(inventory, Material.DARK_OAK_DOOR, false, "§3Back", 35);
         checkSelectet(player, inventory);
     }
@@ -111,13 +110,13 @@ public class LobbyItems implements Listener {
     private void TeamsInventory(Player player) {
         Inventory inventory = Bukkit.createInventory(null, 9, Component.text("§bWähle dein Team!"));
         if (LiveSystem.Teams == 2) {
-            checkTeam(LiveSystem.NewTeams.get("red"), inventory, Material.RED_DYE, "§cTeam Rot", 3, ChatColor.RED);
-            checkTeam(LiveSystem.NewTeams.get("blue"), inventory, Material.BLUE_DYE, "§bTeam Blau", 5, ChatColor.AQUA);
+            checkTeam(LiveSystem.Team.get("red"), inventory, Material.RED_DYE, "§cTeam Rot", 3, ChatColor.RED);
+            checkTeam(LiveSystem.Team.get("blue"), inventory, Material.BLUE_DYE, "§bTeam Blau", 5, ChatColor.AQUA);
         } else {
-            checkTeam(LiveSystem.NewTeams.get("red"), inventory, Material.RED_DYE, "§cTeam Rot", 1, ChatColor.RED);
-            checkTeam(LiveSystem.NewTeams.get("blue"), inventory, Material.BLUE_DYE, "§bTeam Blau", 3, ChatColor.AQUA);
-            checkTeam(LiveSystem.NewTeams.get("yellow"), inventory, Material.YELLOW_DYE, "§eTeam Gelb", 5, ChatColor.YELLOW);
-            checkTeam(LiveSystem.NewTeams.get("green"), inventory, Material.GREEN_DYE, "§aTeam Grün", 7, ChatColor.GREEN);
+            checkTeam(LiveSystem.Team.get("red"), inventory, Material.RED_DYE, "§cTeam Rot", 1, ChatColor.RED);
+            checkTeam(LiveSystem.Team.get("blue"), inventory, Material.BLUE_DYE, "§bTeam Blau", 3, ChatColor.AQUA);
+            checkTeam(LiveSystem.Team.get("yellow"), inventory, Material.YELLOW_DYE, "§eTeam Gelb", 5, ChatColor.YELLOW);
+            checkTeam(LiveSystem.Team.get("green"), inventory, Material.GREEN_DYE, "§aTeam Grün", 7, ChatColor.GREEN);
         }
         player.openInventory(inventory);
     }
@@ -215,7 +214,7 @@ public class LobbyItems implements Listener {
                 case GLASS_BOTTLE -> PerkItems.select(player, "klospülung", ".1Perk");
                 case RED_STAINED_GLASS_PANE -> PerkItems.select(player, "wandgenerator", ".1Perk");
                 case TNT -> PerkItems.select(player, "woolbombe", ".1Perk");
-                // THE GRABBER
+                case CARROT_ON_A_STICK -> PerkItems.select(player, "grabber", ".1Perk");
                 case DARK_OAK_DOOR -> {
                     PerkVorInventory(player);
                     return;
@@ -246,7 +245,7 @@ public class LobbyItems implements Listener {
                 case GLASS_BOTTLE -> PerkItems.select(player, "klospülung", ".2Perk");
                 case RED_STAINED_GLASS_PANE -> PerkItems.select(player, "wandgenerator", ".2Perk");
                 case TNT -> PerkItems.select(player, "woolbombe", ".2Perk");
-                // THE GRABBER
+                case CARROT_ON_A_STICK -> PerkItems.select(player, "grabber", ".2Perk");
                 case DARK_OAK_DOOR -> {
                     PerkVorInventory(player);
                     return;
@@ -306,10 +305,10 @@ public class LobbyItems implements Listener {
         if (event.getView().title().equals(Component.text("§bWähle dein Team!"))) {
             event.setCancelled(true);
             switch (event.getCurrentItem().getItemMeta().getDisplayName()) {
-                case "§cTeam Rot" -> addToTeam(LiveSystem.NewTeams.get("red"), player);
-                case "§bTeam Blau" -> addToTeam(LiveSystem.NewTeams.get("blue"), player);
-                case "§eTeam Gelb" -> addToTeam(LiveSystem.NewTeams.get("yellow"), player);
-                case "§aTeam Grün" -> addToTeam(LiveSystem.NewTeams.get("green"), player);
+                case "§cTeam Rot" -> addToTeam(LiveSystem.Team.get("red"), player);
+                case "§bTeam Blau" -> addToTeam(LiveSystem.Team.get("blue"), player);
+                case "§eTeam Gelb" -> addToTeam(LiveSystem.Team.get("yellow"), player);
+                case "§aTeam Grün" -> addToTeam(LiveSystem.Team.get("green"), player);
             }
             TeamsInventory(player);
         }
@@ -382,7 +381,7 @@ public class LobbyItems implements Listener {
                     case "klospülung" -> Items.create(inventory, Material.GLASS_BOTTLE, true, "§3Klospülung", "Spült dich und deine Gegner weg!", 10, 16, 15);
                     case "wandgenerator" -> Items.create(inventory, Material.RED_STAINED_GLASS_PANE, true, "§3Wandgenerator", "Baut eine Wand aus Wolle vor dir", 8, 10, 16);
                     case "woolbombe" -> Items.create(inventory, Material.TNT, true, "§3WoolBombe", "Booste deine Gegner mit einem werfbaren TNT weg!", 8, 13, 17);
-                    case "thegrabber" -> Items.create(inventory, Material.FISHING_ROD, true, "§3The Grabber", "Ziehe Gegner zu dir!", 8, 5, 18);
+                    case "grabber" -> Items.create(inventory, Material.CARROT_ON_A_STICK, true, "§3The Grabber", "Ziehe Gegner zu dir!", 8, 5, 18);
                     default -> Console.send("[NO_FIRST_PERK]: " + player.getName());
                 }
             }
@@ -411,7 +410,7 @@ public class LobbyItems implements Listener {
                     case "klospülung" -> Items.create(inventory, Material.GLASS_BOTTLE, true, "§3Klospülung", "Spült dich und deine Gegner weg!", 10, 16, 15);
                     case "wandgenerator" -> Items.create(inventory, Material.RED_STAINED_GLASS_PANE, true, "§3Wandgenerator", "Baut eine Wand aus Wolle vor dir", 8, 10, 16);
                     case "woolbombe" -> Items.create(inventory, Material.TNT, true, "§3WoolBombe", "Booste deine Gegner mit einem werfbaren TNT weg!", 8, 13, 17);
-                    case "thegrabber" -> Items.create(inventory, Material.FISHING_ROD, true, "§3The Grabber", "Ziehe Gegner zu dir!", 8, 5, 18);
+                    case "grabber" -> Items.create(inventory, Material.CARROT_ON_A_STICK, true, "§3The Grabber", "Ziehe Gegner zu dir!", 8, 5, 18);
                     default -> Console.send("[NO_SECOND_PERK]: " + player.getName());
                 }
             }
@@ -466,17 +465,17 @@ public class LobbyItems implements Listener {
 
             if (particels == null) {
                 config.set(player.getName() + ".particels", "true");
-                Items.create(player.getInventory(), Material.BLAZE_ROD, null, 5, "§ePartikel sind §aAN", 3);
+                Items.create(player.getInventory(), Material.BLAZE_ROD, "§ePartikel sind §aAN", 3);
                 Woolbattle.getPlugin().saveConfig();
                 return;
                 }
 
             switch (particels.toString()) {
-                case "true" -> Items.create(player.getInventory(), Material.BLAZE_ROD, null, 5, "§ePartikel sind §aAN", 3);
-                case "false" -> Items.create(player.getInventory(), Material.BLAZE_ROD, null, 5, "§ePartikel sind §cAUS", 3);
+                case "true" -> Items.create(player.getInventory(), Material.BLAZE_ROD, "§ePartikel sind §aAN", 3);
+                case "false" -> Items.create(player.getInventory(), Material.BLAZE_ROD,"§ePartikel sind §cAUS", 3);
                 default -> {
                     config.set(player.getName() + ".particels", "true");
-                    Items.create(player.getInventory(), Material.BLAZE_ROD, null, 5, "§ePartikel sind §aAN", 3);
+                    Items.create(player.getInventory(), Material.BLAZE_ROD,"§ePartikel sind §aAN", 3);
                 }
             }
             Woolbattle.getPlugin().saveConfig();
@@ -486,9 +485,9 @@ public class LobbyItems implements Listener {
         Perk perk = PerkHelper.getPerks(player);
         boolean particels = perk.hasParticles();
         if (particels) {
-            Items.create(player.getInventory(), Material.BLAZE_ROD, null, 5, "§ePartikel sind §aAN", 3);
+            Items.create(player.getInventory(), Material.BLAZE_ROD,"§ePartikel sind §aAN", 3);
         } else
-            Items.create(player.getInventory(), Material.BLAZE_ROD, null, 5, "§ePartikel sind §cAUS", 3);
+            Items.create(player.getInventory(), Material.BLAZE_ROD,"§ePartikel sind §cAUS", 3);
     }
 
     private void PartikelAction(Player player) {
@@ -523,7 +522,7 @@ public class LobbyItems implements Listener {
         // Abragen ob der player nicht in einem anderen team ist
         if (team.getMembers().size() < LiveSystem.TeamSize) {
             team.addMember(player);
-            Console.send("Added Player to " + team.getColor());
+            Console.send("Added Player to " + team.getName());
         } else Console.send(ChatColor.RED + "Team is full");
 
         /*

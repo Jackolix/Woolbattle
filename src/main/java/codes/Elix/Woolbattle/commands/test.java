@@ -3,23 +3,16 @@
 
 package codes.Elix.Woolbattle.commands;
 
-import codes.Elix.Woolbattle.game.HelpClasses.Perk;
-import codes.Elix.Woolbattle.game.PerkHelper;
 import codes.Elix.Woolbattle.util.Console;
-import codes.Elix.Woolbattle.util.CustomInventory;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
-import net.kyori.adventure.title.TitlePart;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.UnknownNullability;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +25,7 @@ public class test implements CommandExecutor, TabCompleter {
         if (!(sender instanceof Player player)) return false;
         Title title = Title.title(Component.text("KEKW"), Component.text("KEKW"));
         player.showTitle(title);
+        System.out.println(player.locale());
         /*
 
         Inventory minecraftInventory = null; // Das ursprüngliche net.minecraft.world.entity.player.Inventory-Objekt

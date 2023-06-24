@@ -4,8 +4,8 @@
 package codes.Elix.Woolbattle.items;
 
 import codes.Elix.Woolbattle.game.HelpClasses.CustomPlayer;
-import codes.Elix.Woolbattle.game.LiveSystem;
 import codes.Elix.Woolbattle.game.HelpClasses.Perk;
+import codes.Elix.Woolbattle.listeners.GameProtectionListener;
 import codes.Elix.Woolbattle.main.Woolbattle;
 import codes.Elix.Woolbattle.util.Console;
 import net.kyori.adventure.text.Component;
@@ -35,7 +35,7 @@ public class Items {
     public static HashMap<Player, Perk> perks = new HashMap<>();
 
     public static void standartitems(Player player) {
-        create(player.getInventory(), Material.ENDER_PEARL, null, null, "EnderPearl", 2);
+        create(player.getInventory(), Material.ENDER_PEARL,"EnderPearl", 2);
 
         ItemStack bow = new ItemStack(Material.BOW);
         ItemMeta bowmeta = bow.getItemMeta();
@@ -74,6 +74,20 @@ public class Items {
         itemMeta.setDisplayName(name);
         if (enchant != null) {
             itemMeta.addEnchant(enchant, enchantnumber, true);
+        }
+
+        item.setItemMeta(itemMeta);
+        inventory.setItem(slot, item);
+    }
+
+    //Normal ItemConstructor with more than one enchant
+    public static void create(Inventory inventory, Material material, HashMap<Enchantment, Integer> enchant, Integer enchantnumber, String name, int slot) {
+        ItemStack item = new ItemStack(material);
+        ItemMeta itemMeta = item.getItemMeta();
+        itemMeta.setDisplayName(name);
+        if (enchant != null) {
+            //enchant.forEach(); // TODO this should be the right way
+            //itemMeta.addEnchant(enchant, enchantnumber, true);
         }
 
         item.setItemMeta(itemMeta);
@@ -256,8 +270,20 @@ public class Items {
         return count;
     }
 
+    public static int woolAmount(Player player) {
+        int count = 0;
+        PlayerInventory inv = player.getInventory();
+        for (Material material : GameProtectionListener.toDestroy) {
+            for (ItemStack is : inv.all(material).values()) {
+                if (is != null && is.getType() == material)
+                    count = count + is.getAmount();
+            }
+        }
+        return count;
+    }
+
     public static boolean cost(Player player, int cost) {
-        if (!(Items.amount(player, Items.getWoolColor(player)) >= cost))
+        if (!(Items.woolAmount(player) >= cost))
             return false;
 
         ItemStack item = new ItemStack(Items.getWoolColor(player));
@@ -295,7 +321,7 @@ public class Items {
     }
 
     public static Material getWoolColor(Player player) {
-        return switch (CustomPlayer.getCustomPlayer(player).getTeam().getColor()) {
+        return switch (CustomPlayer.getCustomPlayer(player).getTeam().getName()) {
             case "red" -> Material.RED_WOOL;
             case "blue" -> Material.BLUE_WOOL;
             case "green" -> Material.GREEN_WOOL;

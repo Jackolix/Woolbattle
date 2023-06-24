@@ -14,6 +14,8 @@ public class GameStateManager {
     public GameStateManager(Woolbattle plugin) {
         this.plugin = plugin;
         gamestates = new GameState[3];
+        LobbyState.MIN_PLAYERS = Woolbattle.getPlugin().getConfig().getInt("PlayersToStartCountdown");
+        LobbyState.MAX_PLAYERS = Woolbattle.getPlugin().getConfig().getInt("MaxPlayers");
 
         gamestates[GameState.LOBBY_STATE] = new LobbyState(this);
         gamestates[GameState.INGAME_STATE] = new IngameState();

@@ -50,12 +50,12 @@ public class IngameScoreboard {
         board.updateLine(5, " §7• " + MapName);
         board.updateLine(6, "     ");
         board.updateLine(7, "§8» §7Leben");
-        board.updateLine(8, " §7• §4❤ " + LiveSystem.NewTeams.get("red").getLifes() + " §8- " + Colorname1);
-        board.updateLine(9, " §7• §4❤ " + LiveSystem.NewTeams.get("blue").getLifes() + " §8- " + Colorname2);
+        board.updateLine(8, " §7• §4❤ " + LiveSystem.Team.get("red").getLifes() + " §8- " + Colorname1);
+        board.updateLine(9, " §7• §4❤ " + LiveSystem.Team.get("blue").getLifes() + " §8- " + Colorname2);
         if (LiveSystem.Teams >=3)
-            board.updateLine(10, " §7• §4❤ " + LiveSystem.NewTeams.get("green").getLifes() + " §8- " + Colorname3);
+            board.updateLine(10, " §7• §4❤ " + LiveSystem.Team.get("green").getLifes() + " §8- " + Colorname3);
         if (LiveSystem.Teams >=4)
-            board.updateLine(11, " §7• §4❤ " + LiveSystem.NewTeams.get("yellow").getLifes() + " §8- " + Colorname4);
+            board.updateLine(11, " §7• §4❤ " + LiveSystem.Team.get("yellow").getLifes() + " §8- " + Colorname4);
     }
 
     public static String team(Player player) {
@@ -63,7 +63,7 @@ public class IngameScoreboard {
         CustomPlayer customPlayer = CustomPlayer.getCustomPlayer(player);
         if (customPlayer != null)
             if (customPlayer.getTeam() != null)
-                color = customPlayer.getTeam().getColor();
+                color = customPlayer.getTeam().getName();
         if (color == null) return "nicht ausgewählt";
 
         switch (color) {

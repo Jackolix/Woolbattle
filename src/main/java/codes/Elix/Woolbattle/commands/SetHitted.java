@@ -68,13 +68,32 @@ public class SetHitted implements CommandExecutor, TabCompleter {
                 Console.send("Use: hitted <player> <countdown>");
 
             } else if (args.length == 1) {
+                Player p = Bukkit.getPlayer(args[0]);
+                CustomPlayer player = CustomPlayer.getCustomPlayer(p);
+                if (!player.isHitted())
+                    player.addHitted(null);
+                    /*
                 if (!(LiveSystem.hitted.contains(args[0]))) {
                     Player p = Bukkit.getPlayer(args[0]);
+                    CustomPlayer player = CustomPlayer.getCustomPlayer(p);
+                    player.addHitted(null);
                     LiveSystem.hitted.add(p);
                 }
+                     */
 
             } else if (args.length == 2) {
                 Player p = Bukkit.getPlayer(args[0]);
+                CustomPlayer player = CustomPlayer.getCustomPlayer(p);
+                if (!player.isHitted()) {
+                    player.addHitted(null);
+                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Woolbattle.getPlugin(), new Runnable() {
+                        @Override
+                        public void run() {
+                            player.removeHitted();
+                            Console.send("Removed " + p.getName() + " from hitted.");
+                        }}, 20L *Integer.parseInt(args[1]));
+                }
+                /*
                 LiveSystem.hitted.add(p);
                 Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Woolbattle.getPlugin(), new Runnable() {
                     @Override
@@ -82,6 +101,8 @@ public class SetHitted implements CommandExecutor, TabCompleter {
                         LiveSystem.hitted.remove(args[0]);
                         Console.send("Removed " + args[0] + " from hitted.");
                     }}, 20L *Integer.parseInt(args[1]));
+
+                 */
 
             } else
                 Console.send("Use /hitted <player> <countdown>");

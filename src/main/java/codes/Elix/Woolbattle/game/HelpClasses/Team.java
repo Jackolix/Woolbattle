@@ -7,14 +7,14 @@ import java.util.List;
 public class Team {
 
     private List<Player> members;
-    private String color;
+    private String name;
     private int lifes;
     private boolean dead;
     private final String prefix;
 
-    public Team(List<Player> members, String color, int lifes, boolean dead, String prefix) {
+    public Team(List<Player> members, String name, int lifes, boolean dead, String prefix) {
         this.members = members;
-        this.color = color;
+        this.name = name;
         this.lifes = lifes;
         this.dead = dead;
         this.prefix = prefix;
@@ -28,8 +28,8 @@ public class Team {
         members.remove(player);
     }
 
-    public String getColor() {
-        return color;
+    public String getName() {
+        return name;
     }
 
     public boolean isDead() {

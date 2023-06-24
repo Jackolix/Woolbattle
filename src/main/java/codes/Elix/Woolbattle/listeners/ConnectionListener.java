@@ -7,7 +7,6 @@ package codes.Elix.Woolbattle.listeners;
 import codes.Elix.Woolbattle.countdowns.LobbyCountdown;
 import codes.Elix.Woolbattle.game.HelpClasses.CustomPlayer;
 import codes.Elix.Woolbattle.game.HelpClasses.Team;
-import codes.Elix.Woolbattle.game.LiveSystem;
 import codes.Elix.Woolbattle.game.PerkHelper;
 import codes.Elix.Woolbattle.gamestates.GameStateManager;
 import codes.Elix.Woolbattle.gamestates.IngameState;
@@ -31,12 +30,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.checkerframework.checker.units.qual.C;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-
-public class PlayerLobbyConnectionListener implements Listener {
+public class ConnectionListener implements Listener {
+    private static final Location spawnLocation = new Location(Bukkit.getServer().getWorlds().get(0), 0, 70, 0);
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
@@ -59,7 +56,7 @@ public class PlayerLobbyConnectionListener implements Listener {
 
         // Neuer Weg um Nachrichten zu senden
         TextComponent text = Component.text("Click to Copy Name to Clipboard");
-        final @NotNull TextComponent textComponent = Component.text(Woolbattle.PREFIX)
+        final @NotNull TextComponent textComponent = Woolbattle.PREFIX
                 .append(Component.text(player.getName(), NamedTextColor.GREEN))
                 .append(Component.text(" ist dem Spiel beigetreten. [", NamedTextColor.GRAY))
                 .append(Component.text(Woolbattle.players.size() + "/" + LobbyState.MAX_PLAYERS + "]", NamedTextColor.GRAY))
@@ -72,7 +69,7 @@ public class PlayerLobbyConnectionListener implements Listener {
         // event.setJoinMessage(Woolbattle.PREFIX + "§a" + player.getDisplayName() + " §7ist dem Spiel beigetreten. [" +
                //  Woolbattle.players.size() + "/" + LobbyState.MAX_PLAYERS + "]");
 
-        player.teleport(new Location(Bukkit.getServer().getWorlds().get(0), 0, 70, 0));
+        player.teleport(spawnLocation);
 
         LobbyCountdown countdown = lobbyState.getCountdown();
         if (Woolbattle.getPlayers().size() >= LobbyState.MIN_PLAYERS) {
@@ -97,7 +94,7 @@ public class PlayerLobbyConnectionListener implements Listener {
                 // Woolbattle.getPlayers().size() + "/" + LobbyState.MAX_PLAYERS + "]");
 
         TextComponent text = Component.text("Click to Copy Name to Clipboard");
-        final @NotNull TextComponent textComponent = Component.text(Woolbattle.PREFIX)
+        final @NotNull TextComponent textComponent = Woolbattle.PREFIX
                 .append(Component.text(player.getName(), NamedTextColor.GREEN))
                 .append(Component.text(" hat das Spiel verlassen. [", NamedTextColor.GRAY))
                 .append(Component.text(Woolbattle.players.size() + "/" + LobbyState.MAX_PLAYERS + "]", NamedTextColor.GRAY))
@@ -126,16 +123,15 @@ public class PlayerLobbyConnectionListener implements Listener {
         Voting.voted.remove(player);
         Voting.update();
         CustomPlayer customPlayer = CustomPlayer.getCustomPlayer(player);
-        if (LiveSystem.newVotedPlayers.contains(customPlayer))
-            return;
-        if (customPlayer.getTeam() != null)
-            Console.send(ChatColor.RED + "Player is in team " + customPlayer.getTeam().getColor());
-        Console.send(ChatColor.GREEN + "Trying to remove " + ChatColor.WHITE + player.getName());
+        if (customPlayer.getTeam() == null) return;
+        Console.send(ChatColor.RED + "Player is in team " + customPlayer.getTeam().getName());
+        Console.send(ChatColor.GREEN + "Removing ... " + ChatColor.WHITE + player.getName());
 
         Team team = customPlayer.getTeam();
         team.removeMembers(player);
-        LiveSystem.newVotedPlayers.remove(customPlayer);
+
         /*
+        LiveSystem.newVotedPlayers.remove(customPlayer);
          if (!LiveSystem.VotedPlayers.containsKey(player))
              return;
          Console.send(ChatColor.RED + "Player is in a team");

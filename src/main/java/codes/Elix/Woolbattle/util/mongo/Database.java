@@ -6,25 +6,22 @@ import com.mongodb.reactivestreams.client.MongoClient;
 import com.mongodb.reactivestreams.client.MongoClients;
 import com.mongodb.reactivestreams.client.MongoCollection;
 import com.mongodb.reactivestreams.client.MongoDatabase;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bson.Document;
-import org.bukkit.ChatColor;
 
 public class Database {
-    public static final String PREFIX = ChatColor.BLUE + "MongoDB: " + ChatColor.RESET, ERROR = ChatColor.BLUE + "MongoDB " + ChatColor.RED + "ERROR: " + ChatColor.RESET;
-    //connect to the server/database/collection
+    //connects to the server/database/collection
+    public static final Component PREFIX = Component.text("MongoDB: " , NamedTextColor.BLUE), ERROR = Component.text("MongoDB ", NamedTextColor.BLUE).append(Component.text("ERROR: ", NamedTextColor.RED));
     private static MongoClient mongoClient;
+    private static MongoDatabase database;
+    private static MongoCollection<Document> collection;
     public Database() {
-        connect();
-    }
-
-    public void connect() {
-        //connect to the server/database/collection
         mongoClient = MongoClients.create("mongodb://localhost:27017");
-        MongoDatabase database = mongoClient.getDatabase("database");
-        MongoCollection<Document> col = database.getCollection("collection");
-    }
-
-    public void disconnect() {
+        MongoDatabase database = mongoClient.getDatabase("minecraft");
+        MongoCollection<Document> col = database.getCollection("players");
+        this.database = database;
+        this.collection = col;
     }
 
     public static boolean hasConnection() {
@@ -34,7 +31,10 @@ public class Database {
     public static MongoClient getConnection() {
         return mongoClient;
     }
-    public static MongoDatabase getCollection(String name) {
-        return mongoClient.getDatabase(name);
+    public static MongoDatabase getDatabase() {
+        return database;
+    }
+    public static MongoCollection<Document> getCollection() {
+        return collection;
     }
 }

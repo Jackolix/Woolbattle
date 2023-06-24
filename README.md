@@ -1,5 +1,12 @@
 # Woolbattle
-## 80% Done
+## What is Woolbattle? ##
+Woolbattle is a Gameode where you play against your Friends or ....
+
+---------------
+# How to set it up
+First you need a Database where you can store the perks of all the players. This
+Database is called MongoDB. 
+
 
 ---------------
 ## TODO
@@ -44,13 +51,13 @@
 - [ ] The Grabber
 
 #### PASSIVE PERKS
-- [ ] Aufzug
-- [ ] Explodierender Pfeil
+- [x] Aufzug
+- [x] Explodierender Pfeil
 - [ ] Teleport Pfeil
 - [ ] Pfeilregen
-- [ ] Recharger
+- [x] Recharger
 - [ ] Reflector
-- [ ] Rocket Jump
+- [x] Rocket Jump
 - [ ] Schock Pfeil
 - [ ] SlowArrow
 - [ ] Spinne

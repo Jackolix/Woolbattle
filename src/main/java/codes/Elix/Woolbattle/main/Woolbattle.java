@@ -9,43 +9,58 @@ import codes.Elix.Woolbattle.gamestates.GameState;
 import codes.Elix.Woolbattle.gamestates.GameStateManager;
 import codes.Elix.Woolbattle.gamestates.LobbyState;
 import codes.Elix.Woolbattle.items.LobbyItems;
+import codes.Elix.Woolbattle.listeners.ConnectionListener;
 import codes.Elix.Woolbattle.listeners.GameProtectionListener;
 import codes.Elix.Woolbattle.listeners.KeepDayTask;
-import codes.Elix.Woolbattle.listeners.PlayerLobbyConnectionListener;
 import codes.Elix.Woolbattle.util.Console;
-import codes.Elix.Woolbattle.util.mongo.Database;
 import codes.Elix.Woolbattle.util.Worldloader;
+import codes.Elix.Woolbattle.util.mongo.Database;
 import com.sun.management.OperatingSystemMXBean;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryPoolMXBean;
 import java.lang.management.RuntimeMXBean;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Woolbattle extends JavaPlugin {
 
-    public static final String PREFIX = "§7[§cWOOLBATTLE§7] §r", NO_PERMISSION = PREFIX + "§cDazu hast du keine Rechte!";
+    //public static final String PREFIX = "§7[§cWOOLBATTLE§7] §r";
+    public static final @NotNull TextComponent PREFIX = Component.text("[", NamedTextColor.GRAY)
+            .append(Component.text("Woolbattle", NamedTextColor.RED))
+            .append(Component.text("] ", NamedTextColor.GRAY));
+    public static FileConfiguration config;
     private GameStateManager gameStateManager;
     public static ArrayList<Player> players;
 
     public static List<Block> blocks = new ArrayList<>();
     private static Woolbattle plugin;
-    public static boolean debug = false;
+    public static boolean debug;
     public static boolean useDB = true;
-
 
     @Override
     public void onEnable() {
         plugin = this;
         gameStateManager = new GameStateManager(this);
         players = new ArrayList<>();
+        saveDefaultConfig();
+        config = getConfig();
+        debug = getConfig().getBoolean("Debug");
+        checkFiles();
 
         initmonitor();
         PluginMessage();
@@ -55,13 +70,12 @@ public class Woolbattle extends JavaPlugin {
         addplayers();
 
         init(Bukkit.getPluginManager());
-        Console.send("Woolbattle wurde aktiviert!");
+        Console.send(Component.text("Woolbattle wurde aktiviert!", NamedTextColor.WHITE));
     }
 
     private void init(PluginManager pluginManager) {
         Chat chat = new Chat();
 
-        getCommand("setup").setExecutor(new SetupCommand(this));
         getCommand("start").setExecutor(new StartCommand(this));
         getCommand("test").setExecutor(new test());
         getCommand("countdown").setExecutor(new SetCountdown());
@@ -73,7 +87,7 @@ public class Woolbattle extends JavaPlugin {
         getCommand("switchteam").setExecutor(new Switchteam());
         getCommand("fix").setExecutor(new Fix());
 
-        pluginManager.registerEvents(new PlayerLobbyConnectionListener(), this);
+        pluginManager.registerEvents(new ConnectionListener(), this);
         pluginManager.registerEvents(new DoubleJump(), this);
         pluginManager.registerEvents(new GameProtectionListener(), this);
         pluginManager.registerEvents(new LobbyItems(), this);
@@ -148,7 +162,7 @@ public class Woolbattle extends JavaPlugin {
                 }
             }
         }
-        Console.send("Safed all Woolblocks!");
+        Console.send(Component.text("Safed all Woolblocks!", NamedTextColor.WHITE));
     }
 
     private void addplayers() {
@@ -171,10 +185,12 @@ public class Woolbattle extends JavaPlugin {
         Team blue = new Team(new ArrayList<>(), "blue", 0, false, "§9");
         Team green = new Team(new ArrayList<>(), "green", 0, false, "§a");
         Team yellow = new Team(new ArrayList<>(), "yellow", 0, false, "§e");
-        LiveSystem.NewTeams.put("red", red);
-        LiveSystem.NewTeams.put("blue", blue);
-        LiveSystem.NewTeams.put("green", green);
-        LiveSystem.NewTeams.put("yellow", yellow);
+        Team spectator = new Team(new ArrayList<>(), "spectator", 0, true, "§7");
+        LiveSystem.Team.put("red", red);
+        LiveSystem.Team.put("blue", blue);
+        LiveSystem.Team.put("green", green);
+        LiveSystem.Team.put("yellow", yellow);
+        LiveSystem.Team.put("spectator", spectator);
     }
 
     private void LobbyMap() {
@@ -189,6 +205,26 @@ public class Woolbattle extends JavaPlugin {
         TimoCloudAPI.getMessageAPI().sendMessageToServer(pluginMessage, "Lobby");
 
          */
+    }
+
+    private void checkFiles() {
+        Component error = Component.text("ERROR ", NamedTextColor.RED);
+        if (!Files.exists(Path.of("plugins/Woolbattle/Lobby1.schem"))) {
+            Console.debug(Component.text("Files are missing, trying to copy"));
+            try {
+                Files.copy(getClass().getResourceAsStream("/Lobby1.schem"), Path.of("plugins/Woolbattle/Lobby1.schem"));
+            } catch (IOException e) {
+                Console.debug(error.append(Component.text(e.toString())));
+            }
+        }
+        if (!Files.exists(Path.of("plugins/Woolbattle/Game1.schem"))) {
+            Console.debug(Component.text("Files are missing, trying to copy"));
+            try {
+                Files.copy(getClass().getResourceAsStream("/Game1.schem"), Path.of("plugins/Woolbattle/Game1.schem"));
+            } catch (IOException e) {
+                Console.debug(error.append(Component.text(e.toString())));
+            }
+        }
     }
 
     public static ArrayList<Player> getPlayers() {

@@ -11,6 +11,7 @@ import codes.Elix.Woolbattle.gamestates.IngameState;
 import codes.Elix.Woolbattle.gamestates.LobbyState;
 import codes.Elix.Woolbattle.items.Items;
 import codes.Elix.Woolbattle.main.Woolbattle;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Tag;
@@ -21,13 +22,17 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.*;
+import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerRecipeDiscoverEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 public class GameProtectionListener implements Listener {
 
@@ -158,7 +163,7 @@ public class GameProtectionListener implements Listener {
                 event.setDropItems(false);
                 return;
             }
-
+            System.out.println("Wool amount: " + Items.amount(player, Items.getWoolColor(player)));
             if (Items.amount(player, Items.getWoolColor(player)) >= 192) {
                 event.setCancelled(true);
                 return;
@@ -207,18 +212,18 @@ public class GameProtectionListener implements Listener {
             event.setYield(0);
         }
     }
-    /*
+
     @EventHandler
     public void onAdvancement(PlayerAdvancementDoneEvent event) {
         event.message(Component.text(""));
     }
-     */
+
     @EventHandler
     public void onRecipeDiscover(PlayerRecipeDiscoverEvent event) {
         event.setCancelled(true);
     }
 
-    private static final Set<Material> toDestroy = new HashSet<Material>();
+    public static final Set<Material> toDestroy = new HashSet<Material>();
     static {
         toDestroy.add(Material.RED_WOOL);
         toDestroy.add(Material.BLUE_WOOL);

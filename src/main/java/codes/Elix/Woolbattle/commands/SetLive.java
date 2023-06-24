@@ -7,9 +7,7 @@ import codes.Elix.Woolbattle.game.LiveSystem;
 import codes.Elix.Woolbattle.gamestates.GameStateManager;
 import codes.Elix.Woolbattle.gamestates.IngameState;
 import codes.Elix.Woolbattle.util.IngameScoreboard;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -35,7 +33,7 @@ public class SetLive implements CommandExecutor, TabCompleter {
         }
          */
 
-        LiveSystem.NewTeams.get(args[0]).setLifes(Integer.parseInt(args[1]));
+        LiveSystem.Team.get(args[0]).setLifes(Integer.parseInt(args[1]));
         //LiveSystem.TeamLifes.put(args[0], Integer.parseInt(args[1]));
         for (Player players : Bukkit.getOnlinePlayers())
             IngameScoreboard.setup(players);

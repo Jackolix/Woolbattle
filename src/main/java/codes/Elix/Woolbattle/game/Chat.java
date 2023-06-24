@@ -7,7 +7,6 @@ package codes.Elix.Woolbattle.game;
 import codes.Elix.Woolbattle.game.HelpClasses.CustomPlayer;
 import codes.Elix.Woolbattle.gamestates.GameStateManager;
 import codes.Elix.Woolbattle.gamestates.IngameState;
-import codes.Elix.Woolbattle.util.Console;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -19,7 +18,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -91,56 +89,31 @@ public class Chat implements Listener, CommandExecutor {
     }
 
     public void send(Boolean state, Player player, String message) {
+        CustomPlayer p = CustomPlayer.getCustomPlayer(player);
+        String prefix = "§7";
+        if (p.getTeam() != null)
+            prefix = p.getTeam().getPREFIX();
 
-        ChatColor color;
-        String stringcolor = LiveSystem.Team.get(player);
+        for (Player players : Bukkit.getOnlinePlayers()) {
+            if (state) {
+                players.sendMessage(prefix + "All : " + player.getName() + " : " + ChatColor.WHITE + message);
+                continue;
+            }
+            players.sendMessage(prefix + player.getName() + " : " + ChatColor.WHITE + message);
 
-        if (stringcolor == null)
-            stringcolor = "gray";
 
-        switch (stringcolor) {
-            case "red" -> color = ChatColor.RED;
-            case "blue" -> color = ChatColor.BLUE;
-            case "yellow" -> color = ChatColor.YELLOW;
-            case "green" -> color = ChatColor.GREEN;
-            default -> color = ChatColor.GRAY;
+
+
         }
-        if (state) {
-            // return color + "All: " + player.getName() + ": " + ChatColor.WHITE + message;
-            for (Player players : Bukkit.getOnlinePlayers())
-                players.sendMessage(color + "All : " + player.getName() + " : " + ChatColor.WHITE + message);
-            // Is this useless?
-            for (Player spectators : IngameState.getSpectator())
-                spectators.sendMessage(color + player.getName() + ": " + message);
-
-            return;
-        }
-        // return color + player.getName() + ": " + ChatColor.WHITE + message;
-        for (Player players : Bukkit.getOnlinePlayers())
-            players.sendMessage(color + player.getName() + " : " + ChatColor.WHITE + message);
-        // Is this useless?
-        for (Player spectators : IngameState.getSpectator())
-            spectators.sendMessage(color + player.getName() + ": " + message);
-
     }
-
     public String message(Boolean state, Player player, String message) {
+        CustomPlayer p = CustomPlayer.getCustomPlayer(player);
+        String prefix = "§7";
+        if (p.getTeam() != null)
+            prefix = p.getTeam().getPREFIX();
 
-        ChatColor color;
-        String stringcolor = LiveSystem.Team.get(player);
-
-        if (stringcolor == null)
-            stringcolor = "gray";
-
-        switch (stringcolor) {
-            case "red" -> color = ChatColor.RED;
-            case "blue" -> color = ChatColor.BLUE;
-            case "yellow" -> color = ChatColor.YELLOW;
-            case "green" -> color = ChatColor.GREEN;
-            default -> color = ChatColor.GRAY;
-        }
         if (state)
-            return color + "All : " + player.getName() + " : " + ChatColor.WHITE + message;
-        return color + player.getName() + " : " + ChatColor.WHITE + message;
+            return p.getTeam().getPREFIX() + "All : " + player.getName() + " : " + ChatColor.WHITE + message;
+        return p.getTeam().getPREFIX() + player.getName() + " : " + ChatColor.WHITE + message;
     }
 }

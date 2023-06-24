@@ -10,6 +10,8 @@ import codes.Elix.Woolbattle.main.Woolbattle;
 import codes.Elix.Woolbattle.util.LobbyScoreboard;
 import codes.Elix.Woolbattle.util.Worldloader;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -26,7 +28,8 @@ public class LobbyCountdown extends Countdown{
     private boolean isRunning;
     public LobbyCountdown(GameStateManager gameStateManager) {
         this.gameStateManager = gameStateManager;
-        seconds = COUNTDOWN_TIME;
+        // seconds = COUNTDOWN_TIME;
+        seconds = Woolbattle.getPlugin().getConfig().getInt("LobbyCountdown");
     }
 
     @Override
@@ -35,12 +38,19 @@ public class LobbyCountdown extends Countdown{
         taskID = Bukkit.getScheduler().scheduleSyncRepeatingTask(gameStateManager.getPlugin(), new Runnable() {
             @Override
             public void run() {
+                TextComponent countdown = Woolbattle.PREFIX.append(Component.text("Das Spiel startet in ", NamedTextColor.GRAY)
+                        .append(Component.text(seconds, NamedTextColor.GREEN))
+                        .append(Component.text(" Sekunden.", NamedTextColor.GRAY)));
+                TextComponent lastSecond = Woolbattle.PREFIX.append(Component.text("Das Spiel startet in ")
+                        .append(Component.text(" einer ", NamedTextColor.GREEN))
+                        .append(Component.text("Sekunde.", NamedTextColor.GRAY)));
+
                 switch (seconds) {
                     case 30, 20, 10, 5, 4, 3, 2 ->
-                            Bukkit.broadcast(Component.text(Woolbattle.PREFIX + "§7Das Spiel startet in §a" + seconds + " Sekunden§7."));
-                    case 1 -> Bukkit.broadcast(Component.text( Woolbattle.PREFIX + "§7Das Spiel startet in §aeiner Sekunde§7."));
+                            Bukkit.broadcast(countdown);
+                    case 1 -> Bukkit.broadcast(lastSecond);
                     case 0 -> {
-                        Worldloader.paste(new Location(Bukkit.getServer().getWorlds().get(0), -38, 52, 15), new File("./plugins/Woolbattle/game1.schem"));
+                        Worldloader.paste(new Location(Bukkit.getServer().getWorlds().get(0), -38, 52, 15), new File("./plugins/Woolbattle/Game1.schem"));
                         Woolbattle.safewool();
                         gameStateManager.setGameState(GameState.INGAME_STATE);
                         Worldloader.teleport(new Location(Bukkit.getServer().getWorlds().get(0), 0, 50, 0));
@@ -69,12 +79,16 @@ public class LobbyCountdown extends Countdown{
 
     public void startIdle() {
         isIdling = true;
-        idleID = Bukkit.getScheduler().scheduleSyncRepeatingTask(gameStateManager.getPlugin(), new Runnable() {
+        idleID = Bukkit.getScheduler().scheduleAsyncRepeatingTask(gameStateManager.getPlugin(), new Runnable() {
             @Override
             public void run() {
-                if (Bukkit.getOnlinePlayers().size() > 0)
-                    Bukkit.broadcast(Component.text(Woolbattle.PREFIX + "§7Bis zum Spielstart fehlen noch §6" +
-                            (LobbyState.MIN_PLAYERS - Woolbattle.getPlayers().size()) + " §7Spieler."));
+                if (Bukkit.getOnlinePlayers().size() > 0) {
+                    final TextComponent message = Woolbattle.PREFIX
+                            .append(Component.text("Bis zum Spielstart fehlen noch ", NamedTextColor.GRAY))
+                            .append(Component.text(LobbyState.MIN_PLAYERS - Woolbattle.getPlayers().size(), NamedTextColor.GREEN))
+                            .append(Component.text(" Spieler.", NamedTextColor.GRAY));
+                    Bukkit.broadcast(message);
+                }
             }
         }, 0, 20* IDLE_TIME);
 

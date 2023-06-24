@@ -1,7 +1,8 @@
 package codes.Elix.Woolbattle.items;
 
 import codes.Elix.Woolbattle.util.Console;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -35,11 +36,11 @@ public class Voting {
         }
 
         Console.send("");
-        Console.send(ChatColor.GOLD + "-------- Life Voting --------");
-        Console.send("6: " + six.size());
-        Console.send("12: " + twelve.size());
-        Console.send("18: " + eighteen.size());
-        Console.send("23: " + twentythree.size());
+        Console.send(Component.text("-------- Life Voting --------", NamedTextColor.GOLD));
+        Console.send(Component.text(" 6: " + six.size(), NamedTextColor.WHITE));
+        Console.send(Component.text("12: " + twelve.size(), NamedTextColor.WHITE));
+        Console.send(Component.text("18: " + eighteen.size(), NamedTextColor.WHITE));
+        Console.send(Component.text("23: " + twentythree.size(), NamedTextColor.WHITE));
 
         return largest;
     }

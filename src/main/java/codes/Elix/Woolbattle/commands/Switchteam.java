@@ -28,10 +28,10 @@ public class Switchteam implements CommandExecutor, TabCompleter {
         Team team = null;
         Player player = null;
         switch (args[0]) {
-            case "red" -> team = LiveSystem.NewTeams.get("red");
-            case "blue" -> team = LiveSystem.NewTeams.get("blue");
-            case "green" -> team = LiveSystem.NewTeams.get("green");
-            case "yellow" -> team = LiveSystem.NewTeams.get("yellow");
+            case "red" -> team = LiveSystem.Team.get("red");
+            case "blue" -> team = LiveSystem.Team.get("blue");
+            case "green" -> team = LiveSystem.Team.get("green");
+            case "yellow" -> team = LiveSystem.Team.get("yellow");
             default -> args[0] = null;
         }
 

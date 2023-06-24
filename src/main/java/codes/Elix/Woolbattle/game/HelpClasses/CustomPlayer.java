@@ -35,12 +35,9 @@ public class CustomPlayer {
         return team;
     }
 
-    public void setTeamName(String teamName) {
-        this.teamName = teamName;
-    }
-
     public void setTeam(Team team) {
         this.team = team;
+        this.teamName = team.getName();
     }
 
     public boolean isHitted() {

@@ -71,10 +71,14 @@ public class Worldloader {
         }
     }
 
-    public static void remove() { // Location pos1, Location pos2
+    public static void remove() {
+        // Default small area for backwards compatibility
         Location pos1 = new Location(Bukkit.getWorlds().get(0), -1, 69, -1);
         Location pos2 = new Location(Bukkit.getWorlds().get(0), 1, 69, 1);
+        remove(pos1, pos2);
+    }
 
+    public static void remove(Location pos1, Location pos2) {
         World world = BukkitAdapter.adapt(pos1.getWorld());
         BlockState air = BukkitAdapter.adapt(Material.AIR.createBlockData());
 
@@ -88,7 +92,7 @@ public class Worldloader {
         } catch (MaxChangedBlocksException e) {
             e.printStackTrace();
         }
-        editsession.flushQueue(); // Das hier hat gefehlt damit es funktioniert ...
+        editsession.flushQueue();
     }
 
     public static void teleport(Location location) {

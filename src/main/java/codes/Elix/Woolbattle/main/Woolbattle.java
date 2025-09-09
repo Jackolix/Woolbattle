@@ -13,6 +13,7 @@ import codes.Elix.Woolbattle.listeners.ConnectionListener;
 import codes.Elix.Woolbattle.listeners.GameProtectionListener;
 import codes.Elix.Woolbattle.listeners.KeepDayTask;
 import codes.Elix.Woolbattle.util.Console;
+import codes.Elix.Woolbattle.util.SchematicManager;
 import codes.Elix.Woolbattle.util.Worldloader;
 import codes.Elix.Woolbattle.util.mongo.Database;
 import com.sun.management.OperatingSystemMXBean;
@@ -50,7 +51,7 @@ public class Woolbattle extends JavaPlugin {
     public static List<Block> blocks = new ArrayList<>();
     private static Woolbattle plugin;
     public static boolean debug;
-    public static boolean useDB = true;
+    public static boolean useDB;
 
     @Override
     public void onEnable() {
@@ -60,7 +61,9 @@ public class Woolbattle extends JavaPlugin {
         saveDefaultConfig();
         config = getConfig();
         debug = getConfig().getBoolean("Debug");
+        useDB = getConfig().getBoolean("MongoDB");
         checkFiles();
+        SchematicManager.scanSchematics();
 
         initmonitor();
         PluginMessage();
@@ -86,6 +89,7 @@ public class Woolbattle extends JavaPlugin {
         getCommand("debug").setExecutor(new Debug());
         getCommand("switchteam").setExecutor(new Switchteam());
         getCommand("fix").setExecutor(new Fix());
+        getCommand("visualizewool").setExecutor(new VisualizeWool());
 
         pluginManager.registerEvents(new ConnectionListener(), this);
         pluginManager.registerEvents(new DoubleJump(), this);
@@ -96,7 +100,12 @@ public class Woolbattle extends JavaPlugin {
         pluginManager.registerEvents(chat, this);
 
         new KeepDayTask().runTaskTimer(this, 0L, 100L);
-        new Database();
+        if (useDB) {
+            new Database();
+            Console.send(Component.text("MongoDB connection enabled", NamedTextColor.GREEN));
+        } else {
+            Console.send(Component.text("MongoDB connection disabled - running without database", NamedTextColor.YELLOW));
+        }
         initTeams();
         cloudStartMessenger();
     }
@@ -194,7 +203,9 @@ public class Woolbattle extends JavaPlugin {
     }
 
     private void LobbyMap() {
-        Worldloader.paste(new Location(Bukkit.getServer().getWorlds().get(0), 2, 70, 1), new File("./plugins/Woolbattle/Lobby1.schem"));
+        // Use the new config-based system for loading lobby schematic
+        String lobbySchematic = "Lobby1.schem";
+        SchematicManager.loadSchematicWithConfig(lobbySchematic);
     }
 
     private void cloudStartMessenger() {

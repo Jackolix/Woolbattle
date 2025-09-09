@@ -4,6 +4,7 @@
 package codes.Elix.Woolbattle.gamestates;
 
 import codes.Elix.Woolbattle.countdowns.LobbyCountdown;
+import codes.Elix.Woolbattle.items.MapVoting;
 import codes.Elix.Woolbattle.util.Console;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -20,6 +21,7 @@ public class LobbyState extends GameState {
 
     @Override
     public void start() {
+        MapVoting.clearVotes(); // Clear previous votes when returning to lobby
         countdown.startIdle();
     }
 

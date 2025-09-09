@@ -16,6 +16,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.util.Vector;
 
 import java.util.HashMap;
 import java.util.Objects;
@@ -31,24 +32,31 @@ public class EnderPearl implements Listener {
         if (event.getItem().getType() != Material.ENDER_PEARL) return;
 
         Player player = event.getPlayer();
+        event.setCancelled(true);
+
         if (!Items.cost(player, cost)) {
-            event.setCancelled(true);
             return;
         }
+        Vector direction = player.getLocation().getDirection();
+        Vector velocity = direction.multiply(1.8);
+        
+        Projectile enderPearl;
         if (Objects.equals(Items.perks.get(player).getpassivePerk(), "aufzug")) {
             int amount = ready.get(player);
             amount++;
             if (amount >= 3) {
-                Projectile enderPearl = player.launchProjectile(org.bukkit.entity.EnderPearl.class);
+                enderPearl = player.launchProjectile(org.bukkit.entity.EnderPearl.class, velocity);
                 enderPearl.setMetadata("teleport", new FixedMetadataValue(Woolbattle.getPlugin(), "keineAhnungWiesoIchDasBrauch"));
                 ready.put(player, 0);
             } else {
                 ready.put(player, amount);
-                player.launchProjectile(org.bukkit.entity.EnderPearl.class);
+                enderPearl = player.launchProjectile(org.bukkit.entity.EnderPearl.class, velocity);
+                enderPearl.setMetadata("teleport", new FixedMetadataValue(Woolbattle.getPlugin(), "keineAhnungWiesoIchDasBrauch"));
             }
+        } else {
+            enderPearl = player.launchProjectile(org.bukkit.entity.EnderPearl.class, velocity);
+            enderPearl.setMetadata("teleport", new FixedMetadataValue(Woolbattle.getPlugin(), "keineAhnungWiesoIchDasBrauch"));
         }
-        // player.launchProjectile(org.bukkit.entity.EnderPearl.class);
-        event.setCancelled(true);
 
         if (Objects.equals(PerkHelper.passive(player), "recharger"))
             cooldown = 2;
@@ -57,7 +65,8 @@ public class EnderPearl implements Listener {
             Items.visualCooldown(player, cooldown, Material.ENDER_PEARL, slot, "§3EnderPerle");
     }
 
-    @EventHandler
+    // Prevent players from bugging inside blocks with enderpearl - but commented since it does not happen with newer minecraft versions anymore?
+    /*@EventHandler
     public void onProjectileHit(ProjectileHitEvent e){
         if (!(e.getEntity() instanceof org.bukkit.entity.EnderPearl)) return;
         if (!(e.getEntity().getShooter() instanceof Player player)) return;
@@ -74,7 +83,7 @@ public class EnderPearl implements Listener {
         }
 
 
-    }
+    }*/
 
     public static void enable() {
         Bukkit.getPluginManager().registerEvents(new EnderPearl(), Woolbattle.getPlugin());

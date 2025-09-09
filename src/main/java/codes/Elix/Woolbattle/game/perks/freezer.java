@@ -13,6 +13,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 
 import java.util.Objects;
 
@@ -32,7 +33,9 @@ public class freezer implements Listener {
             if (!Woolbattle.debug)
                 if (!Items.cost(player, cost)) return;
 
-            Projectile snowball = player.launchProjectile(Snowball.class);
+            Vector direction = player.getLocation().getDirection();
+            Vector velocity = direction.multiply(1.6);
+            Projectile snowball = player.launchProjectile(Snowball.class, velocity);
             snowball.setMetadata("Freezer", new FixedMetadataValue(Woolbattle.getPlugin(), "keineAhnungWiesoIchDasBrauch"));
 
             if (Objects.equals(PerkHelper.passive(player), "recharger"))
@@ -51,7 +54,7 @@ public class freezer implements Listener {
         Projectile snowball = (Projectile) e.getDamager();
 
         if (!(snowball.hasMetadata("Freezer"))) return;
-        player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, freeze_time_sec * 20, slowness_strength));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, freeze_time_sec * 20, slowness_strength));
     }
     public static void enable() { Bukkit.getPluginManager().registerEvents(new freezer(), Woolbattle.getPlugin()); }
     public static void disable() {}

@@ -9,6 +9,7 @@ import codes.Elix.Woolbattle.gamestates.GameStateManager;
 import codes.Elix.Woolbattle.gamestates.IngameState;
 import codes.Elix.Woolbattle.main.Woolbattle;
 import codes.Elix.Woolbattle.util.IngameScoreboard;
+import codes.Elix.Woolbattle.util.SchematicManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.title.TitlePart;
@@ -39,7 +40,10 @@ public class VoidTeleport implements Listener {
             if (lifes == 0) {
                 team.setDead(true);
                 IngameState.addSpectator(player);
-                player.teleport(new Location(player.getWorld(), 0, 56, 0));
+                // Use schematic-based spectator spawn instead of hardcoded location
+                String selectedMap = SchematicManager.getSelectedMap();
+                Location spectatorSpawn = SchematicManager.getSpectatorSpawn(selectedMap);
+                player.teleport(spectatorSpawn);
                 if (checkTeams() != null) {
                     winner(checkTeams());
                 }
@@ -65,7 +69,11 @@ public class VoidTeleport implements Listener {
                 customPlayer.removeHitted();
             }
 
-            player.teleport(new Location(player.getWorld(), 0,56,0));
+            // Use schematic-based team spawn instead of hardcoded location
+            String selectedMap = SchematicManager.getSelectedMap();
+            String teamKey = team.getName().toLowerCase();
+            Location teamSpawn = SchematicManager.getTeamSpawn(selectedMap, teamKey);
+            player.teleport(teamSpawn);
 
             for (Player players : Bukkit.getOnlinePlayers())
                 IngameScoreboard.setup(players);
@@ -115,6 +123,21 @@ public class VoidTeleport implements Listener {
                 return null;
             }
         });
+        
+        // Shutdown server after 10 seconds to let players see the results
+        Bukkit.getScheduler().scheduleSyncDelayedTask(Woolbattle.getPlugin(), new Runnable() {
+            @Override
+            public void run() {
+                Bukkit.broadcast(Component.text(Woolbattle.PREFIX + "§cServer shutting down in 5 seconds..."));
+            }
+        }, 20 * 5); // 5 seconds delay
+        
+        Bukkit.getScheduler().scheduleSyncDelayedTask(Woolbattle.getPlugin(), new Runnable() {
+            @Override
+            public void run() {
+                Bukkit.getServer().shutdown();
+            }
+        }, 20 * 10); // 10 seconds delay
     }
 
 }

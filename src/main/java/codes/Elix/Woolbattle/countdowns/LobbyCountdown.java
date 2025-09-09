@@ -7,7 +7,9 @@ import codes.Elix.Woolbattle.gamestates.GameState;
 import codes.Elix.Woolbattle.gamestates.GameStateManager;
 import codes.Elix.Woolbattle.gamestates.LobbyState;
 import codes.Elix.Woolbattle.main.Woolbattle;
+import codes.Elix.Woolbattle.items.MapVoting;
 import codes.Elix.Woolbattle.util.LobbyScoreboard;
+import codes.Elix.Woolbattle.util.SchematicManager;
 import codes.Elix.Woolbattle.util.Worldloader;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -50,11 +52,19 @@ public class LobbyCountdown extends Countdown{
                             Bukkit.broadcast(countdown);
                     case 1 -> Bukkit.broadcast(lastSecond);
                     case 0 -> {
-                        Worldloader.paste(new Location(Bukkit.getServer().getWorlds().get(0), -38, 52, 15), new File("./plugins/Woolbattle/Game1.schem"));
+                        // Finalize map voting and determine winner
+                        String winningMap = MapVoting.getWinningMap();
+                        SchematicManager.selectMap(winningMap);
+                        
+                        // Use config-based loading for the game map
+                        SchematicManager.loadSchematicWithConfig(winningMap);
+                        System.out.println("[Woolbattle] Loading map with config: " + winningMap);
                         Woolbattle.safewool();
                         gameStateManager.setGameState(GameState.INGAME_STATE);
-                        Worldloader.teleport(new Location(Bukkit.getServer().getWorlds().get(0), 0, 50, 0));
-                        Worldloader.remove();
+                        
+                        // Remove lobby map before loading game map
+                        Location[] lobbyBounds = SchematicManager.getLobbyBounds();
+                        Worldloader.remove(lobbyBounds[0], lobbyBounds[1]);
                     }
                 }
                 seconds--;

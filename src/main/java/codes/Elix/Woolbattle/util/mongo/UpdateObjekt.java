@@ -1,6 +1,7 @@
 package codes.Elix.Woolbattle.util.mongo;
 
 import codes.Elix.Woolbattle.game.PerkHelper;
+import codes.Elix.Woolbattle.main.Woolbattle;
 import com.mongodb.reactivestreams.client.MongoClient;
 import com.mongodb.reactivestreams.client.MongoCollection;
 import com.mongodb.reactivestreams.client.MongoDatabase;
@@ -25,7 +26,7 @@ public class UpdateObjekt {
     }
 
     public static void update() {
-        if (!Database.hasConnection()) return;
+        if (!Woolbattle.useDB || !Database.hasConnection()) return;
         MongoClient mongoClient = Database.getConnection();
         MongoDatabase database = mongoClient.getDatabase("minecraft");
         MongoCollection<Document> collection = database.getCollection("players");

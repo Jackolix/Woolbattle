@@ -5,9 +5,14 @@ package codes.Elix.Woolbattle.util;
 
 import codes.Elix.Woolbattle.game.HelpClasses.CustomPlayer;
 import codes.Elix.Woolbattle.game.LiveSystem;
-import com.xism4.sternalboard.SternalBoardHandler;
+import fr.mrmicky.fastboard.FastBoard;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class IngameScoreboard {
 
@@ -16,46 +21,38 @@ public class IngameScoreboard {
     public static String Colorname3 = "§aGreen";
     public static String Colorname4 = "§eGelb";
     private static final String MapName = "§3Custom";
+    private static final Map<Player, FastBoard> boards = new HashMap<>();
 
     public static void setup(Player player) {
-        /*
-        org.bukkit.scoreboard.Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-        Objective objective = scoreboard.registerNewObjective("abcd", "abcd");
-        objective.setDisplayName("§f§lWOOLBATTLE");
-        objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-        objective.getScore(" §7• §4❤ " + LiveSystem.TeamLifes.get("red") + " §8- " + Colorname2).setScore(1);
-        objective.getScore(" §7• §4❤ " + LiveSystem.TeamLifes.get("blue") + " §8- " + Colorname1).setScore(2);
-        if (LiveSystem.Teams >= 3)
-            objective.getScore(" §7• §4❤ " + LiveSystem.TeamLifes.get("green") + " §8- " + Colorname3).setScore(3);
-        if (LiveSystem.Teams >= 4)
-            objective.getScore(" §7• §4❤ " + LiveSystem.TeamLifes.get("yellow") + " §8- " + Colorname4).setScore(4);
-        objective.getScore("§8» §7Leben").setScore(5);
-        objective.getScore(" ").setScore(6);
-        objective.getScore(" §7• " + MapName).setScore(7);
-        objective.getScore("§8» §7Map").setScore(8);
-        objective.getScore("  ").setScore(9);
-        objective.getScore(" §7• " + team(player)).setScore(10);
-        objective.getScore("§8» §7Dein Team").setScore(11);
-        objective.getScore("   ").setScore(12);
-        player.setScoreboard(scoreboard);
-         */
-
-        SternalBoardHandler board = new SternalBoardHandler(player);
+        FastBoard board = new FastBoard(player);
         board.updateTitle("§f§lWOOLBATTLE");
-        board.updateLine(0, "     ");
-        board.updateLine(1, "§8» §7Dein Team");
-        board.updateLine(2, " §7• " + team(player));
-        board.updateLine(3, "    ");
-        board.updateLine(4, "§8» §7Current Map");
-        board.updateLine(5, " §7• " + MapName);
-        board.updateLine(6, "     ");
-        board.updateLine(7, "§8» §7Leben");
-        board.updateLine(8, " §7• §4❤ " + LiveSystem.Team.get("red").getLifes() + " §8- " + Colorname1);
-        board.updateLine(9, " §7• §4❤ " + LiveSystem.Team.get("blue").getLifes() + " §8- " + Colorname2);
-        if (LiveSystem.Teams >=3)
-            board.updateLine(10, " §7• §4❤ " + LiveSystem.Team.get("green").getLifes() + " §8- " + Colorname3);
-        if (LiveSystem.Teams >=4)
-            board.updateLine(11, " §7• §4❤ " + LiveSystem.Team.get("yellow").getLifes() + " §8- " + Colorname4);
+        
+        List<String> lines = new ArrayList<>();
+        lines.add("   ");
+        lines.add("§8» §7Dein Team");
+        lines.add(" §7• " + team(player));
+        lines.add("  ");
+        lines.add("§8» §7Map");
+        lines.add(" §7• " + MapName);
+        lines.add(" ");
+        lines.add("§8» §7Leben");
+        lines.add(" §7• §4❤ " + LiveSystem.Team.get("red").getLifes() + " §8- " + Colorname1);
+        lines.add(" §7• §4❤ " + LiveSystem.Team.get("blue").getLifes() + " §8- " + Colorname2);
+        
+        if (LiveSystem.Teams >= 3)
+            lines.add(" §7• §4❤ " + LiveSystem.Team.get("green").getLifes() + " §8- " + Colorname3);
+        if (LiveSystem.Teams >= 4)
+            lines.add(" §7• §4❤ " + LiveSystem.Team.get("yellow").getLifes() + " §8- " + Colorname4);
+            
+        board.updateLines(lines);
+        boards.put(player, board);
+    }
+    
+    public static void remove(Player player) {
+        FastBoard board = boards.remove(player);
+        if (board != null) {
+            board.delete();
+        }
     }
 
     public static String team(Player player) {

@@ -41,7 +41,9 @@ public class grabber implements Listener {
                     event.setCancelled(true);
                     return;
                 }
-            Projectile egg = player.launchProjectile(Egg.class);
+            Vector direction = player.getLocation().getDirection();
+            Vector velocity = direction.multiply(1.5);
+            Projectile egg = player.launchProjectile(Egg.class, velocity);
             egg.setMetadata("grabber", new FixedMetadataValue(Woolbattle.getPlugin(), "keineAhnungWiesoIchDasBrauch"));
             event.setCancelled(true);
 
@@ -59,7 +61,7 @@ public class grabber implements Listener {
             }, 8*20);
 
         } else if (event.getItem().getType() == Material.STICK) {
-            if (!event.getItem().getItemMeta().hasEnchant(Enchantment.LUCK)) return;
+            if (!event.getItem().getItemMeta().hasEnchant(Enchantment.FORTUNE)) return;
             Entity player = hitted.get(event.getPlayer());
             Vector vector = event.getPlayer().getLocation().toVector().subtract(player.getLocation().toVector());
             System.out.println(vector);
@@ -86,7 +88,7 @@ public class grabber implements Listener {
         ItemStack item = new ItemStack(Material.STICK);
         ItemMeta itemMeta = item.getItemMeta();
         itemMeta.displayName(Component.text("The Grabber", NamedTextColor.AQUA));
-        itemMeta.addEnchant(Enchantment.LUCK, 1, true);
+        itemMeta.addEnchant(Enchantment.FORTUNE, 1, true);
         itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 
         item.setItemMeta(itemMeta);

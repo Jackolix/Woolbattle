@@ -24,7 +24,7 @@ public class DoubleJump implements Listener {
     //TODO: can be changed from rocket jump
     double dj_height = 1.5D;
     //cooldown between double jumps
-    long cooldown = 4L;
+    long cooldown = 2L;
     //strength of the double jumps
     float strength = 0.75f;
     int cost = 5;
@@ -58,7 +58,7 @@ public class DoubleJump implements Listener {
             }
 
             if (Objects.equals(PerkHelper.passive(player), "recharger"))
-                cooldown = 3L;
+                cooldown = 1L;
             Woolbattle.getPlugin().getServer().getScheduler().scheduleSyncDelayedTask(Woolbattle.getPlugin(),
                     () -> player.setAllowFlight(true), 20 * cooldown);
 

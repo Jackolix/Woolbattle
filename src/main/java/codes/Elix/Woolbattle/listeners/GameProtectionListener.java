@@ -163,7 +163,7 @@ public class GameProtectionListener implements Listener {
                 event.setDropItems(false);
                 return;
             }
-            System.out.println("Wool amount: " + Items.amount(player, Items.getWoolColor(player)));
+            // System.out.println("Wool amount: " + Items.amount(player, Items.getWoolColor(player)));
             if (Items.amount(player, Items.getWoolColor(player)) >= 192) {
                 event.setCancelled(true);
                 return;
@@ -201,7 +201,7 @@ public class GameProtectionListener implements Listener {
 
     @EventHandler
     public void onEntityExplode(EntityExplodeEvent event) {
-        if (event.getEntity().getType() == EntityType.PRIMED_TNT) {
+        if (event.getEntity().getType() == EntityType.TNT) {
             List<Block> destroyed = event.blockList();
             Iterator<Block> it = destroyed.iterator();
             while (it.hasNext()) {

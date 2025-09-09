@@ -16,6 +16,7 @@ import codes.Elix.Woolbattle.items.Voting;
 import codes.Elix.Woolbattle.main.Woolbattle;
 import codes.Elix.Woolbattle.util.Console;
 import codes.Elix.Woolbattle.util.IngameScoreboard;
+import codes.Elix.Woolbattle.util.SchematicManager;
 import codes.Elix.Woolbattle.util.mongo.UpdateObjekt;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -38,6 +39,7 @@ public class IngameState extends GameState {
     @Override
     public void start() {
         checkTeams();
+        teleportTeamsToSpawns(); // Teleport teams to their spawn locations
         setLifes();
         IngameStatus();
         for (Player current : Bukkit.getOnlinePlayers()) {
@@ -265,9 +267,91 @@ public class IngameState extends GameState {
         for (Player current : Bukkit.getOnlinePlayers())
             current.hidePlayer(Woolbattle.getPlugin(), player);
 
-        player.teleport(new Location(Bukkit.getServer().getWorlds().get(0), 0, 50, 0));
+        // Use config-based spectator spawn location
+        Location spectatorSpawn = getSpectatorSpawnLocation();
+        player.teleport(spectatorSpawn);
         // LiveSystem.Team.put(player, "spectator");
         IngameScoreboard.setup(player);
+    }
+    
+    private static Location getSpectatorSpawnLocation() {
+        try {
+            // Get the selected map from SchematicManager
+            String selectedMap = SchematicManager.getSelectedMap();
+            return SchematicManager.getSpectatorSpawn(selectedMap);
+        } catch (Exception e) {
+            Console.send("Failed to get spectator spawn from config, using default: " + e.getMessage());
+            // Fallback to default location
+            return new Location(Bukkit.getServer().getWorlds().get(0), 0, 80, 0);
+        }
+    }
+    
+    private void teleportTeamsToSpawns() {
+        Console.send(Component.text("Teleporting teams to spawn locations...", NamedTextColor.YELLOW));
+        
+        try {
+            String selectedMap = SchematicManager.getSelectedMap();
+            Team red = LiveSystem.Team.get("red");
+            Team blue = LiveSystem.Team.get("blue");
+            Team green = LiveSystem.Team.get("green");
+            Team yellow = LiveSystem.Team.get("yellow");
+            
+            // Teleport red team
+            if (red != null && !red.getMembers().isEmpty()) {
+                Location redSpawn = SchematicManager.getTeamSpawn(selectedMap, "red");
+                for (Player player : red.getMembers()) {
+                    player.teleport(redSpawn);
+                    Console.send(Component.text("Teleported ", NamedTextColor.WHITE)
+                        .append(Component.text(player.getName(), NamedTextColor.GREEN))
+                        .append(Component.text(" to ", NamedTextColor.WHITE))
+                        .append(Component.text("Red", NamedTextColor.RED))
+                        .append(Component.text(" spawn", NamedTextColor.WHITE)));
+                }
+            }
+            
+            // Teleport blue team
+            if (blue != null && !blue.getMembers().isEmpty()) {
+                Location blueSpawn = SchematicManager.getTeamSpawn(selectedMap, "blue");
+                for (Player player : blue.getMembers()) {
+                    player.teleport(blueSpawn);
+                    Console.send(Component.text("Teleported ", NamedTextColor.WHITE)
+                        .append(Component.text(player.getName(), NamedTextColor.GREEN))
+                        .append(Component.text(" to ", NamedTextColor.WHITE))
+                        .append(Component.text("Blue", NamedTextColor.BLUE))
+                        .append(Component.text(" spawn", NamedTextColor.WHITE)));
+                }
+            }
+            
+            // Teleport green team (if exists)
+            if (green != null && !green.getMembers().isEmpty() && LiveSystem.Teams >= 3) {
+                Location greenSpawn = SchematicManager.getTeamSpawn(selectedMap, "green");
+                for (Player player : green.getMembers()) {
+                    player.teleport(greenSpawn);
+                    Console.send(Component.text("Teleported ", NamedTextColor.WHITE)
+                        .append(Component.text(player.getName(), NamedTextColor.GREEN))
+                        .append(Component.text(" to ", NamedTextColor.WHITE))
+                        .append(Component.text("Green", NamedTextColor.GREEN))
+                        .append(Component.text(" spawn", NamedTextColor.WHITE)));
+                }
+            }
+            
+            // Teleport yellow team (if exists)
+            if (yellow != null && !yellow.getMembers().isEmpty() && LiveSystem.Teams >= 4) {
+                Location yellowSpawn = SchematicManager.getTeamSpawn(selectedMap, "yellow");
+                for (Player player : yellow.getMembers()) {
+                    player.teleport(yellowSpawn);
+                    Console.send(Component.text("Teleported ", NamedTextColor.WHITE)
+                        .append(Component.text(player.getName(), NamedTextColor.GREEN))
+                        .append(Component.text(" to ", NamedTextColor.WHITE))
+                        .append(Component.text("Yellow", NamedTextColor.YELLOW))
+                        .append(Component.text(" spawn", NamedTextColor.WHITE)));
+                }
+            }
+            
+        } catch (Exception e) {
+            Console.send("Failed to teleport teams to config-based spawns: " + e.getMessage());
+            Console.send("Teams will use default spawn locations");
+        }
     }
 
     public static void boots() {

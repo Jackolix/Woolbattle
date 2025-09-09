@@ -1,0 +1,6 @@
+Debug: false
+LobbyCountdown: 30
+TeamSize: 2
+Teams: 2
+PlayersToStartCountdown: 1
+MaxPlayers: 4

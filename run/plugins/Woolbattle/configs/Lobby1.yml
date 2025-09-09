@@ -1,0 +1,48 @@
+# Schematic file information
+schematic:
+  file: Lobby1.schem
+  display-name: Lobby1
+  description: Auto-generated config for Lobby1
+# Game-specific settings
+game:
+  max-teams: 2
+  team-size: 2
+  max-players: 4
+  pvp-enabled: false
+# Team configurations and spawn locations
+# Coordinates are relative to the schematic placement location
+teams:
+  red:
+    name: Red Team
+    color: RED
+    # Red team spawn location
+    spawn:
+      x: -1.5
+      y: 60.0
+      z: -0.5
+      yaw: 0.0
+      pitch: 15
+  blue:
+    name: Blue Team
+    color: BLUE
+    # Blue team spawn location
+    spawn:
+      x: -1.5
+      y: 60.0
+      z: -0.5
+      yaw: 0.0
+      pitch: 15
+# Other important spawn locations
+spawns:
+  spectator:
+    x: -1.5
+    y: 60.0
+    z: -0.5
+    yaw: 0.0
+    pitch: 15
+# Where to place the schematic in the world
+placement:
+  x: 0
+  y: 60
+  z: 0
+type: lobby

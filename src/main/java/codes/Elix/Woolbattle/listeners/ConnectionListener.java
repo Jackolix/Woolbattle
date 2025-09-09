@@ -15,7 +15,9 @@ import codes.Elix.Woolbattle.items.LobbyItems;
 import codes.Elix.Woolbattle.items.Voting;
 import codes.Elix.Woolbattle.main.Woolbattle;
 import codes.Elix.Woolbattle.util.Console;
+import codes.Elix.Woolbattle.util.IngameScoreboard;
 import codes.Elix.Woolbattle.util.LobbyScoreboard;
+import codes.Elix.Woolbattle.util.SchematicManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -33,7 +35,22 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
 
 public class ConnectionListener implements Listener {
-    private static final Location spawnLocation = new Location(Bukkit.getServer().getWorlds().get(0), 0, 70, 0);
+    
+    private static Location getLobbySpawn() {
+        // Try to get spawn from lobby schematic config, fallback to default
+        try {
+            // Use spectator spawn as the general lobby spawn location
+            Location lobbySpawn = SchematicManager.getSpectatorSpawn("Lobby1.schem");
+            if (lobbySpawn != null) {
+                return lobbySpawn;
+            }
+        } catch (Exception e) {
+            Console.send("Failed to load lobby spawn from config, using default: " + e.getMessage());
+        }
+        
+        // Fallback to hardcoded location
+        return new Location(Bukkit.getServer().getWorlds().get(0), 0, 70, 0);
+    }
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
@@ -69,7 +86,7 @@ public class ConnectionListener implements Listener {
         // event.setJoinMessage(Woolbattle.PREFIX + "§a" + player.getDisplayName() + " §7ist dem Spiel beigetreten. [" +
                //  Woolbattle.players.size() + "/" + LobbyState.MAX_PLAYERS + "]");
 
-        player.teleport(spawnLocation);
+        player.teleport(getLobbySpawn());
 
         LobbyCountdown countdown = lobbyState.getCountdown();
         if (Woolbattle.getPlayers().size() >= LobbyState.MIN_PLAYERS) {
@@ -87,8 +104,13 @@ public class ConnectionListener implements Listener {
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        if (!(GameStateManager.getCurrentGameState() instanceof LobbyState lobbyState)) return;
         Player player = event.getPlayer();
+        
+        // Clean up scoreboards
+        LobbyScoreboard.remove(player);
+        IngameScoreboard.remove(player);
+        
+        if (!(GameStateManager.getCurrentGameState() instanceof LobbyState lobbyState)) return;
         Woolbattle.getPlayers().remove(player);
         // event.setQuitMessage(Woolbattle.PREFIX + "§c" + player.getDisplayName() + " §7hat das Spiel verlassen. [" +
                 // Woolbattle.getPlayers().size() + "/" + LobbyState.MAX_PLAYERS + "]");

@@ -6,66 +6,109 @@ package codes.Elix.Woolbattle.util;
 import codes.Elix.Woolbattle.gamestates.GameStateManager;
 import codes.Elix.Woolbattle.gamestates.LobbyState;
 import codes.Elix.Woolbattle.main.Woolbattle;
-import com.xism4.sternalboard.SternalBoardHandler;
+import fr.mrmicky.fastboard.FastBoard;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Scoreboard;
 
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class LobbyScoreboard {
 
     private final static String MapName = "§3Custom";
-    static ArrayList<SternalBoardHandler> boards = new ArrayList<>();
+    private static final Map<Player, FastBoard> boards = new HashMap<>();
 
     public static void setup(Player player) {
         if (!(GameStateManager.getCurrentGameState() instanceof LobbyState lobbyState)) return;
-        /*
+        
+        try {
+            // Try FastBoard first
+            FastBoard board = new FastBoard(player);
+            board.updateTitle("§f§lWOOLBATTLE");
+            
+            board.updateLines(
+                " ",
+                " §7• §3" + Woolbattle.players.size() + "/" + LobbyState.MAX_PLAYERS,
+                "§8» §7Spieler",
+                "  ",
+                " §7• §3" + lobbyState.getCountdown().getSeconds(),
+                "§8» §7Wartezeit",
+                "   ",
+                " §7• " + MapName,
+                "§8» §7Current Map",
+                "    ",
+                " §7• " + IngameScoreboard.team(player),
+                "§8» §7Dein Team",
+                "     "
+            );
+            
+            boards.put(player, board);
+        } catch (Exception e) {
+            // Fallback to vanilla Bukkit scoreboard
+            setupVanillaScoreboard(player, lobbyState);
+        }
+    }
+    
+    private static void setupVanillaScoreboard(Player player, LobbyState lobbyState) {
         Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-        Objective objective = scoreboard.registerNewObjective("abcd", "abcd");
+        Objective objective = scoreboard.registerNewObjective("woolbattle", "dummy");
         objective.setDisplayName("§f§lWOOLBATTLE");
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-        objective.getScore(" ").setScore(1);
-        objective.getScore(" §7• §3" + Woolbattle.players.size() + "/" + LobbyState.MAX_PLAYERS).setScore(2);
-        objective.getScore("§8» §7Spieler").setScore(3);
-        objective.getScore("  ").setScore(4);
-
-        if (lobbyState.getCountdown().isRunning()) {
-            objective.getScore(" §7• §3" + lobbyState.getCountdown().getSeconds()).setScore(5);
-        } else
-            objective.getScore(" §7• §3" + LobbyCountdown.COUNTDOWN_TIME).setScore(5);
-
-        objective.getScore("§8» §7Wartezeit").setScore(6);
-        objective.getScore("   ").setScore(7);
-        objective.getScore(" §7• " + MapName).setScore(8);
-        objective.getScore("§8» §7Current Map").setScore(9);
-        objective.getScore("    ").setScore(10);
-        objective.getScore(" §7• " + IngameScoreboard.team(player)).setScore(11);
-        objective.getScore("§8» §7Dein Team").setScore(12);
-        objective.getScore("     ").setScore(13);
+        
+        objective.getScore("     ").setScore(12);
+        objective.getScore("§8» §7Dein Team").setScore(11);
+        objective.getScore(" §7• " + IngameScoreboard.team(player)).setScore(10);
+        objective.getScore("    ").setScore(9);
+        objective.getScore("§8» §7Current Map").setScore(8);
+        objective.getScore(" §7• " + MapName).setScore(7);
+        objective.getScore("   ").setScore(6);
+        objective.getScore("§8» §7Wartezeit").setScore(5);
+        objective.getScore(" §7• §3" + lobbyState.getCountdown().getSeconds()).setScore(4);
+        objective.getScore("  ").setScore(3);
+        objective.getScore("§8» §7Spieler").setScore(2);
+        objective.getScore(" §7• §3" + Woolbattle.players.size() + "/" + LobbyState.MAX_PLAYERS).setScore(1);
+        objective.getScore(" ").setScore(0);
+        
         player.setScoreboard(scoreboard);
-         */
-        SternalBoardHandler board = new SternalBoardHandler(player);
-        board.updateTitle("§f§lWOOLBATTLE");
-        board.updateLine(0, "     ");
-        board.updateLine(1, "§8» §7Dein Team");
-        board.updateLine(2, " §7• " + IngameScoreboard.team(player));
-        board.updateLine(3, "    ");
-        board.updateLine(4, "§8» §7Current Map");
-        board.updateLine(5, " §7• " + MapName);
-        board.updateLine(6, "   ");
-        board.updateLine(7, "§8» §7Wartezeit");
-        board.updateLine(8, " §7• §3" + lobbyState.getCountdown().getSeconds());
-        board.updateLine(9, "  ");
-        board.updateLine(10, "§8» §7Spieler");
-        board.updateLine(11, " §7• §3" + Woolbattle.players.size() + "/" + LobbyState.MAX_PLAYERS);
-        board.updateLine(12, " ");
-        boards.add(board);
     }
 
     public static void change(Player player) {
         if (!(GameStateManager.getCurrentGameState() instanceof LobbyState lobbyState)) return;
-        for (SternalBoardHandler boar : boards) {
-            boar.updateLine(8, " §7• §3" +  lobbyState.getCountdown().getSeconds());
-            boar.updateLine(2, " §7• " + IngameScoreboard.team(player));
+        
+        try {
+            for (Map.Entry<Player, FastBoard> entry : boards.entrySet()) {
+                FastBoard board = entry.getValue();
+                Player boardPlayer = entry.getKey();
+                
+                board.updateLines(
+                    " ",
+                    " §7• §3" + Woolbattle.players.size() + "/" + LobbyState.MAX_PLAYERS,
+                    "§8» §7Spieler",
+                    "  ",
+                    " §7• §3" + lobbyState.getCountdown().getSeconds(),
+                    "§8» §7Wartezeit",
+                    "   ",
+                    " §7• " + MapName,
+                    "§8» §7Current Map",
+                    "    ",
+                    " §7• " + IngameScoreboard.team(boardPlayer),
+                    "§8» §7Dein Team",
+                    "     "
+                );
+            }
+        } catch (Exception e) {
+            // If FastBoard fails, update will require recreation with vanilla API
+            // For simplicity, just ignore updates in fallback mode
+        }
+    }
+
+    public static void remove(Player player) {
+        FastBoard board = boards.remove(player);
+        if (board != null) {
+            board.delete();
         }
     }
 

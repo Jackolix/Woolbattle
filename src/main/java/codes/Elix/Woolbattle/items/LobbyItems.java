@@ -12,18 +12,22 @@ import codes.Elix.Woolbattle.gamestates.GameStateManager;
 import codes.Elix.Woolbattle.gamestates.LobbyState;
 import codes.Elix.Woolbattle.main.Woolbattle;
 import codes.Elix.Woolbattle.util.Console;
+import codes.Elix.Woolbattle.util.SchematicManager;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
 
@@ -54,7 +58,7 @@ public class LobbyItems implements Listener {
     }
 
     private void PerkVorInventory(Player player) {
-        Inventory inventory = Bukkit.createInventory(null, 9, Component.text("§3Wähle deine Perks!"));
+        Inventory inventory = Bukkit.createInventory(null, 9, Component.text("Wähle deine Perks!", NamedTextColor.DARK_AQUA));
         Items.create(inventory, Material.CHEST,"§6Aktiv-Perk #1", 3);
         Items.create(inventory, Material.TRAPPED_CHEST,"§6Aktiv-Perk #2", 4);
         Items.create(inventory, Material.ENDER_CHEST,"§3Passiv-Perk", 5);
@@ -63,7 +67,7 @@ public class LobbyItems implements Listener {
 
     private void PerkInventory(Player player, String title) {
         Title.put(player, title);
-        Inventory inventory = Bukkit.createInventory(null, 9*4, Component.text(title));
+        Inventory inventory = Bukkit.createInventory(null, 9*4, Items.convertLegacyText(title));
         Items.create(inventory, Material.TRIPWIRE_HOOK, false, "§3Booster", "Boostet dich durch die Luft",12, 25, 0);
         Items.create(inventory, Material.FISHING_ROD, false, "§3Enterhaken", "Ziehe dich mit einem Enterhaken über die Map!", 5, 16, 1);
         Items.create(inventory, Material.PACKED_ICE, false, "§3Freezer", "Friere deine Gegner ein!", 6, 6, 2);
@@ -89,7 +93,7 @@ public class LobbyItems implements Listener {
 
     private void PassivePerkInventory(Player player) {
         Title.put(player,"§3Verfügbare Perks:");
-        Inventory inventory = Bukkit.createInventory(null, 9*4, Component.text("§3Verfügbare Perks:"));
+        Inventory inventory = Bukkit.createInventory(null, 9*4, Component.text("Verfügbare Perks:", NamedTextColor.DARK_AQUA));
         Items.createPassivePerk(inventory, Material.LADDER, false, "§3Aufzug", "Teleportiere dich mit der Enderperle auf den getroffenen Block!", null, "§6Cooldown: 3 Enderperlen", 0);
         Items.createPassivePerk(inventory, Material.TNT, false, "§3Explodierender Pfeil", "Ein besonderer Pfeil der alles in die Luft sprengt!", "§6Preis: 8 Wolle", "Nach Pfeilen: 8", 1);
         Items.createPassivePerk(inventory, Material.FISHING_ROD, false, "§3IDK", "IDK", "IDK", "IDK", 2);
@@ -108,15 +112,15 @@ public class LobbyItems implements Listener {
     }
 
     private void TeamsInventory(Player player) {
-        Inventory inventory = Bukkit.createInventory(null, 9, Component.text("§bWähle dein Team!"));
+        Inventory inventory = Bukkit.createInventory(null, 9, Component.text("Wähle dein Team!", NamedTextColor.AQUA));
         if (LiveSystem.Teams == 2) {
-            checkTeam(LiveSystem.Team.get("red"), inventory, Material.RED_DYE, "§cTeam Rot", 3, ChatColor.RED);
-            checkTeam(LiveSystem.Team.get("blue"), inventory, Material.BLUE_DYE, "§bTeam Blau", 5, ChatColor.AQUA);
+            checkTeam(LiveSystem.Team.get("red"), inventory, Material.RED_DYE, "§cTeam Rot", 3, "§c");
+            checkTeam(LiveSystem.Team.get("blue"), inventory, Material.BLUE_DYE, "§bTeam Blau", 5, "§b");
         } else {
-            checkTeam(LiveSystem.Team.get("red"), inventory, Material.RED_DYE, "§cTeam Rot", 1, ChatColor.RED);
-            checkTeam(LiveSystem.Team.get("blue"), inventory, Material.BLUE_DYE, "§bTeam Blau", 3, ChatColor.AQUA);
-            checkTeam(LiveSystem.Team.get("yellow"), inventory, Material.YELLOW_DYE, "§eTeam Gelb", 5, ChatColor.YELLOW);
-            checkTeam(LiveSystem.Team.get("green"), inventory, Material.GREEN_DYE, "§aTeam Grün", 7, ChatColor.GREEN);
+            checkTeam(LiveSystem.Team.get("red"), inventory, Material.RED_DYE, "§cTeam Rot", 1, "§c");
+            checkTeam(LiveSystem.Team.get("blue"), inventory, Material.BLUE_DYE, "§bTeam Blau", 3, "§b");
+            checkTeam(LiveSystem.Team.get("yellow"), inventory, Material.YELLOW_DYE, "§eTeam Gelb", 5, "§e");
+            checkTeam(LiveSystem.Team.get("green"), inventory, Material.GREEN_DYE, "§aTeam Grün", 7, "§a");
         }
         player.openInventory(inventory);
     }
@@ -126,7 +130,7 @@ public class LobbyItems implements Listener {
 
     private void Lifes(Player player) {
         Title.put(player,"§aLebensanzahl");
-        Inventory inventory = Bukkit.createInventory(null, 3*9, Component.text("§aLebensanzahl"));
+        Inventory inventory = Bukkit.createInventory(null, 3*9, Component.text("Lebensanzahl", NamedTextColor.GREEN));
         Items.create(inventory, Material.GRAY_STAINED_GLASS_PANE, " ", 0);
         Items.create(inventory, Material.GRAY_STAINED_GLASS_PANE, " ", 1);
         Items.create(inventory, Material.GRAY_STAINED_GLASS_PANE, " ", 2);
@@ -158,17 +162,105 @@ public class LobbyItems implements Listener {
     }
 
     private void Maps(Player player) {
-
-        Inventory inventory = Bukkit.createInventory(null, 4*9, Component.text("§aMaps"));
-        Items.create(inventory, Material.GRAY_STAINED_GLASS_PANE, "Custom", 0);
+        List<SchematicManager.SchematicInfo> schematics = SchematicManager.getGameSchematics();
+        Console.send("Loading maps menu for " + player.getName() + " - found " + schematics.size() + " game schematics (lobby maps excluded)");
+        
+        int inventorySize = Math.max(9, ((schematics.size() + 8) / 9) * 9);
+        if (inventorySize > 54) inventorySize = 54;
+        
+        Inventory inventory = Bukkit.createInventory(null, inventorySize, Component.text("Game Maps (" + schematics.size() + " available)", NamedTextColor.GREEN));
+        
+        String currentWinningMap = MapVoting.getCurrentWinningMap();
+        String playerVote = MapVoting.getPlayerVote(player);
+        
+        int slot = 0;
+        for (SchematicManager.SchematicInfo schematic : schematics) {
+            if (slot >= inventorySize) break;
+            
+            Console.send("Adding schematic to slot " + slot + ": " + schematic.getDisplayName());
+            
+            // Add vote count to display name using Adventure components
+            int voteCount = MapVoting.getVotesForMap(schematic.getFileName());
+            Component displayName = Component.text(schematic.getDisplayName(), NamedTextColor.GOLD);
+            if (voteCount > 0) {
+                displayName = displayName.append(Component.text(" (", NamedTextColor.DARK_GRAY))
+                    .append(Component.text(voteCount + " votes", NamedTextColor.YELLOW))
+                    .append(Component.text(")", NamedTextColor.DARK_GRAY));
+            }
+            
+            // Determine material and display name color based on state
+            Material itemMaterial = schematic.getMaterial();
+            NamedTextColor nameColor = NamedTextColor.GOLD;
+            
+            ArrayList<Component> lore = new ArrayList<>();
+            lore.add(Component.text("File: ", NamedTextColor.GRAY).append(Component.text(schematic.getFileName(), NamedTextColor.YELLOW)));
+            lore.add(Component.text("Votes: ", NamedTextColor.GRAY).append(Component.text(voteCount, NamedTextColor.YELLOW)));
+            
+            if (schematic.getFileName().equals(currentWinningMap)) {
+                // Winning map - use gold block and bright color
+                itemMaterial = Material.GOLD_BLOCK;
+                nameColor = NamedTextColor.YELLOW;
+                lore.add(Component.text("⭐ CURRENTLY WINNING ⭐", NamedTextColor.YELLOW));
+            }
+            
+            if (schematic.getFileName().equals(playerVote)) {
+                // Player's vote - use emerald block and green color
+                itemMaterial = Material.EMERALD_BLOCK;
+                nameColor = NamedTextColor.GREEN;
+                lore.add(Component.text("✓ YOUR VOTE", NamedTextColor.GREEN));
+            }
+            
+            // If it's both winning and player's vote, prioritize player's vote appearance
+            if (schematic.getFileName().equals(playerVote) && schematic.getFileName().equals(currentWinningMap)) {
+                itemMaterial = Material.EMERALD_BLOCK;
+                nameColor = NamedTextColor.GREEN;
+                lore.clear();
+                lore.add(Component.text("File: ", NamedTextColor.GRAY).append(Component.text(schematic.getFileName(), NamedTextColor.YELLOW)));
+                lore.add(Component.text("Votes: ", NamedTextColor.GRAY).append(Component.text(voteCount, NamedTextColor.YELLOW)));
+                lore.add(Component.text("✓ YOUR VOTE & WINNING! ⭐", NamedTextColor.GOLD));
+            }
+            
+            lore.add(Component.text("Click to vote for this map!", NamedTextColor.GRAY));
+            
+            // Update display name color
+            displayName = Component.text(schematic.getDisplayName(), nameColor);
+            if (voteCount > 0) {
+                displayName = displayName.append(Component.text(" (", NamedTextColor.DARK_GRAY))
+                    .append(Component.text(voteCount + " votes", NamedTextColor.YELLOW))
+                    .append(Component.text(")", NamedTextColor.DARK_GRAY));
+            }
+            
+            // Create item
+            ItemStack item = new ItemStack(itemMaterial);
+            ItemMeta itemMeta = item.getItemMeta();
+            itemMeta.displayName(displayName);
+            itemMeta.lore(lore);
+            item.setItemMeta(itemMeta);
+            inventory.setItem(slot, item);
+            slot++;
+        }
+        
+        if (schematics.isEmpty()) {
+            Console.send("No schematics found - adding barrier item");
+            Items.create(inventory, Material.BARRIER, "§cNo maps available", 4);
+        }
 
         player.openInventory(inventory);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onGUIClick(InventoryClickEvent event) {
-        if (!(event.getWhoClicked() instanceof Player player)) return;
-        if (event.getCurrentItem() == null) return;
+        System.out.println("[WOOLBATTLE DEBUG] InventoryClickEvent triggered!");
+        if (!(event.getWhoClicked() instanceof Player player)) {
+            System.out.println("[WOOLBATTLE DEBUG] Not a player click");
+            return;
+        }
+        if (event.getCurrentItem() == null) {
+            System.out.println("[WOOLBATTLE DEBUG] No item clicked");
+            return;
+        }
+        System.out.println("[WOOLBATTLE DEBUG] Player: " + player.getName() + " clicked item: " + event.getCurrentItem().getType());
+
 
         FileConfiguration config = Woolbattle.getPlugin().getConfig();
         Material clicked = event.getCurrentItem().getType();
@@ -184,7 +276,7 @@ public class LobbyItems implements Listener {
         String PassivePerk = perk.getpassivePerk();
 
 
-        if (event.getView().title().equals(Component.text("§3Wähle deine Perks!"))) {
+        if (event.getView().title().equals(Component.text("Wähle deine Perks!", NamedTextColor.DARK_AQUA))) {
             event.setCancelled(true); //Player kann das Item nicht aus dem Inventar ziehen
             switch (clicked) {
                 case CHEST -> PerkInventory(player, "§3Erstes Perk:");
@@ -193,7 +285,7 @@ public class LobbyItems implements Listener {
             }
         }
 
-        if (event.getView().title().equals(Component.text("§3Erstes Perk:"))) {
+        if (event.getView().title().equals(Items.convertLegacyText("§3Erstes Perk:"))) {
             event.setCancelled(true);
             switch (clicked) {
                 case TRIPWIRE_HOOK -> PerkItems.select(player, "booster", ".1Perk");
@@ -224,7 +316,7 @@ public class LobbyItems implements Listener {
             PerkInventory(player, "§3Erstes Perk:");
         }
 
-        if (event.getView().title().equals(Component.text("§3Zweites Perk:"))) {
+        if (event.getView().title().equals(Items.convertLegacyText("§3Zweites Perk:"))) {
             event.setCancelled(true);
             switch (clicked) {
                 case TRIPWIRE_HOOK -> PerkItems.select(player, "booster", ".2Perk");
@@ -255,7 +347,7 @@ public class LobbyItems implements Listener {
             PerkInventory(player, "§3Zweites Perk:");
         }
 
-        if (event.getView().title().equals(Component.text("§3Verfügbare Perks:"))) {
+        if (event.getView().title().equals(Component.text("Verfügbare Perks:", NamedTextColor.DARK_AQUA))) {
             event.setCancelled(true);
             String name = event.getWhoClicked().getName();
             /*
@@ -302,7 +394,7 @@ public class LobbyItems implements Listener {
             PassivePerkInventory(player);
         }
 
-        if (event.getView().title().equals(Component.text("§bWähle dein Team!"))) {
+        if (event.getView().title().equals(Component.text("Wähle dein Team!", NamedTextColor.AQUA))) {
             event.setCancelled(true);
             switch (event.getCurrentItem().getItemMeta().getDisplayName()) {
                 case "§cTeam Rot" -> addToTeam(LiveSystem.Team.get("red"), player);
@@ -313,7 +405,7 @@ public class LobbyItems implements Listener {
             TeamsInventory(player);
         }
 
-        if (event.getView().title().equals(Component.text("§aLebensanzahl"))) {
+        if (event.getView().title().equals(Component.text("Lebensanzahl", NamedTextColor.GREEN))) {
             event.setCancelled(true);
             System.out.println(event.getCurrentItem().getItemMeta().displayName());
             switch (event.getCurrentItem().getItemMeta().getDisplayName()) {
@@ -325,9 +417,18 @@ public class LobbyItems implements Listener {
             Lifes(player);
         }
 
-        if (event.getView().title().contains(Component.text("§aMaps"))) {
+        // Handle Maps voting - check if title contains Maps
+        if (event.getView().title().toString().contains("Maps")) {
             event.setCancelled(true);
+            System.out.println("[DEBUG] Maps inventory detected!");
+            Console.send("Maps inventory clicked by " + player.getName());
+            if (event.getCurrentItem().getType() != Material.AIR) {
+                System.out.println("[DEBUG] Item type: " + event.getCurrentItem().getType());
+                Console.send("Item clicked: " + event.getCurrentItem().getType());
+                handleMapSelection(player, event.getCurrentItem());
+            }
         }
+
 
         if (GameStateManager.getCurrentGameState() instanceof LobbyState)
             event.setCancelled(true);
@@ -523,7 +624,7 @@ public class LobbyItems implements Listener {
         if (team.getMembers().size() < LiveSystem.TeamSize) {
             team.addMember(player);
             Console.send("Added Player to " + team.getName());
-        } else Console.send(ChatColor.RED + "Team is full");
+        } else Console.send("§cTeam is full");
 
         /*
         if (arrayList.contains(player)) return;
@@ -535,14 +636,14 @@ public class LobbyItems implements Listener {
             arrayList.add(player);
             LiveSystem.VotedPlayers.put(player, arrayList);
             IngameState.teamUpdate();
-        } else Console.send(ChatColor.RED + "Team is full");
+        } else Console.send("§cTeam is full");
          */
     }
 
-    private void checkTeam(Team team, Inventory inventory, Material material, String Team, int slot, ChatColor color) {
+    private void checkTeam(Team team, Inventory inventory, Material material, String Team, int slot, String colorCode) {
         ArrayList<String> lore = new ArrayList<>();
         for (Player player : team.getMembers())
-            lore.add(color + player.getName());
+            lore.add(colorCode + player.getName());
         Items.createTeam(inventory, material, Team, lore, slot);
     }
 
@@ -561,5 +662,49 @@ public class LobbyItems implements Listener {
         passivePerks.add("§3Spinne");
         passivePerks.add("§3Stomper");
         passivePerks.add("§3SlimePlattform");
+    }
+
+    private void handleMapSelection(Player player, ItemStack clickedItem) {
+        if (clickedItem.getItemMeta() == null || clickedItem.getType() == Material.BARRIER) return;
+        
+        List<Component> lore = clickedItem.getItemMeta().lore();
+        if (lore == null || lore.isEmpty()) return;
+        
+        String fileName = null;
+        net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer plainSerializer = 
+            net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText();
+        
+        for (Component line : lore) {
+            String loreText = plainSerializer.serialize(line);
+            
+            // Look for the file line and extract filename
+            if (loreText.startsWith("File: ")) {
+                fileName = loreText.substring(6); // Remove "File: " prefix
+                break;
+            }
+        }
+        
+        if (fileName != null) {
+            List<SchematicManager.SchematicInfo> schematics = SchematicManager.getGameSchematics();
+            for (SchematicManager.SchematicInfo schematic : schematics) {
+                if (schematic.getFileName().equals(fileName)) {
+                    MapVoting.voteForMap(player, fileName);
+                    
+                    String previousVote = MapVoting.getPlayerVote(player);
+                    Component displayName = Component.text(schematic.getDisplayName(), NamedTextColor.GOLD);
+                    if (previousVote != null && !previousVote.equals(fileName)) {
+                        player.sendMessage(Woolbattle.PREFIX.append(Component.text("Changed vote to: ", NamedTextColor.YELLOW).append(displayName)));
+                    } else {
+                        player.sendMessage(Woolbattle.PREFIX.append(Component.text("Voted for: ", NamedTextColor.GREEN).append(displayName)));
+                    }
+                    
+                    Console.send(player.getName() + " voted for map: " + schematic.getFileName());
+                    
+                    // Refresh the inventory to show updated vote counts
+                    Maps(player);
+                    return;
+                }
+            }
+        }
     }
 }

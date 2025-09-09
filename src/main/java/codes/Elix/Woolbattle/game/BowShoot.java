@@ -72,7 +72,7 @@ public class BowShoot implements Listener {
         location = e.getHitBlock().getLocation();
         Location spawnLocation = new Location(location.getWorld(), location.getX(), location.getY()+1, location.getZ());
 
-        TNTPrimed tnt = (TNTPrimed) Bukkit.getWorlds().get(0).spawnEntity(spawnLocation, EntityType.PRIMED_TNT);
+        TNTPrimed tnt = (TNTPrimed) Bukkit.getWorlds().get(0).spawnEntity(spawnLocation, EntityType.TNT);
         tnt.setFuseTicks(10); // How long until it explodes
         tnt.setMetadata("exploding_arrow", new FixedMetadataValue(Woolbattle.getPlugin(), "okay"));
 
@@ -126,7 +126,7 @@ public class BowShoot implements Listener {
 
     @EventHandler
     public void onEntityExplode(ExplosionPrimeEvent event){
-        if(event.getEntity().getType() == EntityType.PRIMED_TNT){
+        if(event.getEntity().getType() == EntityType.TNT){
             if (!event.getEntity().hasMetadata("exploding_arrow")) return;
             // event.setCancelled(true);
             event.setRadius(1.0F);

@@ -35,7 +35,7 @@ public class woolbomb implements Listener {
         } else
             location = event.getHitBlock().getLocation();
 
-        TNTPrimed tnt = (TNTPrimed) Bukkit.getWorlds().get(0).spawnEntity(location, EntityType.PRIMED_TNT);
+        TNTPrimed tnt = (TNTPrimed) Bukkit.getWorlds().get(0).spawnEntity(location, EntityType.TNT);
         tnt.setFuseTicks(10); // How long until it explodes
 
         System.out.println(location.getNearbyEntities(5,5,5));
@@ -62,7 +62,7 @@ public class woolbomb implements Listener {
                     double redux = 0.25; // You don't want the player flying thousands of blocks
                     Vector v = new Vector(-(xPos / redux), 0.5, -(zPos / redux));
                     //player.setVelocity(new Vector(-(xPos / redux), 0.5, -(zPos / redux)));
-                    player.setVelocity(v.normalize().multiply(5));
+                    player.setVelocity(v.normalize().multiply(1));
                 }
             }
         }, 10);
@@ -75,9 +75,12 @@ public class woolbomb implements Listener {
         if (!(event.getItem().getType() == Material.TNT)) return;
         Player player = event.getPlayer();
 
+        Vector direction = player.getLocation().getDirection();
+        Vector velocity = direction.multiply(1.6);
+        
         if (Woolbattle.debug) {
             event.setCancelled(true);
-            Projectile snowball = player.launchProjectile(Snowball.class);
+            Projectile snowball = player.launchProjectile(Snowball.class, velocity);
             snowball.setMetadata("Woolbomb", new FixedMetadataValue(Woolbattle.getPlugin(), "keineAhnungWiesoIchDasBrauch"));
             return;
         }
@@ -87,7 +90,7 @@ public class woolbomb implements Listener {
             return;
         }
 
-        Projectile snowball = player.launchProjectile(Snowball.class);
+        Projectile snowball = player.launchProjectile(Snowball.class, velocity);
         snowball.setMetadata("Woolbomb", new FixedMetadataValue(Woolbattle.getPlugin(), "keineAhnungWiesoIchDasBrauch"));
 
         event.setCancelled(true);

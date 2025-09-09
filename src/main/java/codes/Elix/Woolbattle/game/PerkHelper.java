@@ -2,6 +2,7 @@ package codes.Elix.Woolbattle.game;
 
 import codes.Elix.Woolbattle.game.HelpClasses.Perk;
 import codes.Elix.Woolbattle.items.Items;
+import codes.Elix.Woolbattle.main.Woolbattle;
 import codes.Elix.Woolbattle.util.Console;
 import codes.Elix.Woolbattle.util.mongo.Database;
 import codes.Elix.Woolbattle.util.mongo.UpdateObjekt;
@@ -49,13 +50,13 @@ public class PerkHelper {
     }
 
     public static void setPerk(Player player, Perk perk) {
-        /*
+        if (!Woolbattle.useDB) {
+            Items.perks.put(player, perk);
+            return;
+        }
+        
         if (!Database.hasConnection()) return;
-        MongoClient mongoClient = Database.getConnection();
-        MongoDatabase database = mongoClient.getDatabase("minecraft");
-        MongoCollection<Document> collection = database.getCollection("players");
-        Console.debug(Database.PREFIX + "trying to inject");
-         */
+        
         Console.debug(Database.PREFIX.append(Component.text("trying to inject", NamedTextColor.WHITE)));
         Document user = new Document("UUID", player.getUniqueId().toString())
                 .append("name", player.getName())
@@ -70,7 +71,16 @@ public class PerkHelper {
     }
 
     public static void onJoin(Player player) {
-        // find(collection, player.getUniqueId());
+        if (!Woolbattle.useDB) {
+            Items.perks.put(player, defaultPerk);
+            return;
+        }
+        
+        if (!Database.hasConnection()) {
+            Items.perks.put(player, defaultPerk);
+            return;
+        }
+        
         exists(player.getUniqueId().toString(), new Callback() {
             @Override
             public void onSuccess(boolean value) {
@@ -82,12 +92,11 @@ public class PerkHelper {
     }
 
     public static void updatePerks(Player player, Perk oldPerk, Perk newPerk) {
-        /*
-        if (!Database.hasConnection()) return;
-        MongoClient mongoClient = Database.getConnection();
-        MongoDatabase database = mongoClient.getDatabase("minecraft");
-        MongoCollection<Document> collection = database.getCollection("players");
-         */
+        Items.perks.put(player, newPerk);
+        
+        if (!Woolbattle.useDB || !Database.hasConnection()) {
+            return;
+        }
 
         //TODO update when going to ingamestate, not everytime the user clicks
         // Is it better to just update the entire perk or just the part which changed?
@@ -104,21 +113,6 @@ public class PerkHelper {
             new UpdateObjekt(player, "perks.secondperkslot", String.valueOf(newPerk.getsecondPerkSlot()));
         if (oldPerk.hasParticles() != newPerk.hasParticles())
             new UpdateObjekt(player, "particles", String.valueOf(newPerk.hasParticles()));
-        /*
-        if (oldPerk.getfirstPerk() != newPerk.getfirstPerk())
-            update(collection, player.getUniqueId(), "perks.firstperk", newPerk.getfirstPerk());
-        if (oldPerk.getsecondPerk() != newPerk.getsecondPerk())
-            update(collection, player.getUniqueId(), "perks.secondperk", newPerk.getsecondPerk());
-        if (oldPerk.getpassivePerk() != newPerk.getpassivePerk())
-            update(collection, player.getUniqueId(), "perks.passiveperk", newPerk.getpassivePerk());
-        if (oldPerk.getsecondPerkSlot() != newPerk.getfirstPerkSlot())
-            update(collection, player.getUniqueId(), "perks.firstperkslot", String.valueOf(newPerk.getfirstPerkSlot()));
-        if (oldPerk.getfirstPerkSlot() != newPerk.getsecondPerkSlot())
-            update(collection, player.getUniqueId(), "perks.secondperkslot", String.valueOf(newPerk.getsecondPerkSlot()));
-        if (oldPerk.hasParticles() != newPerk.hasParticles())
-            update(collection, player.getUniqueId(), "particles", String.valueOf(newPerk.hasParticles()));
-         */
-        Items.perks.put(player, newPerk);
     }
 
     private static void insert(MongoCollection<Document> collection, Document doc) {
@@ -237,6 +231,11 @@ public class PerkHelper {
     }
 
     public static void exists(String id, final Callback callback) {
+        if (!Woolbattle.useDB || !Database.hasConnection()) {
+            callback.onSuccess(false);
+            return;
+        }
+        
         Query query = new Query(Criteria.where("UUID").is(id));
         ReactiveMongoTemplate template = new ReactiveMongoTemplate(Database.getConnection(), "minecraft");
         Mono<Boolean> exists = template.exists(query, "players");

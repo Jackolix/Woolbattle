@@ -15,6 +15,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.util.Vector;
 
 import java.util.Objects;
 
@@ -51,17 +52,20 @@ public class switcher implements Listener {
         if (event.getItem() == null)    return;
         if (!(event.getItem().getType() == Material.SNOWBALL)) return;
         Player player = event.getPlayer();
+        
+        event.setCancelled(true);
+        
         if (!Woolbattle.debug)
             if (!Items.cost(player, cost)) {
-                event.setCancelled(true);
                 return;
             }
-        // Snowball wird 2 mal losgeschickt, (TODO) keine Ahnung ob es jetzt noch funktioniert, müsste eigentlich
-        Projectile snowball = player.launchProjectile(Snowball.class);
+        
+        Vector direction = player.getLocation().getDirection();
+        Vector velocity = direction.multiply(1.6);
+        
+        Projectile snowball = player.launchProjectile(Snowball.class, velocity);
         snowball.setMetadata("Switcher", new FixedMetadataValue(Woolbattle.getPlugin(), "keineAhnungWiesoIchDasBrauch"));
 
-        // player.launchProjectile(Snowball.class);
-        event.setCancelled(true);
         if (Objects.equals(PerkHelper.passive(player), "recharger"))
             cooldown = 8;
         int slot = player.getInventory().getHeldItemSlot();

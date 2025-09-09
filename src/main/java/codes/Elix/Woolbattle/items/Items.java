@@ -9,8 +9,8 @@ import codes.Elix.Woolbattle.listeners.GameProtectionListener;
 import codes.Elix.Woolbattle.main.Woolbattle;
 import codes.Elix.Woolbattle.util.Console;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -39,17 +39,17 @@ public class Items {
 
         ItemStack bow = new ItemStack(Material.BOW);
         ItemMeta bowmeta = bow.getItemMeta();
-        bowmeta.displayName(Component.text("§bWool Blaster"));
-        bowmeta.addEnchant(Enchantment.ARROW_KNOCKBACK, 2, false);
-        bowmeta.addEnchant(Enchantment.ARROW_INFINITE, 1, false);
+        bowmeta.displayName(Component.text("Wool Blaster", NamedTextColor.AQUA));
+        bowmeta.addEnchant(Enchantment.PUNCH, 2, false);
+        bowmeta.addEnchant(Enchantment.INFINITY, 1, false);
         bowmeta.addEnchant(Enchantment.KNOCKBACK, 5, true);
         bowmeta.setUnbreakable(true);
         bow.setItemMeta(bowmeta);
 
         ItemStack shears = new ItemStack(Material.SHEARS);
         ItemMeta shearsmeta = shears.getItemMeta();
-        shearsmeta.displayName(Component.text("§aMega Schere"));
-        shearsmeta.addEnchant(Enchantment.DIG_SPEED, 5, false);
+        shearsmeta.displayName(Component.text("Mega Schere", NamedTextColor.GREEN));
+        shearsmeta.addEnchant(Enchantment.EFFICIENCY, 5, false);
         shearsmeta.addEnchant(Enchantment.KNOCKBACK, 5, true);
         shearsmeta.setUnbreakable(true);
         shears.setItemMeta(shearsmeta);
@@ -58,11 +58,23 @@ public class Items {
         player.getInventory().setItem(1, shears);
     }
 
+    // Helper method to convert legacy colors to proper Adventure components
+    public static Component convertLegacyText(String text) {
+        if (text.contains("§")) {
+            // Use Adventure's built-in legacy serializer to properly convert all legacy formatting codes
+            return net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
+                    .legacySection()
+                    .deserialize(text);
+        } else {
+            return Component.text(text);
+        }
+    }
+
     //Normal ItemConstructor
     public static void create(Inventory inventory, Material material, String name, int slot) {
         ItemStack item = new ItemStack(material);
         ItemMeta itemMeta = item.getItemMeta();
-        itemMeta.displayName(Component.text(name));
+        itemMeta.displayName(convertLegacyText(name));
         item.setItemMeta(itemMeta);
         inventory.setItem(slot, item);
     }
@@ -71,7 +83,7 @@ public class Items {
     public static void create(Inventory inventory, Material material, Enchantment enchant, Integer enchantnumber, String name, int slot) {
         ItemStack item = new ItemStack(material);
         ItemMeta itemMeta = item.getItemMeta();
-        itemMeta.setDisplayName(name);
+        itemMeta.displayName(convertLegacyText(name));
         if (enchant != null) {
             itemMeta.addEnchant(enchant, enchantnumber, true);
         }
@@ -84,7 +96,7 @@ public class Items {
     public static void create(Inventory inventory, Material material, HashMap<Enchantment, Integer> enchant, Integer enchantnumber, String name, int slot) {
         ItemStack item = new ItemStack(material);
         ItemMeta itemMeta = item.getItemMeta();
-        itemMeta.setDisplayName(name);
+        itemMeta.displayName(convertLegacyText(name));
         if (enchant != null) {
             //enchant.forEach(); // TODO this should be the right way
             //itemMeta.addEnchant(enchant, enchantnumber, true);
@@ -99,7 +111,7 @@ public class Items {
     public static void create(Inventory inventory, Material material, boolean enchantEffect, String name, int slot) {
         ItemStack item = new ItemStack(material);
         ItemMeta itemMeta = item.getItemMeta();
-        itemMeta.setDisplayName(name);
+        itemMeta.displayName(convertLegacyText(name));
         if (enchantEffect) {
             itemMeta.addEnchant(Enchantment.KNOCKBACK, 1, true);
             itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
@@ -113,7 +125,7 @@ public class Items {
     public static void create(Inventory inventory, Material material, boolean enchantEffect, String name, String text, int slot) {
         ItemStack item = new ItemStack(material);
         ItemMeta itemMeta = item.getItemMeta();
-        itemMeta.setDisplayName(name);;
+        itemMeta.displayName(convertLegacyText(name));
         if (enchantEffect) {
             itemMeta.addEnchant(Enchantment.KNOCKBACK, 1, true);
             itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
@@ -130,7 +142,7 @@ public class Items {
     public static void create(Inventory inventory, Material material, int amount, String name, String text, int slot) {
         ItemStack item = new ItemStack(material, amount);
         ItemMeta itemMeta = item.getItemMeta();
-        itemMeta.setDisplayName(name);
+        itemMeta.displayName(convertLegacyText(name));
 
         List<Component> lore = new ArrayList<>();
         lore.add(Component.text(text));
@@ -146,16 +158,16 @@ public class Items {
     public static void create(Inventory inventory, Material material, boolean enchantEffect, String name, String description, int cost, int cooldown, int slot) {
         ItemStack item = new ItemStack(material);
         ItemMeta itemMeta = item.getItemMeta();
-        itemMeta.setDisplayName(name);
+        itemMeta.displayName(convertLegacyText(name));
         if (enchantEffect) {
             itemMeta.addEnchant(Enchantment.KNOCKBACK, 1, true);
             itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         }
 
         List<Component> lore = new ArrayList<>();
-        lore.add(Component.text(ChatColor.GRAY + description));
-        lore.add(Component.text(ChatColor.GOLD + "Preis: " + cost + " Wolle"));
-        lore.add(Component.text(ChatColor.GOLD + "Cooldown: " + cooldown));
+        lore.add(Component.text(description, NamedTextColor.GRAY));
+        lore.add(Component.text("Preis: " + cost + " Wolle", NamedTextColor.GOLD));
+        lore.add(Component.text("Cooldown: " + cooldown, NamedTextColor.GOLD));
         itemMeta.lore(lore);
 
         item.setItemMeta(itemMeta);
@@ -167,14 +179,14 @@ public class Items {
     public static void createPassivePerk(Inventory inventory, Material material, boolean enchantEffect, String name, String description, String cost, String cooldown, int slot) {
         ItemStack item = new ItemStack(material);
         ItemMeta itemMeta = item.getItemMeta();
-        itemMeta.setDisplayName(name);
+        itemMeta.displayName(convertLegacyText(name));
         if (enchantEffect) {
             itemMeta.addEnchant(Enchantment.KNOCKBACK, 1, true);
             itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         }
 
         List<Component> lore = new ArrayList<>();
-        lore.add(Component.text(ChatColor.GRAY + description));
+        lore.add(Component.text(description, NamedTextColor.GRAY));
         if (cost != null)
             lore.add(Component.text(cost));
         if (cooldown != null)
@@ -188,7 +200,7 @@ public class Items {
     public static void createPassivePerk(Inventory inventory, Material material, String name, int slot) {
         ItemStack item = new ItemStack(material);
         ItemMeta itemMeta = item.getItemMeta();
-        itemMeta.setDisplayName(name);
+        itemMeta.displayName(convertLegacyText(name));
         itemMeta.addItemFlags(ItemFlag.HIDE_DESTROYS);
 
         item.setItemMeta(itemMeta);
@@ -199,7 +211,7 @@ public class Items {
     public static void createTeam(Inventory inventory, Material material, String name, ArrayList<String> lore, int slot) {
         ItemStack item = new ItemStack(material);
         ItemMeta itemMeta = item.getItemMeta();
-        itemMeta.setDisplayName(name);
+        itemMeta.displayName(convertLegacyText(name));
         itemMeta.setLore(lore);
 
         item.setItemMeta(itemMeta);
@@ -209,7 +221,7 @@ public class Items {
     public static void createMap(Inventory inventory, Material material, int amount, String name, String text, int slot) {
         ItemStack item = new ItemStack(material, amount);
         ItemMeta itemMeta = item.getItemMeta();
-        itemMeta.setDisplayName(name);
+        itemMeta.displayName(convertLegacyText(name));
 
         List<Component> lore = new ArrayList<>();
         lore.add(Component.text(" "));
@@ -224,7 +236,7 @@ public class Items {
     public static void createMapEffect(Inventory inventory, Material material, int amount, String name, String text, int slot) {
         ItemStack item = new ItemStack(material, amount);
         ItemMeta itemMeta = item.getItemMeta();
-        itemMeta.setDisplayName(name);
+        itemMeta.displayName(convertLegacyText(name));
 
         List<Component> lore = new ArrayList<>();
         lore.add(Component.text(" "));
@@ -241,7 +253,7 @@ public class Items {
     public static void createCooldown(Inventory inventory, Material material, int amount, String name, int slot) {
         ItemStack item = new ItemStack(material, amount);
         ItemMeta itemMeta = item.getItemMeta();
-        itemMeta.setDisplayName(name);
+        itemMeta.displayName(convertLegacyText(name));
 
         item.setItemMeta(itemMeta);
         inventory.setItem(slot, item);
@@ -251,7 +263,7 @@ public class Items {
         ItemStack item = new ItemStack(Material.LEATHER_BOOTS, 1);
         LeatherArmorMeta meta = (LeatherArmorMeta) item.getItemMeta();
 
-        meta.setDisplayName(ChatColor.BLUE + "Boots");
+        meta.displayName(Component.text("Boots", NamedTextColor.BLUE));
         meta.setColor(color);
         meta.setUnbreakable(true);
 
@@ -296,7 +308,7 @@ public class Items {
         interact.add(player);
         ItemStack item = new ItemStack(perk);
         ItemMeta itemMeta = item.getItemMeta();
-        itemMeta.displayName(Component.text(perkname));
+        itemMeta.displayName(convertLegacyText(perkname));
         itemMeta.setUnbreakable(true);
         item.setItemMeta(itemMeta);
 
@@ -305,7 +317,9 @@ public class Items {
 
             @Override
             public void run() {
-                createCooldown(player.getInventory(), Material.GRAY_DYE, count, "Cooldown", slot);
+                if (count > 0) {
+                    createCooldown(player.getInventory(), Material.GRAY_DYE, count, "Cooldown", slot);
+                }
                 count--;
                 if (count == 0) {
                     // create(player.getInventory(), item, perkname, slot);
@@ -333,12 +347,12 @@ public class Items {
         Bukkit.getScheduler().cancelTask(taskID);
     }
 
-    public static ChatColor getColor(String team) {
+    public static NamedTextColor getColor(String team) {
         return switch (team) {
-            case "red" -> ChatColor.RED;
-            case "blue" -> ChatColor.BLUE;
-            case "green" -> ChatColor.GREEN;
-            case "yellow" -> ChatColor.YELLOW;
+            case "red" -> NamedTextColor.RED;
+            case "blue" -> NamedTextColor.BLUE;
+            case "green" -> NamedTextColor.GREEN;
+            case "yellow" -> NamedTextColor.YELLOW;
             default -> null;
         };
     }

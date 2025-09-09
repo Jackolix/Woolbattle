@@ -2,4 +2,4 @@ run
 .idea
 .gradle
 build
-gradle
+gradlerun/

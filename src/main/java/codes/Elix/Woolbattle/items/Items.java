@@ -301,6 +301,10 @@ public class Items {
         ItemStack item = new ItemStack(Items.getWoolColor(player));
         item.setAmount(cost);
         player.getInventory().removeItem(item);
+
+        // Update flight ability after consuming wool
+        codes.Elix.Woolbattle.game.DoubleJump.updateFlightBasedOnWool(player);
+
         return true;
     }
 
@@ -335,7 +339,10 @@ public class Items {
     }
 
     public static Material getWoolColor(Player player) {
-        return switch (CustomPlayer.getCustomPlayer(player).getTeam().getName()) {
+        codes.Elix.Woolbattle.game.HelpClasses.Team team = CustomPlayer.getCustomPlayer(player).getTeam();
+        if (team == null) return null;
+
+        return switch (team.getName()) {
             case "red" -> Material.RED_WOOL;
             case "blue" -> Material.BLUE_WOOL;
             case "green" -> Material.GREEN_WOOL;

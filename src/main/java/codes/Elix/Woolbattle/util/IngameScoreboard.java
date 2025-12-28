@@ -26,7 +26,19 @@ public class IngameScoreboard {
     public static void setup(Player player) {
         FastBoard board = new FastBoard(player);
         board.updateTitle("§f§lWOOLBATTLE");
-        
+
+        updateBoard(player, board);
+        boards.put(player, board);
+    }
+
+    public static void update(Player player) {
+        FastBoard board = boards.get(player);
+        if (board != null) {
+            updateBoard(player, board);
+        }
+    }
+
+    private static void updateBoard(Player player, FastBoard board) {
         List<String> lines = new ArrayList<>();
         lines.add("   ");
         lines.add("§8» §7Dein Team");
@@ -38,14 +50,13 @@ public class IngameScoreboard {
         lines.add("§8» §7Leben");
         lines.add(" §7• §4❤ " + LiveSystem.Team.get("red").getLifes() + " §8- " + Colorname1);
         lines.add(" §7• §4❤ " + LiveSystem.Team.get("blue").getLifes() + " §8- " + Colorname2);
-        
+
         if (LiveSystem.Teams >= 3)
             lines.add(" §7• §4❤ " + LiveSystem.Team.get("green").getLifes() + " §8- " + Colorname3);
         if (LiveSystem.Teams >= 4)
             lines.add(" §7• §4❤ " + LiveSystem.Team.get("yellow").getLifes() + " §8- " + Colorname4);
-            
+
         board.updateLines(lines);
-        boards.put(player, board);
     }
     
     public static void remove(Player player) {

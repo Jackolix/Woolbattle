@@ -1,5 +1,6 @@
 package codes.Elix.Woolbattle.game.perks;
 
+import codes.Elix.Woolbattle.config.PerkConfig;
 import codes.Elix.Woolbattle.game.PerkHelper;
 import codes.Elix.Woolbattle.items.Items;
 import codes.Elix.Woolbattle.main.Woolbattle;
@@ -12,17 +13,22 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.util.Vector;
 
+import java.util.Objects;
+
 public class enterhaken implements Listener {
 
-    int cost = 5;
-    int cooldown = 16;
+    private PerkConfig.PerkSettings getSettings() {
+        return PerkConfig.getInstance().getPerkSettings("enterhaken");
+    }
 
     @EventHandler
     public void onInteract(PlayerFishEvent event) {
         Player player = event.getPlayer();
         FishHook h = event.getHook();
+        PerkConfig.PerkSettings settings = getSettings();
+        
         if (!Woolbattle.debug)
-            if (!Items.cost(player, cost)) {
+            if (!Items.cost(player, settings.getCost())) {
                 event.setCancelled(true);
                 return;
             }
@@ -33,8 +39,10 @@ public class enterhaken implements Listener {
             vector.normalize().multiply(5.0);
             player.setVelocity(vector);
 
-            if (PerkHelper.passive(player) == "recharger")
-                cooldown = 13;
+            int cooldown = Objects.equals(PerkHelper.passive(player), "recharger")
+                ? settings.getCooldownRecharger()
+                : settings.getCooldown();
+                
             if (!Woolbattle.debug)
                 Items.visualCooldown(player, cooldown, Material.FISHING_ROD, slot, "§3Enterhaken");
         }

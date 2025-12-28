@@ -4,9 +4,13 @@ import codes.Elix.Woolbattle.util.Console;
 import codes.Elix.Woolbattle.util.SchematicManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class MapVoting {
 
@@ -14,28 +18,44 @@ public class MapVoting {
     public static HashMap<String, List<Player>> mapVotes = new HashMap<>();
 
     public static void voteForMap(Player player, String fileName) {
-        // Remove previous vote if exists
+        // Check if player is voting for the same map they already voted for
         String previousVote = votedMaps.get(player);
+        if (fileName.equals(previousVote)) {
+            // Player already voted for this map, do nothing to prevent spam
+            return;
+        }
+
+        // Remove previous vote if exists
         if (previousVote != null) {
             List<Player> previousVoters = mapVotes.get(previousVote);
             if (previousVoters != null) {
                 previousVoters.remove(player);
+                // For OP players, remove their second vote as well
+                if (player.hasPermission("Woolbattle.OP")) {
+                    previousVoters.remove(player);
+                }
                 if (previousVoters.isEmpty()) {
                     mapVotes.remove(previousVote);
                 }
             }
         }
-        
+
         // Add new vote
         votedMaps.put(player, fileName);
         mapVotes.computeIfAbsent(fileName, k -> new ArrayList<>()).add(player);
-        
+
         // Give OP players double vote weight (like in Leben voting)
         if (player.hasPermission("Woolbattle.OP")) {
             mapVotes.get(fileName).add(player); // Add second vote for OP
         }
-        
+
         updateMapSelection();
+
+        // Refresh UI for all players viewing the map voting GUI
+        // Run on next tick to ensure vote is fully processed
+        Bukkit.getScheduler().runTask(codes.Elix.Woolbattle.main.Woolbattle.getPlugin(), () -> {
+            LobbyItems.refreshMapVotingForAllViewers();
+        });
     }
 
     public static String getWinningMap() {

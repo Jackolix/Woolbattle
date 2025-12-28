@@ -11,6 +11,8 @@ import codes.Elix.Woolbattle.main.Woolbattle;
 import codes.Elix.Woolbattle.util.IngameScoreboard;
 import codes.Elix.Woolbattle.util.SchematicManager;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.title.TitlePart;
 import org.bukkit.Bukkit;
@@ -35,6 +37,16 @@ public class VoidTeleport implements Listener {
         if (player.getLocation().getBlockY() <= -25) {
             CustomPlayer customPlayer = CustomPlayer.getCustomPlayer(player);
             Team team = customPlayer.getTeam();
+
+            // If player has no team, make them spectator
+            if (team == null) {
+                IngameState.addSpectator(player);
+                String selectedMap = SchematicManager.getSelectedMap();
+                Location spectatorSpawn = SchematicManager.getSpectatorSpawn(selectedMap);
+                player.teleport(spectatorSpawn);
+                return;
+            }
+
             Integer lifes = team.getLifes();
 
             if (lifes == 0) {
@@ -53,6 +65,7 @@ public class VoidTeleport implements Listener {
             if (customPlayer.isHitted()) {
                 String damager;
                 String prefix;
+                TextColor damagerColor = TextColor.color(255, 0, 0); // Default red
 
                 team.setLifes(lifes - 1);
                 if (customPlayer.getDamager() == null) {
@@ -60,12 +73,24 @@ public class VoidTeleport implements Listener {
                     prefix = "§4";
                 } else {
                     damager = customPlayer.getDamager().getName();
-                    prefix = CustomPlayer.getCustomPlayer(customPlayer.getDamager()).getTeam().getPREFIX();
+                    Team damagerTeam = CustomPlayer.getCustomPlayer(customPlayer.getDamager()).getTeam();
+                    if (damagerTeam != null) {
+                        prefix = damagerTeam.getPREFIX();
+                        damagerColor = damagerTeam.getTextColor();
+                    } else {
+                        prefix = "§7";
+                    }
                 }
 
 
-                Bukkit.broadcast(Component.text(Woolbattle.PREFIX + customPlayer.getTeam().getPREFIX() + customPlayer.getPlayer().getName() + " §fdied to " + prefix +
-                            damager));
+                Component deathMessage = Woolbattle.PREFIX
+                        .append(Component.text(customPlayer.getPlayer().getName(), team.getTextColor()))
+                        .append(Component.text(" died to ", NamedTextColor.GRAY))
+                        .append(Component.text(damager, damagerColor));
+
+                for (Player p : Bukkit.getOnlinePlayers()) {
+                    p.sendMessage(deathMessage);
+                }
                 customPlayer.removeHitted();
             }
 
@@ -128,7 +153,11 @@ public class VoidTeleport implements Listener {
         Bukkit.getScheduler().scheduleSyncDelayedTask(Woolbattle.getPlugin(), new Runnable() {
             @Override
             public void run() {
-                Bukkit.broadcast(Component.text(Woolbattle.PREFIX + "§cServer shutting down in 5 seconds..."));
+                Component shutdownMsg = Woolbattle.PREFIX
+                        .append(Component.text("Server shutting down in 5 seconds...", NamedTextColor.RED));
+                for (Player p : Bukkit.getOnlinePlayers()) {
+                    p.sendMessage(shutdownMsg);
+                }
             }
         }, 20 * 5); // 5 seconds delay
         

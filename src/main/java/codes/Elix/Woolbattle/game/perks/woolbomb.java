@@ -1,5 +1,6 @@
 package codes.Elix.Woolbattle.game.perks;
 
+import codes.Elix.Woolbattle.config.PerkConfig;
 import codes.Elix.Woolbattle.game.PerkHelper;
 import codes.Elix.Woolbattle.items.Items;
 import codes.Elix.Woolbattle.main.Woolbattle;
@@ -17,18 +18,20 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 
 public class woolbomb implements Listener {
 
-    int cost = 8;
-    int cooldown = 13;
+    private PerkConfig.PerkSettings getSettings() {
+        return PerkConfig.getInstance().getPerkSettings("woolbomb");
+    }
 
     @EventHandler
     public void onBlockHit(ProjectileHitEvent event) {
         if (!(event.getEntity() instanceof Snowball)) return;
         if (!(event.getEntity().hasMetadata("Woolbomb"))) return;
+        
+        PerkConfig.PerkSettings settings = getSettings();
         Location location;
         if (event.getHitBlock() == null) {
             location = event.getHitEntity().getLocation();
@@ -36,11 +39,9 @@ public class woolbomb implements Listener {
             location = event.getHitBlock().getLocation();
 
         TNTPrimed tnt = (TNTPrimed) Bukkit.getWorlds().get(0).spawnEntity(location, EntityType.TNT);
-        tnt.setFuseTicks(10); // How long until it explodes
+        tnt.setFuseTicks(settings.getFuseTicks());
 
-        System.out.println(location.getNearbyEntities(5,5,5));
-
-        @NotNull Collection<Entity> list = location.getNearbyEntities(5,5,5);
+        @NotNull Collection<Entity> list = location.getNearbyEntities(settings.getExplosionRadius(), settings.getExplosionRadius(), settings.getExplosionRadius());
         ArrayList<Player> players = new ArrayList<>();
         for (Entity entity : list) {
             if (entity instanceof Player)
@@ -60,12 +61,11 @@ public class woolbomb implements Listener {
                     int xPos = location.getBlockX() - player.getLocation().getBlockX();
                     int zPos = location.getBlockZ() - player.getLocation().getBlockZ();
                     double redux = 0.25; // You don't want the player flying thousands of blocks
-                    Vector v = new Vector(-(xPos / redux), 0.5, -(zPos / redux));
-                    //player.setVelocity(new Vector(-(xPos / redux), 0.5, -(zPos / redux)));
-                    player.setVelocity(v.normalize().multiply(1));
+                    Vector v = new Vector(-(xPos / redux), settings.getKnockbackYVelocity(), -(zPos / redux));
+                    player.setVelocity(v.normalize().multiply(settings.getKnockbackMultiplier()));
                 }
             }
-        }, 10);
+        }, settings.getExplosionDelayTicks());
 
     }
 
@@ -74,9 +74,10 @@ public class woolbomb implements Listener {
         if (event.getItem() == null) return;
         if (!(event.getItem().getType() == Material.TNT)) return;
         Player player = event.getPlayer();
+        PerkConfig.PerkSettings settings = getSettings();
 
         Vector direction = player.getLocation().getDirection();
-        Vector velocity = direction.multiply(1.6);
+        Vector velocity = direction.multiply(settings.getProjectileVelocity());
         
         if (Woolbattle.debug) {
             event.setCancelled(true);
@@ -85,7 +86,7 @@ public class woolbomb implements Listener {
             return;
         }
 
-        if (!Items.cost(player, cost)) {
+        if (!Items.cost(player, settings.getCost())) {
             event.setCancelled(true);
             return;
         }
@@ -94,8 +95,9 @@ public class woolbomb implements Listener {
         snowball.setMetadata("Woolbomb", new FixedMetadataValue(Woolbattle.getPlugin(), "keineAhnungWiesoIchDasBrauch"));
 
         event.setCancelled(true);
-        if (Objects.equals(PerkHelper.passive(player), "recharger"))
-            cooldown = 6;
+        int cooldown = Objects.equals(PerkHelper.passive(player), "recharger")
+            ? settings.getCooldownRecharger()
+            : settings.getCooldown();
         int slot = player.getInventory().getHeldItemSlot();
         Items.visualCooldown(player, cooldown, Material.TNT, slot, "§3Woolbomb");
     }

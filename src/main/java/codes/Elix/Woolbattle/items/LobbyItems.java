@@ -10,6 +10,7 @@ import codes.Elix.Woolbattle.game.LiveSystem;
 import codes.Elix.Woolbattle.game.PerkHelper;
 import codes.Elix.Woolbattle.gamestates.GameStateManager;
 import codes.Elix.Woolbattle.gamestates.LobbyState;
+import codes.Elix.Woolbattle.gui.PerkConfigGUI;
 import codes.Elix.Woolbattle.main.Woolbattle;
 import codes.Elix.Woolbattle.util.Console;
 import codes.Elix.Woolbattle.util.SchematicManager;
@@ -20,7 +21,6 @@ import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -33,12 +33,17 @@ import java.util.*;
 
 public class LobbyItems implements Listener {
     private HashMap<Player, String> Title = new HashMap<>();
+    private static Set<Player> playersViewingMapVoting = new HashSet<>();
 
     public static void Lobby(Player player) {
         Items.create(player.getInventory(), Material.BOW, "§3Perks", 0);
         Items.create(player.getInventory(), Material.BOOK, "§5Team wählen", 1);
         particleitem(player);
         Items.create(player.getInventory(), Material.CHEST, "§6Inventarsortierung", 5);
+        // Add perk config item for OP players
+        if (player.hasPermission("woolbattle.admin.config") || player.isOp()) {
+            Items.create(player.getInventory(), Material.COMMAND_BLOCK, "§dPerk Configuration", 6);
+        }
         Items.create(player.getInventory(), Material.NAME_TAG, "§aLebensanzahl ändern", 7);
         Items.create(player.getInventory(), Material.PAPER,"§6Maps", 8);
     }
@@ -52,6 +57,11 @@ public class LobbyItems implements Listener {
             case BOOK -> TeamsInventory(event.getPlayer());
             case BLAZE_ROD -> PartikelAction(event.getPlayer());
             case CHEST -> Inventarsortierung();
+            case COMMAND_BLOCK -> {
+                if (event.getPlayer().hasPermission("woolbattle.admin.config") || event.getPlayer().isOp()) {
+                    PerkConfigGUI.openMainConfigGUI(event.getPlayer());
+                }
+            }
             case NAME_TAG -> Lifes(event.getPlayer());
             case PAPER -> Maps(event.getPlayer());
         }
@@ -162,12 +172,15 @@ public class LobbyItems implements Listener {
     }
 
     private void Maps(Player player) {
+        // Add player to tracking set
+        playersViewingMapVoting.add(player);
+
         List<SchematicManager.SchematicInfo> schematics = SchematicManager.getGameSchematics();
         Console.send("Loading maps menu for " + player.getName() + " - found " + schematics.size() + " game schematics (lobby maps excluded)");
-        
+
         int inventorySize = Math.max(9, ((schematics.size() + 8) / 9) * 9);
         if (inventorySize > 54) inventorySize = 54;
-        
+
         Inventory inventory = Bukkit.createInventory(null, inventorySize, Component.text("Game Maps (" + schematics.size() + " available)", NamedTextColor.GREEN));
         
         String currentWinningMap = MapVoting.getCurrentWinningMap();
@@ -248,7 +261,15 @@ public class LobbyItems implements Listener {
         player.openInventory(inventory);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler
+    public void onInventoryClose(org.bukkit.event.inventory.InventoryCloseEvent event) {
+        if (event.getPlayer() instanceof Player player) {
+            // Remove player from map voting tracking when they close any inventory
+            playersViewingMapVoting.remove(player);
+        }
+    }
+
+    @EventHandler()
     public void onGUIClick(InventoryClickEvent event) {
         System.out.println("[WOOLBATTLE DEBUG] InventoryClickEvent triggered!");
         if (!(event.getWhoClicked() instanceof Player player)) {
@@ -417,8 +438,12 @@ public class LobbyItems implements Listener {
             Lifes(player);
         }
 
+        // Use modern Paper Adventure API for title detection
+        Component titleComponent = event.getView().title();
+        String title = net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(titleComponent);
+        
         // Handle Maps voting - check if title contains Maps
-        if (event.getView().title().toString().contains("Maps")) {
+        if (title.contains("Maps")) {
             event.setCancelled(true);
             System.out.println("[DEBUG] Maps inventory detected!");
             Console.send("Maps inventory clicked by " + player.getName());
@@ -427,8 +452,15 @@ public class LobbyItems implements Listener {
                 Console.send("Item clicked: " + event.getCurrentItem().getType());
                 handleMapSelection(player, event.getCurrentItem());
             }
+            return; // Exit early for maps
         }
 
+        // Handle Perk Configuration GUIs - don't cancel these events
+        if (title.contains("Perk Configuration") || title.contains("Configure ")) {
+            // Let PerkConfigGUI handle these events
+            System.out.println("[LOBBY ITEMS] Perk Config GUI detected, letting PerkConfigGUI handle: " + title);
+            return;
+        }
 
         if (GameStateManager.getCurrentGameState() instanceof LobbyState)
             event.setCancelled(true);
@@ -664,6 +696,115 @@ public class LobbyItems implements Listener {
         passivePerks.add("§3SlimePlattform");
     }
 
+    /**
+     * Refreshes the map voting UI for all players who currently have it open
+     */
+    public static void refreshMapVotingForAllViewers() {
+        // Create a copy to avoid concurrent modification
+        Set<Player> viewers = new HashSet<>(playersViewingMapVoting);
+        for (Player viewer : viewers) {
+            if (viewer.isOnline()) {
+                // Check if they still have a Maps inventory open
+                Component titleComponent = viewer.getOpenInventory().title();
+                String title = net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(titleComponent);
+                if (title.contains("Maps")) {
+                    // Refresh their inventory
+                    refreshMapVotingUI(viewer);
+                } else {
+                    // They closed it or switched inventories, remove from tracking
+                    playersViewingMapVoting.remove(viewer);
+                }
+            } else {
+                playersViewingMapVoting.remove(viewer);
+            }
+        }
+    }
+
+    /**
+     * Refreshes the map voting UI for a specific player
+     */
+    private static void refreshMapVotingUI(Player player) {
+        List<SchematicManager.SchematicInfo> schematics = SchematicManager.getGameSchematics();
+
+        int inventorySize = Math.max(9, ((schematics.size() + 8) / 9) * 9);
+        if (inventorySize > 54) inventorySize = 54;
+
+        Inventory inventory = player.getOpenInventory().getTopInventory();
+        inventory.clear();
+
+        String currentWinningMap = MapVoting.getCurrentWinningMap();
+        String playerVote = MapVoting.getPlayerVote(player);
+
+        int slot = 0;
+        for (SchematicManager.SchematicInfo schematic : schematics) {
+            if (slot >= inventorySize) break;
+
+            // Add vote count to display name using Adventure components
+            int voteCount = MapVoting.getVotesForMap(schematic.getFileName());
+            Component displayName = Component.text(schematic.getDisplayName(), NamedTextColor.GOLD);
+            if (voteCount > 0) {
+                displayName = displayName.append(Component.text(" (", NamedTextColor.DARK_GRAY))
+                    .append(Component.text(voteCount + " votes", NamedTextColor.YELLOW))
+                    .append(Component.text(")", NamedTextColor.DARK_GRAY));
+            }
+
+            // Determine material and display name color based on state
+            Material itemMaterial = schematic.getMaterial();
+            NamedTextColor nameColor = NamedTextColor.GOLD;
+
+            ArrayList<Component> lore = new ArrayList<>();
+            lore.add(Component.text("File: ", NamedTextColor.GRAY).append(Component.text(schematic.getFileName(), NamedTextColor.YELLOW)));
+            lore.add(Component.text("Votes: ", NamedTextColor.GRAY).append(Component.text(voteCount, NamedTextColor.YELLOW)));
+
+            if (schematic.getFileName().equals(currentWinningMap)) {
+                // Winning map - use gold block and bright color
+                itemMaterial = Material.GOLD_BLOCK;
+                nameColor = NamedTextColor.YELLOW;
+                lore.add(Component.text("⭐ CURRENTLY WINNING ⭐", NamedTextColor.YELLOW));
+            }
+
+            if (schematic.getFileName().equals(playerVote)) {
+                // Player's vote - use emerald block and green color
+                itemMaterial = Material.EMERALD_BLOCK;
+                nameColor = NamedTextColor.GREEN;
+                lore.add(Component.text("✓ YOUR VOTE", NamedTextColor.GREEN));
+            }
+
+            // If it's both winning and player's vote, prioritize player's vote appearance
+            if (schematic.getFileName().equals(playerVote) && schematic.getFileName().equals(currentWinningMap)) {
+                itemMaterial = Material.EMERALD_BLOCK;
+                nameColor = NamedTextColor.GREEN;
+                lore.clear();
+                lore.add(Component.text("File: ", NamedTextColor.GRAY).append(Component.text(schematic.getFileName(), NamedTextColor.YELLOW)));
+                lore.add(Component.text("Votes: ", NamedTextColor.GRAY).append(Component.text(voteCount, NamedTextColor.YELLOW)));
+                lore.add(Component.text("✓ YOUR VOTE & WINNING! ⭐", NamedTextColor.GOLD));
+            }
+
+            lore.add(Component.text("Click to vote for this map!", NamedTextColor.GRAY));
+
+            // Update display name color
+            displayName = Component.text(schematic.getDisplayName(), nameColor);
+            if (voteCount > 0) {
+                displayName = displayName.append(Component.text(" (", NamedTextColor.DARK_GRAY))
+                    .append(Component.text(voteCount + " votes", NamedTextColor.YELLOW))
+                    .append(Component.text(")", NamedTextColor.DARK_GRAY));
+            }
+
+            // Create item
+            ItemStack item = new ItemStack(itemMaterial);
+            ItemMeta itemMeta = item.getItemMeta();
+            itemMeta.displayName(displayName);
+            itemMeta.lore(lore);
+            item.setItemMeta(itemMeta);
+            inventory.setItem(slot, item);
+            slot++;
+        }
+
+        if (schematics.isEmpty()) {
+            Items.create(inventory, Material.BARRIER, "§cNo maps available", 4);
+        }
+    }
+
     private void handleMapSelection(Player player, ItemStack clickedItem) {
         if (clickedItem.getItemMeta() == null || clickedItem.getType() == Material.BARRIER) return;
         
@@ -699,9 +840,8 @@ public class LobbyItems implements Listener {
                     }
                     
                     Console.send(player.getName() + " voted for map: " + schematic.getFileName());
-                    
-                    // Refresh the inventory to show updated vote counts
-                    Maps(player);
+
+                    // UI refresh happens automatically for all viewers via MapVoting.voteForMap()
                     return;
                 }
             }

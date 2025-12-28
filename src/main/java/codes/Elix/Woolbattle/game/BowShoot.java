@@ -148,7 +148,8 @@ public class BowShoot implements Listener {
 
     public static void enable() {
         for (Player player : Bukkit.getOnlinePlayers()) {
-            if (Objects.equals(CustomPlayer.getCustomPlayer(player).getTeam().getName(), "spectator")) continue;
+            codes.Elix.Woolbattle.game.HelpClasses.Team team = CustomPlayer.getCustomPlayer(player).getTeam();
+            if (team == null || Objects.equals(team.getName(), "spectator")) continue;
             if (Objects.equals(Items.perks.get(player).getpassivePerk(), "exploding_arrow"))
                 bomb.put(player, 0);
         }

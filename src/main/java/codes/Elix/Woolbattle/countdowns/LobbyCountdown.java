@@ -6,8 +6,8 @@ package codes.Elix.Woolbattle.countdowns;
 import codes.Elix.Woolbattle.gamestates.GameState;
 import codes.Elix.Woolbattle.gamestates.GameStateManager;
 import codes.Elix.Woolbattle.gamestates.LobbyState;
-import codes.Elix.Woolbattle.main.Woolbattle;
 import codes.Elix.Woolbattle.items.MapVoting;
+import codes.Elix.Woolbattle.main.Woolbattle;
 import codes.Elix.Woolbattle.util.LobbyScoreboard;
 import codes.Elix.Woolbattle.util.SchematicManager;
 import codes.Elix.Woolbattle.util.Worldloader;
@@ -17,8 +17,6 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-
-import java.io.File;
 
 public class LobbyCountdown extends Countdown{
 

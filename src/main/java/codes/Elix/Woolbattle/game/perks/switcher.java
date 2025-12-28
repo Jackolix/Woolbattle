@@ -3,10 +3,14 @@
 
 package codes.Elix.Woolbattle.game.perks;
 
+import codes.Elix.Woolbattle.config.PerkConfig;
 import codes.Elix.Woolbattle.game.PerkHelper;
 import codes.Elix.Woolbattle.items.Items;
 import codes.Elix.Woolbattle.main.Woolbattle;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Snowball;
@@ -22,8 +26,9 @@ import java.util.Objects;
 
 public class switcher implements Listener {
 
-    int cost = 5;
-    int cooldown = 10;
+    private PerkConfig.PerkSettings getSettings() {
+        return PerkConfig.getInstance().getPerkSettings("switcher");
+    }
 
     @EventHandler
     public void onSwitch(EntityDamageByEntityEvent event) {
@@ -55,19 +60,23 @@ public class switcher implements Listener {
         
         event.setCancelled(true);
         
+        PerkConfig.PerkSettings settings = getSettings();
+        
         if (!Woolbattle.debug)
-            if (!Items.cost(player, cost)) {
+            if (!Items.cost(player, settings.getCost())) {
                 return;
             }
         
         Vector direction = player.getLocation().getDirection();
-        Vector velocity = direction.multiply(1.6);
+        Vector velocity = direction.multiply(settings.getProjectileVelocity());
         
         Projectile snowball = player.launchProjectile(Snowball.class, velocity);
         snowball.setMetadata("Switcher", new FixedMetadataValue(Woolbattle.getPlugin(), "keineAhnungWiesoIchDasBrauch"));
 
-        if (Objects.equals(PerkHelper.passive(player), "recharger"))
-            cooldown = 8;
+        int cooldown = Objects.equals(PerkHelper.passive(player), "recharger")
+            ? settings.getCooldownRecharger()
+            : settings.getCooldown();
+            
         int slot = player.getInventory().getHeldItemSlot();
         if (!Woolbattle.debug)
             Items.visualCooldown(player, cooldown, Material.SNOWBALL, slot, "§3Tauscher");

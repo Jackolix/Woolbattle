@@ -6,7 +6,6 @@ authors: [ N4med, Elix ]
 description: Gamemode for Minecraft
 depend:
   - FastAsyncWorldEdit
-  #- TimoCloud
 
 commands:
   setup:
@@ -22,3 +21,5 @@ commands:
   switchteam:
   fix:
   visualizewool:
+  reloadperks:
+  perkconfig:

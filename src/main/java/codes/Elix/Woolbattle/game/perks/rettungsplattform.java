@@ -1,5 +1,6 @@
 package codes.Elix.Woolbattle.game.perks;
 
+import codes.Elix.Woolbattle.config.PerkConfig;
 import codes.Elix.Woolbattle.game.PerkHelper;
 import codes.Elix.Woolbattle.items.Items;
 import codes.Elix.Woolbattle.main.Woolbattle;
@@ -15,8 +16,9 @@ import java.util.Objects;
 
 public class rettungsplattform implements Listener {
 
-    int cooldown = 15;
-    int cost = 5;
+    private PerkConfig.PerkSettings getSettings() {
+        return PerkConfig.getInstance().getPerkSettings("rettungsplattform");
+    }
 
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
@@ -29,9 +31,14 @@ public class rettungsplattform implements Listener {
             return;
         }
 
-        if (!Items.cost(player, cost)) return;
-        if (Objects.equals(PerkHelper.passive(player), "recharger"))
-            cooldown = 13;
+        PerkConfig.PerkSettings settings = getSettings();
+        
+        if (!Items.cost(player, settings.getCost())) return;
+        
+        int cooldown = Objects.equals(PerkHelper.passive(player), "recharger")
+            ? settings.getCooldownRecharger()
+            : settings.getCooldown();
+            
         int slot = player.getInventory().getHeldItemSlot();
         Location placelocation = player.getLocation();
         placeBlocks(placelocation, Items.getWoolColor(player));

@@ -1,7 +1,6 @@
 package codes.Elix.Woolbattle.util;
 
 import codes.Elix.Woolbattle.main.Woolbattle;
-import codes.Elix.Woolbattle.util.Worldloader;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -310,20 +309,26 @@ public class SchematicManager {
     
     public static Location getTeamSpawn(String schematicFileName, String teamKey) {
         FileConfiguration config = getSchematicConfig(schematicFileName);
-        
+
         // Get base placement coordinates
         double baseX = config.getDouble("placement.x", 0);
         double baseY = config.getDouble("placement.y", 70);
         double baseZ = config.getDouble("placement.z", 0);
-        
-        // Get team-specific spawn coordinates (absolute world coordinates)
+
+        // Get team-specific spawn coordinates
         double spawnX = config.getDouble("teams." + teamKey + ".spawn.x", 0);
         double spawnY = config.getDouble("teams." + teamKey + ".spawn.y", 70);
         double spawnZ = config.getDouble("teams." + teamKey + ".spawn.z", 0);
         float yaw = (float) config.getDouble("teams." + teamKey + ".spawn.yaw", 0.0);
         float pitch = (float) config.getDouble("teams." + teamKey + ".spawn.pitch", 0.0);
-        
-        
+
+        // Apply the schematic origin offset to spawn coordinates
+        // This ensures spawn points move with the schematic when origin offset is applied
+        com.sk89q.worldedit.math.BlockVector3 offset = Worldloader.getLastOriginOffset();
+        spawnX -= offset.getX();
+        spawnY -= offset.getY();
+        spawnZ -= offset.getZ();
+
         return new Location(
             org.bukkit.Bukkit.getServer().getWorlds().get(0),
             spawnX, spawnY, spawnZ, yaw, pitch
@@ -332,14 +337,20 @@ public class SchematicManager {
     
     public static Location getSpectatorSpawn(String schematicFileName) {
         FileConfiguration config = getSchematicConfig(schematicFileName);
-        
-        // Get spectator spawn coordinates (absolute world coordinates)
+
+        // Get spectator spawn coordinates
         double spawnX = config.getDouble("spawns.spectator.x", 0);
         double spawnY = config.getDouble("spawns.spectator.y", 80);
         double spawnZ = config.getDouble("spawns.spectator.z", 0);
         float yaw = (float) config.getDouble("spawns.spectator.yaw", 0.0);
         float pitch = (float) config.getDouble("spawns.spectator.pitch", -45.0);
-        
+
+        // Apply the schematic origin offset to spawn coordinates
+        com.sk89q.worldedit.math.BlockVector3 offset = Worldloader.getLastOriginOffset();
+        spawnX -= offset.getX();
+        spawnY -= offset.getY();
+        spawnZ -= offset.getZ();
+
         return new Location(
             org.bukkit.Bukkit.getServer().getWorlds().get(0),
             spawnX, spawnY, spawnZ, yaw, pitch

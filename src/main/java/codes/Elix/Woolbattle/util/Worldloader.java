@@ -4,7 +4,10 @@
 package codes.Elix.Woolbattle.util;
 
 import codes.Elix.Woolbattle.main.Woolbattle;
-import com.sk89q.worldedit.*;
+import com.sk89q.worldedit.EditSession;
+import com.sk89q.worldedit.MaxChangedBlocksException;
+import com.sk89q.worldedit.WorldEdit;
+import com.sk89q.worldedit.WorldEditException;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
@@ -16,12 +19,11 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.session.ClipboardHolder;
+import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
-import com.sk89q.worldedit.world.registry.BundledBlockData;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import com.sk89q.worldedit.world.World;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
@@ -33,6 +35,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 public class Worldloader {
+
+    // Store the last schematic's origin offset for spawn coordinate adjustment
+    private static BlockVector3 lastOriginOffset = BlockVector3.ZERO;
+
+    public static BlockVector3 getLastOriginOffset() {
+        return lastOriginOffset;
+    }
 
     public static void paste(Location location, File file) {
 
@@ -53,21 +62,71 @@ public class Worldloader {
 
                 clipboard = clipboardReader.read();
 
+                // FIX: Calculate origin offset to paste correctly
+                BlockVector3 clipboardOrigin = clipboard.getOrigin();
+                BlockVector3 clipboardMin = clipboard.getMinimumPoint();
+                BlockVector3 clipboardMax = clipboard.getMaximumPoint();
+                BlockVector3 offset = clipboardOrigin.subtract(clipboardMin);
+
+                // Store the offset for spawn coordinate adjustment
+                lastOriginOffset = offset;
+
+                // Adjust paste location by subtracting the offset
+                BlockVector3 adjustedPasteLocation = blockVector3.subtract(offset);
+
+                // Validation: Check if schematic will exceed world height limits
+                int schematicHeight = clipboardMax.getY() - clipboardMin.getY();
+                int finalMaxY = adjustedPasteLocation.getY() + schematicHeight;
+                int finalMinY = adjustedPasteLocation.getY();
+
+                // Log warnings if schematic exceeds world bounds
+                if (finalMaxY > 319) {
+                    Console.send("§cWARNING: Schematic '" + file.getName() + "' will exceed max world height!");
+                    Console.send("§e  Paste Y: " + adjustedPasteLocation.getY() + ", Schematic height: " + schematicHeight);
+                    Console.send("§e  Final max Y: " + finalMaxY + " (world limit: 319)");
+                    Console.send("§c  Top " + (finalMaxY - 319) + " blocks will be CUT OFF!");
+                }
+                if (finalMinY < -64) {
+                    Console.send("§cWARNING: Schematic '" + file.getName() + "' will go below min world height!");
+                    Console.send("§e  Final min Y: " + finalMinY + " (world limit: -64)");
+                    Console.send("§c  Bottom " + (-64 - finalMinY) + " blocks will be CUT OFF!");
+                }
+
+                // Detailed debug logging
+                if (Woolbattle.debug) {
+                    Console.send("§7Schematic paste debug info:");
+                    Console.send("§7  File: " + file.getName());
+                    Console.send("§7  Clipboard origin: " + clipboardOrigin);
+                    Console.send("§7  Clipboard min: " + clipboardMin);
+                    Console.send("§7  Clipboard max: " + clipboardMax);
+                    Console.send("§7  Offset: " + offset);
+                    Console.send("§7  Requested location: " + blockVector3);
+                    Console.send("§7  Adjusted location: " + adjustedPasteLocation);
+                    Console.send("§7  Y range: " + finalMinY + " to " + finalMaxY);
+                }
+
                 Operation operation = new ClipboardHolder(clipboard)
                         .createPaste(editSession)
-                        .to(blockVector3)
+                        .to(adjustedPasteLocation)
                         .ignoreAirBlocks(true)
+                        .copyBiomes(true)
+                        .copyEntities(false)
                         .build();
 
                 try {
                     Operations.complete(operation);
                     editSession.close();
+                    Console.send("§aSuccessfully pasted schematic: " + file.getName());
                 } catch (WorldEditException e) {
+                    Console.send("§cERROR: Failed to paste schematic " + file.getName());
                     e.printStackTrace();
                 }
             } catch (IOException e) {
+                Console.send("§cERROR: Failed to read schematic file " + file.getName());
                 e.printStackTrace();
             }
+        } else {
+            Console.send("§cERROR: Unknown schematic format for file " + file.getName());
         }
     }
 

@@ -1,5 +1,5 @@
 Debug: false
-MongoDB: true
+MongoDB: false
 LobbyCountdown: 30
 TeamSize: 2
 Teams: 2

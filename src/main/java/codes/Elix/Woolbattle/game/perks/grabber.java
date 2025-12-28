@@ -1,5 +1,6 @@
 package codes.Elix.Woolbattle.game.perks;
 
+import codes.Elix.Woolbattle.config.PerkConfig;
 import codes.Elix.Woolbattle.game.PerkHelper;
 import codes.Elix.Woolbattle.items.Items;
 import codes.Elix.Woolbattle.main.Woolbattle;
@@ -28,21 +29,25 @@ import java.util.Objects;
 public class grabber implements Listener {
 
     private static HashMap<Player, Entity> hitted = new HashMap<>();
-    int cost = 5;
-    int cooldown = 10;
+    
+    private PerkConfig.PerkSettings getSettings() {
+        return PerkConfig.getInstance().getPerkSettings("grabber");
+    }
 
     @EventHandler
     private void onInteract(PlayerInteractEvent event) {
         if (event.getItem() == null) return;
         if ((event.getItem().getType() == Material.CARROT_ON_A_STICK)) {
             Player player = event.getPlayer();
+            PerkConfig.PerkSettings settings = getSettings();
+            
             if (!Woolbattle.debug)
-                if (!Items.cost(player, cost)) {
+                if (!Items.cost(player, settings.getCost())) {
                     event.setCancelled(true);
                     return;
                 }
             Vector direction = player.getLocation().getDirection();
-            Vector velocity = direction.multiply(1.5);
+            Vector velocity = direction.multiply(settings.getProjectileVelocity());
             Projectile egg = player.launchProjectile(Egg.class, velocity);
             egg.setMetadata("grabber", new FixedMetadataValue(Woolbattle.getPlugin(), "keineAhnungWiesoIchDasBrauch"));
             event.setCancelled(true);
@@ -52,13 +57,14 @@ public class grabber implements Listener {
                 public void run() {
                     if (hitted.containsKey(player)) return;
                     System.out.println("Player didnt hit a entity");
-                    if (Objects.equals(PerkHelper.passive(player), "recharger"))
-                        cooldown = 8;
+                    int cooldown = Objects.equals(PerkHelper.passive(player), "recharger")
+                        ? settings.getCooldownRecharger()
+                        : settings.getCooldown();
                     int slot = player.getInventory().getHeldItemSlot();
                     if (!Woolbattle.debug)
                         Items.visualCooldown(player, cooldown, Material.CARROT_ON_A_STICK, slot, "§3Grabber");
                 }
-            }, 8*20);
+            }, settings.getHitTimeoutSeconds()*20);
 
         } else if (event.getItem().getType() == Material.STICK) {
             if (!event.getItem().getItemMeta().hasEnchant(Enchantment.FORTUNE)) return;
@@ -67,8 +73,12 @@ public class grabber implements Listener {
             System.out.println(vector);
             player.setVelocity(vector);
             hitted.remove(event.getPlayer());
-            if (Objects.equals(PerkHelper.passive(event.getPlayer()), "recharger"))
-                cooldown = 8;
+            
+            PerkConfig.PerkSettings settings = getSettings();
+            int cooldown = Objects.equals(PerkHelper.passive(event.getPlayer()), "recharger")
+                ? settings.getCooldownRecharger()
+                : settings.getCooldown();
+            
             int slot = event.getPlayer().getInventory().getHeldItemSlot();
             if (!Woolbattle.debug) {
                 Items.visualCooldown(event.getPlayer(), cooldown, Material.CARROT_ON_A_STICK, slot, "§3Grabber");
@@ -94,19 +104,21 @@ public class grabber implements Listener {
         item.setItemMeta(itemMeta);
         player.getInventory().setItem(player.getInventory().getHeldItemSlot(), item);
 
+        PerkConfig.PerkSettings settings = getSettings();
         Bukkit.getScheduler().runTaskLaterAsynchronously(Woolbattle.getPlugin(), new Runnable() {
             @Override
             public void run() {
                 if (!hitted.containsKey(player))
                     return;
                 System.out.println("Player didnt grab an entity");
-                if (Objects.equals(PerkHelper.passive(player), "recharger"))
-                    cooldown = 8;
+                int cooldown = Objects.equals(PerkHelper.passive(player), "recharger")
+                    ? settings.getCooldownRecharger()
+                    : settings.getCooldown();
                 int slot = player.getInventory().getHeldItemSlot();
                 if (!Woolbattle.debug)
                     Items.visualCooldown(player, cooldown, Material.CARROT_ON_A_STICK, slot, "§3Grabber");
             }
-        }, 80);
+        }, settings.getGrabTimeoutSeconds()*20);
 
 
     }

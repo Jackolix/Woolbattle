@@ -53,15 +53,15 @@ public class Chat implements Listener, CommandExecutor {
             send(true, player, msg);
         } else {
             CustomPlayer customPlayer = CustomPlayer.getCustomPlayer(player);
-            List<Player> team = customPlayer.getTeam().getMembers();
+            codes.Elix.Woolbattle.game.HelpClasses.Team team = customPlayer.getTeam();
 
-            if (team.size() <= 1) {
+            if (team == null || team.getMembers().size() <= 1) {
                 send(true, player, msg);
                 event.setCancelled(true);
                 return;
             }
 
-            for (Player teammates : team)
+            for (Player teammates : team.getMembers())
                 teammates.sendMessage(message(false, player, msg));
         }
         event.setCancelled(true);
@@ -113,7 +113,7 @@ public class Chat implements Listener, CommandExecutor {
             prefix = p.getTeam().getPREFIX();
 
         if (state)
-            return p.getTeam().getPREFIX() + "All : " + player.getName() + " : " + ChatColor.WHITE + message;
-        return p.getTeam().getPREFIX() + player.getName() + " : " + ChatColor.WHITE + message;
+            return prefix + "All : " + player.getName() + " : " + ChatColor.WHITE + message;
+        return prefix + player.getName() + " : " + ChatColor.WHITE + message;
     }
 }

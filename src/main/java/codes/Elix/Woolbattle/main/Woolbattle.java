@@ -14,13 +14,16 @@ import codes.Elix.Woolbattle.listeners.GameProtectionListener;
 import codes.Elix.Woolbattle.listeners.KeepDayTask;
 import codes.Elix.Woolbattle.util.Console;
 import codes.Elix.Woolbattle.util.SchematicManager;
-import codes.Elix.Woolbattle.util.Worldloader;
 import codes.Elix.Woolbattle.util.mongo.Database;
 import com.sun.management.OperatingSystemMXBean;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.*;
+import net.kyori.adventure.text.format.TextColor;
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.Tag;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -28,7 +31,6 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryPoolMXBean;
@@ -90,6 +92,8 @@ public class Woolbattle extends JavaPlugin {
         getCommand("switchteam").setExecutor(new Switchteam());
         getCommand("fix").setExecutor(new Fix());
         getCommand("visualizewool").setExecutor(new VisualizeWool());
+        getCommand("reloadperks").setExecutor(new ReloadPerks());
+        getCommand("perkconfig").setExecutor(new PerkConfigCommand());
 
         pluginManager.registerEvents(new ConnectionListener(), this);
         pluginManager.registerEvents(new DoubleJump(), this);
@@ -98,6 +102,7 @@ public class Woolbattle extends JavaPlugin {
         pluginManager.registerEvents(new VoidTeleport(), this);
         pluginManager.registerEvents(new BowShoot(), this);
         pluginManager.registerEvents(chat, this);
+        pluginManager.registerEvents(new codes.Elix.Woolbattle.gui.PerkConfigGUI(), this);
 
         new KeepDayTask().runTaskTimer(this, 0L, 100L);
         if (useDB) {
@@ -156,12 +161,20 @@ public class Woolbattle extends JavaPlugin {
     public static void safewool() {
         boolean enabled = debug;
         World w = Bukkit.getServer().getWorlds().get(0);
+
+        // Clear previous blocks to prevent stale references
+        blocks.clear();
+
+        // Get world height limits (1.21.8 supports -64 to 319)
+        int minY = w.getMinHeight();  // -64
+        int maxY = w.getMaxHeight();  // 320 (exclusive)
+
         for (Chunk c : w.getLoadedChunks()) {
             int cx = c.getX() << 4;
             int cz = c.getZ() << 4;
             for (int x = cx; x < cx + 16; x++) {
                 for (int z = cz; z < cz + 16; z++) {
-                    for (int y = 0; y < 128; y++) {
+                    for (int y = minY; y < maxY; y++) {
                         if (Tag.WOOL.isTagged(w.getBlockAt(x, y, z).getType())) {
                             blocks.add(w.getBlockAt(x,y,z));
                             if (enabled)
@@ -171,7 +184,7 @@ public class Woolbattle extends JavaPlugin {
                 }
             }
         }
-        Console.send(Component.text("Safed all Woolblocks!", NamedTextColor.WHITE));
+        Console.send(Component.text("Safed all Woolblocks! (" + blocks.size() + " blocks)", NamedTextColor.GREEN));
     }
 
     private void addplayers() {
@@ -189,12 +202,12 @@ public class Woolbattle extends JavaPlugin {
         }
     }
 
-    private void initTeams() {
-        Team red = new Team(new ArrayList<>(), "red", 0, false, "§c");
-        Team blue = new Team(new ArrayList<>(), "blue", 0, false, "§9");
-        Team green = new Team(new ArrayList<>(), "green", 0, false, "§a");
-        Team yellow = new Team(new ArrayList<>(), "yellow", 0, false, "§e");
-        Team spectator = new Team(new ArrayList<>(), "spectator", 0, true, "§7");
+    private void initTeams() { //TODO Correct RGB Colors
+        Team red = new Team(new ArrayList<>(), "red", 0, false, "§c", TextColor.color(19,248,50));
+        Team blue = new Team(new ArrayList<>(), "blue", 0, false, "§9", TextColor.color(19,248,50));
+        Team green = new Team(new ArrayList<>(), "green", 0, false, "§a", TextColor.color(19,248,50));
+        Team yellow = new Team(new ArrayList<>(), "yellow", 0, false, "§e", TextColor.color(19,248,50));
+        Team spectator = new Team(new ArrayList<>(), "spectator", 0, true, "§7", TextColor.color(19,248,50));
         LiveSystem.Team.put("red", red);
         LiveSystem.Team.put("blue", blue);
         LiveSystem.Team.put("green", green);

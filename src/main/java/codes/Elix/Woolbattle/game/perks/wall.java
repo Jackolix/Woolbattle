@@ -1,5 +1,6 @@
 package codes.Elix.Woolbattle.game.perks;
 
+import codes.Elix.Woolbattle.config.PerkConfig;
 import codes.Elix.Woolbattle.game.PerkHelper;
 import codes.Elix.Woolbattle.items.Items;
 import codes.Elix.Woolbattle.main.Woolbattle;
@@ -16,19 +17,20 @@ import java.util.Objects;
 
 
 public class wall implements Listener {
-    int cooldown = 8;
 
-    //number of blocks infornt of the player where the wall should be spawned
-    float front = 4;
-    int cost = 5;
+    private PerkConfig.PerkSettings getSettings() {
+        return PerkConfig.getInstance().getPerkSettings("wall");
+    }
 
     @EventHandler
     public void onWallInteract(PlayerInteractEvent event) {
         if (event.getItem() == null) return;
         if (event.getItem().getType() == Material.RED_STAINED_GLASS_PANE) {
             Player player = event.getPlayer();
+            PerkConfig.PerkSettings settings = getSettings();
+            
             if (!Woolbattle.debug)
-                if (!Items.cost(player, cost)) return;
+                if (!Items.cost(player, settings.getCost())) return;
 
             Vector forwardVec = new Vector(0,0,0);
             Vector rightVec   = new Vector(0,0,0);
@@ -77,16 +79,19 @@ public class wall implements Listener {
                 return;
             }
 
-            if (Objects.equals(PerkHelper.passive(player), "recharger"))
-                cooldown = 6;
+            int cooldown = Objects.equals(PerkHelper.passive(player), "recharger")
+                ? settings.getCooldownRecharger()
+                : settings.getCooldown();
+                
             int slot = player.getInventory().getHeldItemSlot();
             Items.visualCooldown(player, cooldown, Material.RED_STAINED_GLASS_PANE, slot, "§3Wall");
             }
         }
 
         private void placeBlocks(Location location, Material material, Vector forwardVec, Vector rightVec) {
-            //move the location front with the value in front
-            location.add(forwardVec.multiply(front));
+            PerkConfig.PerkSettings settings = getSettings();
+            //move the location front with the value in front  
+            location.add(forwardVec.multiply(settings.getMaxDistance()));
             location.add(rightVec);
 
             if (location.add(rightVec).getBlock().getType() == Material.AIR) location.getBlock().setType(material);

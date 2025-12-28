@@ -159,7 +159,7 @@ public class IngameState extends GameState {
             if (Bukkit.getOnlinePlayers().size() == 2)
                 for (Player players : Bukkit.getOnlinePlayers()) {
                     if (players.getName().equals(player.getName()))
-                        return;
+                        continue;  // Skip self, don't exit the method
                     CustomPlayer customPlayer1 = CustomPlayer.getCustomPlayer(players);
                     if (customPlayer1.getTeam() == null) {
                         customPlayer.setTeam(red);
@@ -188,24 +188,20 @@ public class IngameState extends GameState {
                     .append(Component.text(player.getName(), NamedTextColor.GREEN))
                     .append(Component.text(" to Team", NamedTextColor.WHITE))
                     .append(Component.text(" Blue", NamedTextColor.BLUE)));
-        } else if (LiveSystem.Teams >= 3) {
-            if (green.getMembers().size() < LiveSystem.TeamSize) {
-                green.addMember(player);
-                customPlayer.setTeam(green);
-                Console.send(Component.text("Added ", NamedTextColor.WHITE)
-                        .append(Component.text(player.getName(), NamedTextColor.GREEN))
-                        .append(Component.text(" to Team", NamedTextColor.WHITE))
-                        .append(Component.text(" Green", NamedTextColor.GREEN)));
-            }
-        } else if (LiveSystem.Teams >= 3) {
-            if (yellow.getMembers().size() < LiveSystem.TeamSize) {
-                yellow.addMember(player);
-                customPlayer.setTeam(yellow);
-                Console.send(Component.text("Added ", NamedTextColor.WHITE)
-                        .append(Component.text(player.getName(), NamedTextColor.GREEN))
-                        .append(Component.text(" to Team", NamedTextColor.WHITE))
-                        .append(Component.text(" Yellow", NamedTextColor.YELLOW)));
-            }
+        } else if (LiveSystem.Teams >= 3 && green.getMembers().size() < LiveSystem.TeamSize) {
+            green.addMember(player);
+            customPlayer.setTeam(green);
+            Console.send(Component.text("Added ", NamedTextColor.WHITE)
+                    .append(Component.text(player.getName(), NamedTextColor.GREEN))
+                    .append(Component.text(" to Team", NamedTextColor.WHITE))
+                    .append(Component.text(" Green", NamedTextColor.GREEN)));
+        } else if (LiveSystem.Teams >= 4 && yellow.getMembers().size() < LiveSystem.TeamSize) {
+            yellow.addMember(player);
+            customPlayer.setTeam(yellow);
+            Console.send(Component.text("Added ", NamedTextColor.WHITE)
+                    .append(Component.text(player.getName(), NamedTextColor.GREEN))
+                    .append(Component.text(" to Team", NamedTextColor.WHITE))
+                    .append(Component.text(" Yellow", NamedTextColor.YELLOW)));
         } else {
             Console.send(Component.text("All Teams are full!", NamedTextColor.RED));
             addSpectator(player);
@@ -258,8 +254,6 @@ public class IngameState extends GameState {
     }
 
     public static void addSpectator(Player player) {
-        CustomPlayer p = CustomPlayer.getCustomPlayer(player);
-        p.getTeam().addMember(player);
         spectator.add(player);
         player.setAllowFlight(true);
         player.getInventory().clear();

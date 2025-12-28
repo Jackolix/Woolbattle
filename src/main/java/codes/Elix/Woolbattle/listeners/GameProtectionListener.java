@@ -48,22 +48,41 @@ public class GameProtectionListener implements Listener {
 
     @EventHandler
     public void onPlayerDropItem(PlayerDropItemEvent event) {
-        if (!Tag.WOOL.isTagged(event.getItemDrop().getItemStack().getType()))
+        if (!Tag.WOOL.isTagged(event.getItemDrop().getItemStack().getType())) {
             event.setCancelled(true);
+        } else {
+            // Wool was dropped - update flight ability after the drop completes
+            Player player = event.getPlayer();
+            Bukkit.getScheduler().runTask(Woolbattle.getPlugin(),
+                () -> codes.Elix.Woolbattle.game.DoubleJump.updateFlightBasedOnWool(player));
+        }
     }
 
     @EventHandler
     public void onPlayerPickup(EntityPickupItemEvent event) {
-        /*
-        if (!(event.getEntity() instanceof Player)) return;
-        ItemStack item = new ItemStack(Material.BLACK_WOOL);
-        if (!event.getItem().getItemStack().equals(item)) return;
-        Console.send("Item ist Wolle");
-        if (Items.amount((Player) event.getEntity(), Material.BLACK_WOOL) >= 196) // Items.getWoolColor(player) idk ob das funktioniert
-            event.setCancelled(true);
+        if (!(event.getEntity() instanceof Player player)) return;
 
-         */
-        // event.setCancelled(true);
+        ItemStack itemStack = event.getItem().getItemStack();
+
+        // Check if the item is wool
+        if (!Tag.WOOL.isTagged(itemStack.getType())) return;
+
+        // Count total wool across all colors
+        int totalWool = 0;
+        for (Material woolType : toDestroy) {
+            if (Tag.WOOL.isTagged(woolType)) {
+                totalWool += Items.amount(player, woolType);
+            }
+        }
+
+        // Prevent pickup if player already has 196 or more total wool
+        if (totalWool >= 196) {
+            event.setCancelled(true);
+        } else {
+            // Update flight ability after picking up wool
+            Bukkit.getScheduler().runTask(Woolbattle.getPlugin(),
+                () -> codes.Elix.Woolbattle.game.DoubleJump.updateFlightBasedOnWool(player));
+        }
     }
 
     @EventHandler
@@ -145,7 +164,7 @@ public class GameProtectionListener implements Listener {
     }
 
     @EventHandler
-    public void onBlockbreak(BlockBreakEvent event) { //TODO: Wolle in der mitte kann nur mit op abgebaut werden warum auch immer wtf
+    public void onBlockbreak(BlockBreakEvent event) { //Wolle in der mitte kann nur mit op abgebaut werden warum auch immer wtf - it was worldedit
         if (event instanceof Player) return;
         Player player = event.getPlayer();
         if (Build.BuildPlayers.contains(player)) return;
@@ -181,6 +200,9 @@ public class GameProtectionListener implements Listener {
                 ItemStack arrow = new ItemStack(Material.ARROW);
                 player.getInventory().setItem(30, arrow);
             }
+
+            // Update flight ability after breaking wool block
+            codes.Elix.Woolbattle.game.DoubleJump.updateFlightBasedOnWool(player);
         }
         event.setCancelled(true);
     }

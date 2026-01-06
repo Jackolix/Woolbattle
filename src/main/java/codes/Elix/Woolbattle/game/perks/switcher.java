@@ -62,9 +62,21 @@ public class switcher implements Listener {
     private void onInteract(PlayerInteractEvent event) {
         if (event.getItem() == null)    return;
         if (!(event.getItem().getType() == Material.SNOWBALL)) return;
+
+        // Only handle right-click actions (normal way to throw items)
+        if (event.getAction() != org.bukkit.event.block.Action.RIGHT_CLICK_AIR &&
+            event.getAction() != org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK) {
+            return;
+        }
+
         Player player = event.getPlayer();
-        
+
         event.setCancelled(true);
+
+        // Check if player is already on cooldown
+        if (Items.interact.contains(player)) {
+            return;
+        }
         
         PerkConfig.PerkSettings settings = getSettings();
         

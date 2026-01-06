@@ -16,8 +16,11 @@ import codes.Elix.Woolbattle.items.Voting;
 import codes.Elix.Woolbattle.main.Woolbattle;
 import codes.Elix.Woolbattle.util.Console;
 import codes.Elix.Woolbattle.util.IngameScoreboard;
+import codes.Elix.Woolbattle.util.IngameTabList;
 import codes.Elix.Woolbattle.util.LobbyScoreboard;
+import codes.Elix.Woolbattle.util.LobbyTabList;
 import codes.Elix.Woolbattle.util.SchematicManager;
+import codes.Elix.Woolbattle.util.TeamColorManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -70,6 +73,8 @@ public class ConnectionListener implements Listener {
 
         LobbyItems.Lobby(player);
         LobbyScoreboard.setup(player);
+        LobbyTabList.setup(player);
+        LobbyTabList.updateAll();
 
         // Neuer Weg um Nachrichten zu senden
         TextComponent text = Component.text("Click to Copy Name to Clipboard");
@@ -100,16 +105,36 @@ public class ConnectionListener implements Listener {
 
         // Add player to perk database
         PerkHelper.onJoin(player);
+
+        // Update player name color based on team (for mid-game joins)
+        TeamColorManager.updatePlayerColor(player);
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        
+
         // Clean up scoreboards
         LobbyScoreboard.remove(player);
         IngameScoreboard.remove(player);
-        
+
+        // Clean up tab lists
+        LobbyTabList.remove(player);
+        IngameTabList.remove(player);
+
+        // Remove player from team color system
+        TeamColorManager.removePlayer(player);
+
+        // Clean up cooldown/interact system to prevent inventory lock issues
+        codes.Elix.Woolbattle.items.Items.interact.remove(player);
+        if (codes.Elix.Woolbattle.items.Items.tasks.containsKey(player)) {
+            codes.Elix.Woolbattle.items.Items.tasks.get(player).values().forEach(taskId ->
+                Bukkit.getScheduler().cancelTask(taskId)
+            );
+            codes.Elix.Woolbattle.items.Items.tasks.remove(player);
+        }
+        codes.Elix.Woolbattle.items.Items.perks.remove(player);
+
         if (!(GameStateManager.getCurrentGameState() instanceof LobbyState lobbyState)) return;
         Woolbattle.getPlayers().remove(player);
         // event.setQuitMessage(Woolbattle.PREFIX + "§c" + player.getDisplayName() + " §7hat das Spiel verlassen. [" +
@@ -123,6 +148,9 @@ public class ConnectionListener implements Listener {
                 .hoverEvent(HoverEvent.showText(text))
                 .clickEvent(ClickEvent.suggestCommand(player.getName()));
         event.quitMessage(textComponent);
+
+        // Update tab lists for remaining players
+        LobbyTabList.updateAll();
 
         LobbyCountdown countdown = lobbyState.getCountdown();
         if (Woolbattle.getPlayers().size() < LobbyState.MIN_PLAYERS) {

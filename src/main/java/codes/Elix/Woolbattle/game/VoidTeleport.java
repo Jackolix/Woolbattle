@@ -9,6 +9,7 @@ import codes.Elix.Woolbattle.gamestates.GameStateManager;
 import codes.Elix.Woolbattle.gamestates.IngameState;
 import codes.Elix.Woolbattle.main.Woolbattle;
 import codes.Elix.Woolbattle.util.IngameScoreboard;
+import codes.Elix.Woolbattle.util.IngameTabList;
 import codes.Elix.Woolbattle.util.SchematicManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -102,6 +103,9 @@ public class VoidTeleport implements Listener {
 
             for (Player players : Bukkit.getOnlinePlayers())
                 IngameScoreboard.setup(players);
+
+            // Update tab lists to reflect life changes
+            IngameTabList.updateAll();
         }
     }
 

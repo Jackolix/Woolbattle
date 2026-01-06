@@ -49,7 +49,7 @@ public class Items {
         ItemStack shears = new ItemStack(Material.SHEARS);
         ItemMeta shearsmeta = shears.getItemMeta();
         shearsmeta.displayName(Component.text("Mega Schere", NamedTextColor.GREEN));
-        shearsmeta.addEnchant(Enchantment.EFFICIENCY, 10, true);
+        shearsmeta.addEnchant(Enchantment.EFFICIENCY, 100, true);
         shearsmeta.addEnchant(Enchantment.KNOCKBACK, 5, true);
         shearsmeta.setUnbreakable(true);
         shears.setItemMeta(shearsmeta);
@@ -316,7 +316,7 @@ public class Items {
         itemMeta.setUnbreakable(true);
         item.setItemMeta(itemMeta);
 
-        int taskID = Bukkit.getScheduler().scheduleAsyncRepeatingTask(Woolbattle.getPlugin(), new Runnable() {
+        int taskID = Bukkit.getScheduler().scheduleSyncRepeatingTask(Woolbattle.getPlugin(), new Runnable() {
             int count = cooldown;
 
             @Override

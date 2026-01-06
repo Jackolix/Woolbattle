@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.util.Vector;
 
 import java.util.Objects;
 
@@ -29,28 +30,37 @@ public class rettungsplattform implements Listener {
         if (event.getItem().getType() != Material.RED_STAINED_GLASS) return;
 
         if (Woolbattle.debug) {
-            placeBlocks(player.getLocation(), Items.getWoolColor(player));
+            placeBlocks(player, player.getLocation(), Items.getWoolColor(player));
             return;
         }
 
         PerkConfig.PerkSettings settings = getSettings();
-        
+
         if (!Items.cost(player, settings.getCost())) return;
-        
+
         int cooldown = Objects.equals(PerkHelper.passive(player), "recharger")
             ? settings.getCooldownRecharger()
             : settings.getCooldown();
-            
+
         int slot = player.getInventory().getHeldItemSlot();
         Location placelocation = player.getLocation();
-        placeBlocks(placelocation, Items.getWoolColor(player));
+        placeBlocks(player, placelocation, Items.getWoolColor(player));
         Items.visualCooldown(player, cooldown, Material.RED_STAINED_GLASS, slot, "§3Rettungsplattform");
 
     }
 
-    private void placeBlocks(Location location, Material material) {
+    private void placeBlocks(Player player, Location location, Material material) {
         if (material == null) material = Material.BLACK_WOOL;
         PlacedWoolCooldown cooldown = Woolbattle.getPlacedWoolCooldown();
+
+        // Reset player velocity to prevent them from being knocked out of the capsule
+        player.setVelocity(new Vector(0, 0, 0));
+
+        // Teleport player to the center of the block to ensure they're inside the capsule
+        Location centerLocation = location.clone();
+        centerLocation.setX(location.getBlockX() + 0.5);
+        centerLocation.setZ(location.getBlockZ() + 0.5);
+        player.teleport(centerLocation);
 
         // Below player
         Block block = location.clone().add(0,-1,0).getBlock();

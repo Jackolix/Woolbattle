@@ -9,6 +9,7 @@ import codes.Elix.Woolbattle.gamestates.LobbyState;
 import codes.Elix.Woolbattle.items.MapVoting;
 import codes.Elix.Woolbattle.main.Woolbattle;
 import codes.Elix.Woolbattle.util.LobbyScoreboard;
+import codes.Elix.Woolbattle.util.LobbyTabList;
 import codes.Elix.Woolbattle.util.SchematicManager;
 import codes.Elix.Woolbattle.util.Worldloader;
 import net.kyori.adventure.text.Component;
@@ -69,6 +70,7 @@ public class LobbyCountdown extends Countdown{
                 for (Player current : Bukkit.getOnlinePlayers()) {
                    LobbyScoreboard.change(current); // LobbyScoreboard.setup(current);
                 }
+                LobbyTabList.updateAll();
 
             }
         }, 0, 20);

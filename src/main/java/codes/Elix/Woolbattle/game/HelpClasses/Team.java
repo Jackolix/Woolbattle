@@ -1,5 +1,6 @@
 package codes.Elix.Woolbattle.game.HelpClasses;
 
+import codes.Elix.Woolbattle.util.TeamColorManager;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.entity.Player;
 
@@ -29,6 +30,9 @@ public class Team {
 
     public void removeMembers(Player player) {
         members.remove(player);
+
+        // Update player's name color when removed from team
+        TeamColorManager.updatePlayerColor(player);
     }
 
     public String getName() {
@@ -50,6 +54,9 @@ public class Team {
         }
         members.add(player);
         customPlayer.setTeam(this);
+
+        // Update player's name color in tab list and above head
+        TeamColorManager.updatePlayerColor(player);
     }
 
     public void setDead(boolean dead) {

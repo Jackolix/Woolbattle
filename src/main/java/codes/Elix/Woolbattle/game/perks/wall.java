@@ -76,17 +76,16 @@ public class wall implements Listener {
                 rightVec = new Vector(-1, 0, 0);
             }
 
-            if (!Woolbattle.debug) {
-                placeBlocks(player.getLocation(), Items.getWoolColor(player), forwardVec, rightVec);
-                return;
-            }
+            placeBlocks(player.getLocation(), Items.getWoolColor(player), forwardVec, rightVec);
 
-            int cooldown = Objects.equals(PerkHelper.passive(player), "recharger")
-                ? settings.getCooldownRecharger()
-                : settings.getCooldown();
-                
-            int slot = player.getInventory().getHeldItemSlot();
-            Items.visualCooldown(player, cooldown, Material.RED_STAINED_GLASS_PANE, slot, "§3Wall");
+            if (!Woolbattle.debug) {
+                int cooldown = Objects.equals(PerkHelper.passive(player), "recharger")
+                    ? settings.getCooldownRecharger()
+                    : settings.getCooldown();
+
+                int slot = player.getInventory().getHeldItemSlot();
+                Items.visualCooldown(player, cooldown, Material.RED_STAINED_GLASS_PANE, slot, "§3Wall");
+            }
             }
         }
 
@@ -94,8 +93,8 @@ public class wall implements Listener {
             PerkConfig.PerkSettings settings = getSettings();
             PlacedWoolCooldown cooldown = Woolbattle.getPlacedWoolCooldown();
 
-            //move the location front with the value in front
-            location.add(forwardVec.multiply(settings.getMaxDistance()));
+            //move the location front 2 blocks
+            location.add(forwardVec.multiply(2));
             location.add(rightVec);
 
             Block block;

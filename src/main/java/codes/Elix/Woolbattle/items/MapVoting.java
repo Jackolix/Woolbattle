@@ -1,6 +1,9 @@
 package codes.Elix.Woolbattle.items;
 
+import codes.Elix.Woolbattle.gamestates.GameStateManager;
+import codes.Elix.Woolbattle.gamestates.LobbyState;
 import codes.Elix.Woolbattle.util.Console;
+import codes.Elix.Woolbattle.util.LobbyTabList;
 import codes.Elix.Woolbattle.util.SchematicManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -50,6 +53,11 @@ public class MapVoting {
         }
 
         updateMapSelection();
+
+        // Update tab lists if in lobby state
+        if (GameStateManager.getCurrentGameState() instanceof LobbyState) {
+            LobbyTabList.updateAll();
+        }
 
         // Refresh UI for all players viewing the map voting GUI
         // Run on next tick to ensure vote is fully processed

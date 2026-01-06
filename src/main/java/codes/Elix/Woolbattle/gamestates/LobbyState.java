@@ -6,8 +6,12 @@ package codes.Elix.Woolbattle.gamestates;
 import codes.Elix.Woolbattle.countdowns.LobbyCountdown;
 import codes.Elix.Woolbattle.items.MapVoting;
 import codes.Elix.Woolbattle.util.Console;
+import codes.Elix.Woolbattle.util.LobbyTabList;
+import codes.Elix.Woolbattle.util.TeamColorManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 public class LobbyState extends GameState {
 
@@ -23,10 +27,23 @@ public class LobbyState extends GameState {
     public void start() {
         MapVoting.clearVotes(); // Clear previous votes when returning to lobby
         countdown.startIdle();
+
+        // Clear team colors from previous game
+        TeamColorManager.clearAll();
+
+        // Setup tab lists for all online players
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            LobbyTabList.setup(player);
+        }
     }
 
     @Override
     public void stop() {
+        // Remove lobby tab lists
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            LobbyTabList.remove(player);
+        }
+
         Console.send(Component.text("Game has started", NamedTextColor.GOLD));
         Console.send(" ");
     }

@@ -178,6 +178,7 @@ public class PerkConfigGUI implements Listener {
                 break;
             case "doublejump":
                 addConfigSetting(inventory, 19, Material.FEATHER, "Jump Height", String.valueOf(settings.getDoubleJumpHeight()), "doublejump_height");
+                addConfigSetting(inventory, 20, Material.FIRE_CHARGE, "Rocket Jump Height", String.valueOf(settings.getRocketJumpHeight()), "rocket_jump_height");
                 break;
         }
 
@@ -320,7 +321,7 @@ public class PerkConfigGUI implements Listener {
                 return;
             }
             case YELLOW_WOOL -> {
-                player.sendMessage(Component.text("Reset to defaults functionality would go here", NamedTextColor.YELLOW));
+                player.sendMessage(Component.text("Reset to defaults functionality would go here - TODO", NamedTextColor.YELLOW));
                 // TODO: Implement reset to defaults
                 return;
             }
@@ -435,6 +436,7 @@ public class PerkConfigGUI implements Listener {
             case "auto_trigger_height" -> settings.getAutoTriggerHeight();
             case "enderpearl_velocity" -> settings.getEnderpearlVelocity();
             case "doublejump_height" -> settings.getDoubleJumpHeight();
+            case "rocket_jump_height" -> settings.getRocketJumpHeight();
             default -> 0;
         };
     }
@@ -483,6 +485,7 @@ public class PerkConfigGUI implements Listener {
             case "auto_trigger_height" -> settings.setAutoTriggerHeight((int)value);
             case "enderpearl_velocity" -> settings.setEnderpearlVelocity(value);
             case "doublejump_height" -> settings.setDoubleJumpHeight(value);
+            case "rocket_jump_height" -> settings.setRocketJumpHeight(value);
         }
         System.out.println("[PERK CONFIG GUI] After setting: cooldown=" + settings.getCooldown() + ", cost=" + settings.getCost());
     }

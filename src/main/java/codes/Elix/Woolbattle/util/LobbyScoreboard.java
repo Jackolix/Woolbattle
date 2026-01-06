@@ -5,6 +5,7 @@ package codes.Elix.Woolbattle.util;
 
 import codes.Elix.Woolbattle.gamestates.GameStateManager;
 import codes.Elix.Woolbattle.gamestates.LobbyState;
+import codes.Elix.Woolbattle.items.MapVoting;
 import codes.Elix.Woolbattle.main.Woolbattle;
 import fr.mrmicky.fastboard.FastBoard;
 import org.bukkit.Bukkit;
@@ -14,12 +15,26 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class LobbyScoreboard {
 
-    private final static String MapName = "§3Custom";
     private static final Map<Player, FastBoard> boards = new HashMap<>();
+
+    private static String getMapDisplayName() {
+        String fileName = MapVoting.getCurrentWinningMap();
+        List<SchematicManager.SchematicInfo> schematics = SchematicManager.getAvailableSchematics();
+
+        for (SchematicManager.SchematicInfo schematic : schematics) {
+            if (schematic.getFileName().equals(fileName)) {
+                return schematic.getDisplayName();
+            }
+        }
+
+        // Fallback to file name without extension if not found
+        return "§3" + fileName.replace(".schem", "");
+    }
 
     public static void setup(Player player) {
         if (!(GameStateManager.getCurrentGameState() instanceof LobbyState lobbyState)) return;
@@ -37,7 +52,7 @@ public class LobbyScoreboard {
                 " §7• §3" + lobbyState.getCountdown().getSeconds(),
                 "§8» §7Wartezeit",
                 "   ",
-                " §7• " + MapName,
+                " §7• " + getMapDisplayName(),
                 "§8» §7Current Map",
                 "    ",
                 " §7• " + IngameScoreboard.team(player),
@@ -63,7 +78,7 @@ public class LobbyScoreboard {
         objective.getScore(" §7• " + IngameScoreboard.team(player)).setScore(10);
         objective.getScore("    ").setScore(9);
         objective.getScore("§8» §7Current Map").setScore(8);
-        objective.getScore(" §7• " + MapName).setScore(7);
+        objective.getScore(" §7• " + getMapDisplayName()).setScore(7);
         objective.getScore("   ").setScore(6);
         objective.getScore("§8» §7Wartezeit").setScore(5);
         objective.getScore(" §7• §3" + lobbyState.getCountdown().getSeconds()).setScore(4);
@@ -91,7 +106,7 @@ public class LobbyScoreboard {
                     " §7• §3" + lobbyState.getCountdown().getSeconds(),
                     "§8» §7Wartezeit",
                     "   ",
-                    " §7• " + MapName,
+                    " §7• " + getMapDisplayName(),
                     "§8» §7Current Map",
                     "    ",
                     " §7• " + IngameScoreboard.team(boardPlayer),

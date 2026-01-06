@@ -74,6 +74,8 @@ public class IngameState extends GameState {
     @Override
     public void stop() {
         DoubleJump.disable();
+        BowShoot.cleanup();
+        EnderPearl.disable();
     }
 
     public void setLifes() {

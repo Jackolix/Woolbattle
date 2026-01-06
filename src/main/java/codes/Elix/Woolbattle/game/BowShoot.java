@@ -27,8 +27,9 @@ import java.util.*;
 
 public class BowShoot implements Listener {
 
-    public ArrayList<Projectile> arrows = new ArrayList<>();
+    public static ArrayList<Projectile> arrows = new ArrayList<>();
     public static HashMap<Player, Integer> bomb = new HashMap<>();
+    private static BukkitRunnable globalParticleTask = null;
 
 
     @EventHandler
@@ -61,8 +62,12 @@ public class BowShoot implements Listener {
     }
     @EventHandler
     public void onProjectileHit(ProjectileHitEvent e){
-        if(e.getEntity() instanceof Arrow){
-            arrows.remove(e.getEntity());
+        if(e.getEntity() instanceof Arrow arrow){
+            arrows.remove(arrow);
+            // Make arrows vanish quickly when hitting blocks (10 ticks = 0.5 seconds)
+            if(e.getHitBlock() != null){
+                Bukkit.getScheduler().runTaskLater(Woolbattle.getPlugin(), () -> arrow.remove(), 10);
+            }
         }
         if (!(e.getEntity().getShooter() instanceof Player player1)) return;
         if (!Objects.equals(Items.perks.get(player1).getpassivePerk(), "exploding_arrow")) return;
@@ -94,34 +99,39 @@ public class BowShoot implements Listener {
         }, 10);
     }
 
-    public void addParticleEffect(final Projectile entity){
-        new BukkitRunnable(){
+    public static void addParticleEffect(final Projectile entity){
+        // Start global particle task if not running
+        if(globalParticleTask == null || globalParticleTask.isCancelled()){
+            startGlobalParticleTask();
+        }
+    }
 
+    private static void startGlobalParticleTask(){
+        globalParticleTask = new BukkitRunnable(){
             @Override
             public void run() {
-                if(arrows.contains(entity)){//if the arrow still is in the air
-                    Map<Player, Location> locationCache = new HashMap<>();
-                    for (Player online : Bukkit.getOnlinePlayers()) {
-                        locationCache.put(online, online.getLocation());
-                        online.spawnParticle(Particle.GLOW, entity.getLocation(), 2); //Particle.SONIC_BOOM
-                    }
+                // Clean up invalid arrows and stop task if no arrows remain
+                arrows.removeIf(arrow -> !arrow.isValid() || arrow.isDead());
 
-                    Location loc = entity.getLocation();
-                    for (Map.Entry<Player, Location> entry : locationCache.entrySet()) {
-                        if(entry.getKey().isOnline()){
+                if(arrows.isEmpty()){
+                    this.cancel();
+                    globalParticleTask = null;
+                    return;
+                }
 
-                            //If the player has left when the arrow was going. we should remove him from the map to avoid NPE's
-                            if (entry.getValue().getWorld() == loc.getWorld()) {
-                                entry.getValue().distanceSquared(loc);
+                // Display particles for all active arrows
+                for(Projectile arrow : arrows){
+                    if(arrow.isValid() && !arrow.isDead()){
+                        for(Player player : Bukkit.getOnlinePlayers()){
+                            if(player.getWorld() == arrow.getWorld()){
+                                player.spawnParticle(Particle.GLOW, arrow.getLocation(), 2);
                             }
                         }
                     }
-                }else{//we cancel the event when the arrow isn't in the air anymore.
-                    this.cancel();
-                    return;
                 }
             }
-        }.runTaskTimer(Woolbattle.getPlugin(), 0, 1);
+        };
+        globalParticleTask.runTaskTimer(Woolbattle.getPlugin(), 0, 1);
     }
 
     @EventHandler
@@ -147,13 +157,22 @@ public class BowShoot implements Listener {
     }
 
     public static void enable() {
+        bomb.clear();
         for (Player player : Bukkit.getOnlinePlayers()) {
             codes.Elix.Woolbattle.game.HelpClasses.Team team = CustomPlayer.getCustomPlayer(player).getTeam();
             if (team == null || Objects.equals(team.getName(), "spectator")) continue;
             if (Objects.equals(Items.perks.get(player).getpassivePerk(), "exploding_arrow"))
                 bomb.put(player, 0);
         }
+    }
 
+    public static void cleanup() {
+        arrows.clear();
+        bomb.clear();
+        if(globalParticleTask != null && !globalParticleTask.isCancelled()){
+            globalParticleTask.cancel();
+            globalParticleTask = null;
+        }
     }
 
 

@@ -52,8 +52,19 @@ public class EnderPearl implements Listener {
         if (event.getItem() == null)    return;
         if (event.getItem().getType() != Material.ENDER_PEARL) return;
 
+        // Only handle right-click actions (normal way to throw items)
+        if (event.getAction() != org.bukkit.event.block.Action.RIGHT_CLICK_AIR &&
+            event.getAction() != org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK) {
+            return;
+        }
+
         Player player = event.getPlayer();
         event.setCancelled(true);
+
+        // Check if player is already on cooldown
+        if (Items.interact.contains(player)) {
+            return;
+        }
 
         if (!Items.cost(player, cost)) {
             return;
@@ -120,6 +131,7 @@ public class EnderPearl implements Listener {
     }*/
 
     public static void enable() {
+        ready.clear();
         Bukkit.getPluginManager().registerEvents(new EnderPearl(), Woolbattle.getPlugin());
         for (Player player : Bukkit.getOnlinePlayers()) {
             codes.Elix.Woolbattle.game.HelpClasses.Team team = CustomPlayer.getCustomPlayer(player).getTeam();
@@ -128,6 +140,8 @@ public class EnderPearl implements Listener {
                 ready.put(player, 0);
         }
     }
-    public static void disable() {}
+    public static void disable() {
+        ready.clear();
+    }
 }
 

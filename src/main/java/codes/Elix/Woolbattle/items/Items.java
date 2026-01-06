@@ -49,7 +49,7 @@ public class Items {
         ItemStack shears = new ItemStack(Material.SHEARS);
         ItemMeta shearsmeta = shears.getItemMeta();
         shearsmeta.displayName(Component.text("Mega Schere", NamedTextColor.GREEN));
-        shearsmeta.addEnchant(Enchantment.EFFICIENCY, 5, false);
+        shearsmeta.addEnchant(Enchantment.EFFICIENCY, 10, true);
         shearsmeta.addEnchant(Enchantment.KNOCKBACK, 5, true);
         shearsmeta.setUnbreakable(true);
         shears.setItemMeta(shearsmeta);
@@ -321,11 +321,10 @@ public class Items {
 
             @Override
             public void run() {
+                count--;
                 if (count > 0) {
                     createCooldown(player.getInventory(), Material.GRAY_DYE, count, "Cooldown", slot);
-                }
-                count--;
-                if (count == 0) {
+                } else {
                     // create(player.getInventory(), item, perkname, slot);
                     player.getInventory().setItem(slot, item);
                     interact.remove(player);
@@ -334,8 +333,6 @@ public class Items {
             }
         }, 0, 20);
         tasks.computeIfAbsent(player, k -> new HashMap<>()).put(perkname, taskID);
-        Console.send("Task added to Database");
-
     }
 
     public static Material getWoolColor(Player player) {

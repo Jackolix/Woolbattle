@@ -104,6 +104,21 @@ perks:
     platform_duration: 10         # How long platform lasts (seconds)
     auto_trigger_height: 5         # Auto-trigger when falling from height
 
+  # EnderPearl Perk - Teleportation
+  enderpearl:
+    cooldown: 3                    # Cooldown in seconds
+    cooldown_recharger: 2          # Cooldown with recharger passive
+    cost: 3                        # Wool cost to use perk
+    velocity: 1.8                  # Projectile velocity
+
+  # DoubleJump Perk - Air jump ability
+  doublejump:
+    cooldown: 2                    # Cooldown in seconds
+    cooldown_recharger: 1          # Cooldown with recharger passive
+    cost: 5                        # Wool cost to use perk
+    height: 1.5                    # Jump height multiplier
+    rocket_jump_height: 2.0        # Jump height with rocket_jump passive
+
 # Global Perk Settings
 global:
   # Passive Perks

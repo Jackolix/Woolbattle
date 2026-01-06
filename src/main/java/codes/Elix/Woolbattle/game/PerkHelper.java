@@ -46,7 +46,10 @@ public class PerkHelper {
     public static Perk getPerks(Player player) {
         if (Items.perks.containsKey(player))
             return Items.perks.get(player);
-        return defaultPerk;
+        // Return a new copy to avoid shared mutable state
+        return new Perk(defaultPerk.getfirstPerk(), defaultPerk.getsecondPerk(),
+                       defaultPerk.getpassivePerk(), defaultPerk.hasParticles(),
+                       defaultPerk.getfirstPerkSlot(), defaultPerk.getsecondPerkSlot());
     }
 
     public static void setPerk(Player player, Perk perk) {
@@ -72,20 +75,29 @@ public class PerkHelper {
 
     public static void onJoin(Player player) {
         if (!Woolbattle.useDB) {
-            Items.perks.put(player, defaultPerk);
+            // Create a new copy for each player to avoid shared mutable state
+            Items.perks.put(player, new Perk(defaultPerk.getfirstPerk(), defaultPerk.getsecondPerk(),
+                                            defaultPerk.getpassivePerk(), defaultPerk.hasParticles(),
+                                            defaultPerk.getfirstPerkSlot(), defaultPerk.getsecondPerkSlot()));
             return;
         }
-        
+
         if (!Database.hasConnection()) {
-            Items.perks.put(player, defaultPerk);
+            // Create a new copy for each player to avoid shared mutable state
+            Items.perks.put(player, new Perk(defaultPerk.getfirstPerk(), defaultPerk.getsecondPerk(),
+                                            defaultPerk.getpassivePerk(), defaultPerk.hasParticles(),
+                                            defaultPerk.getfirstPerkSlot(), defaultPerk.getsecondPerkSlot()));
             return;
         }
-        
+
         exists(player.getUniqueId().toString(), new Callback() {
             @Override
             public void onSuccess(boolean value) {
                 if (!value)
-                    setPerk(player, defaultPerk);
+                    // Create a new copy for new players
+                    setPerk(player, new Perk(defaultPerk.getfirstPerk(), defaultPerk.getsecondPerk(),
+                                            defaultPerk.getpassivePerk(), defaultPerk.hasParticles(),
+                                            defaultPerk.getfirstPerkSlot(), defaultPerk.getsecondPerkSlot()));
                 find(Database.getCollection(), player.getUniqueId());
             }
         });
@@ -148,7 +160,10 @@ public class PerkHelper {
             @Override
             public void onError(Throwable t) {
                 Console.send(Database.ERROR.append(Component.text("Find: " + t, NamedTextColor.WHITE)));
-                Items.perks.put(Bukkit.getPlayer(uuid), defaultPerk);
+                // Create a new copy to avoid shared mutable state
+                Items.perks.put(Bukkit.getPlayer(uuid), new Perk(defaultPerk.getfirstPerk(), defaultPerk.getsecondPerk(),
+                                                                 defaultPerk.getpassivePerk(), defaultPerk.hasParticles(),
+                                                                 defaultPerk.getfirstPerkSlot(), defaultPerk.getsecondPerkSlot()));
             }
             @Override
             public void onComplete() {

@@ -75,14 +75,14 @@ public class Worldloader {
                 BlockVector3 adjustedPasteLocation = blockVector3.subtract(offset);
 
                 // Validation: Check if schematic will exceed world height limits
-                int schematicHeight = clipboardMax.getY() - clipboardMin.getY();
-                int finalMaxY = adjustedPasteLocation.getY() + schematicHeight;
-                int finalMinY = adjustedPasteLocation.getY();
+                int schematicHeight = clipboardMax.y() - clipboardMin.y();
+                int finalMaxY = adjustedPasteLocation.y() + schematicHeight;
+                int finalMinY = adjustedPasteLocation.y();
 
                 // Log warnings if schematic exceeds world bounds
                 if (finalMaxY > 319) {
                     Console.send("§cWARNING: Schematic '" + file.getName() + "' will exceed max world height!");
-                    Console.send("§e  Paste Y: " + adjustedPasteLocation.getY() + ", Schematic height: " + schematicHeight);
+                    Console.send("§e  Paste Y: " + adjustedPasteLocation.y() + ", Schematic height: " + schematicHeight);
                     Console.send("§e  Final max Y: " + finalMaxY + " (world limit: 319)");
                     Console.send("§c  Top " + (finalMaxY - 319) + " blocks will be CUT OFF!");
                 }

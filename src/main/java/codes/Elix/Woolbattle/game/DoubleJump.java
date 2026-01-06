@@ -25,6 +25,7 @@ public class DoubleJump implements Listener {
     private static DoubleJump instance;
     //TODO: can be changed from rocket jump
     double dj_height;
+    double rocket_jump_height;
     //cooldown between double jumps
     long cooldown;
     //strength of the double jumps
@@ -41,12 +42,13 @@ public class DoubleJump implements Listener {
         this.cooldown = settings.getCooldown();
         this.cost = settings.getCost();
         this.dj_height = settings.getDoubleJumpHeight();
+        this.rocket_jump_height = settings.getRocketJumpHeight();
     }
 
     public static void reloadConfig() {
         if (instance != null) {
             instance.loadConfig();
-            System.out.println("[DoubleJump] Config reloaded - cooldown: " + instance.cooldown + ", cost: " + instance.cost + ", height: " + instance.dj_height);
+            System.out.println("[DoubleJump] Config reloaded - cooldown: " + instance.cooldown + ", cost: " + instance.cost + ", height: " + instance.dj_height + ", rocket_jump_height: " + instance.rocket_jump_height);
         }
     }
 
@@ -74,18 +76,15 @@ public class DoubleJump implements Listener {
             }
 
             // Player has wool - perform double jump
+            double jumpHeight = dj_height;
             if (Objects.equals(PerkHelper.passive(player), "rocket_jump"))
-                dj_height = 2D;
+                jumpHeight = rocket_jump_height;
             //give player the velocity
             Vector walk_vector = player.getVelocity().normalize();
-            Vector vector = new Vector(walk_vector.getX(), dj_height, walk_vector.getZ());
+            Vector vector = new Vector(walk_vector.getX(), jumpHeight, walk_vector.getZ());
             vector.multiply(strength);
             player.setVelocity(vector);
-
-            // Ensure flight is disabled and update scoreboard
             player.setAllowFlight(false);
-            IngameScoreboard.update(player);
-
             //player.setFoodLevel(0);
 
             //change xp for the cooldown

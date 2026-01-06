@@ -13,6 +13,7 @@ import codes.Elix.Woolbattle.gamestates.LobbyState;
 import codes.Elix.Woolbattle.gui.PerkConfigGUI;
 import codes.Elix.Woolbattle.main.Woolbattle;
 import codes.Elix.Woolbattle.util.Console;
+import codes.Elix.Woolbattle.util.LobbyScoreboard;
 import codes.Elix.Woolbattle.util.SchematicManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -649,6 +650,7 @@ public class LobbyItems implements Listener {
         CustomPlayer customPlayer = CustomPlayer.getCustomPlayer(player);
         if (team.getMembers().isEmpty()) {
             team.addMember(player);
+            LobbyScoreboard.change(player); // Update scoreboard after team change
             return;
         }
         if (team.getMembers().contains(player)) return;
@@ -656,6 +658,7 @@ public class LobbyItems implements Listener {
         if (team.getMembers().size() < LiveSystem.TeamSize) {
             team.addMember(player);
             Console.send("Added Player to " + team.getName());
+            LobbyScoreboard.change(player); // Update scoreboard after team change
         } else Console.send("§cTeam is full");
 
         /*

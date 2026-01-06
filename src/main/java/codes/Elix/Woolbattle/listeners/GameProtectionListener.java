@@ -11,10 +11,9 @@ import codes.Elix.Woolbattle.gamestates.IngameState;
 import codes.Elix.Woolbattle.gamestates.LobbyState;
 import codes.Elix.Woolbattle.items.Items;
 import codes.Elix.Woolbattle.main.Woolbattle;
+import codes.Elix.Woolbattle.util.IngameScoreboard;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.Tag;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -142,6 +141,7 @@ public class GameProtectionListener implements Listener {
 
         // LiveSystem.hitted.add((Player) event.getEntity());
         CustomPlayer.getCustomPlayer((Player) event.getEntity()).addHitted((Player) causePlayer);
+        IngameScoreboard.update((Player) event.getEntity()); //Debug
 
         event.setDamage(0.00000000001D);
         ((Player) event.getEntity()).setHealth(20);
@@ -151,6 +151,7 @@ public class GameProtectionListener implements Listener {
             public void run() {
                 //LiveSystem.hitted.remove((Player) event.getEntity());
                 CustomPlayer.getCustomPlayer((Player) event.getEntity()).removeHitted();
+                IngameScoreboard.update((Player) event.getEntity()); //Debug
             }
         }, 20 * 10);
     }
@@ -164,7 +165,7 @@ public class GameProtectionListener implements Listener {
     }
 
     @EventHandler
-    public void onBlockbreak(BlockBreakEvent event) { //Wolle in der mitte kann nur mit op abgebaut werden warum auch immer wtf - it was worldedit
+    public void onBlockbreak(BlockBreakEvent event) {
         if (event instanceof Player) return;
         Player player = event.getPlayer();
         if (Build.BuildPlayers.contains(player)) return;
@@ -235,14 +236,23 @@ public class GameProtectionListener implements Listener {
         }
     }
 
-    @EventHandler
+    /*@EventHandler
     public void onAdvancement(PlayerAdvancementDoneEvent event) {
-        event.message(Component.text(""));
-    }
+        event.message(null);
+    }*/
 
     @EventHandler
     public void onRecipeDiscover(PlayerRecipeDiscoverEvent event) {
         event.setCancelled(true);
+    }
+
+    public static void setGamerules() {
+        Bukkit.getWorlds().get(0).setGameRule(GameRules.ADVANCE_TIME, false);
+        Bukkit.getServer().getWorlds().get(0).setTime(5000L);
+        Bukkit.getWorlds().get(0).setGameRule(GameRules.RESPAWN_RADIUS, 0);
+        Bukkit.getWorlds().get(0).setGameRule(GameRules.SHOW_ADVANCEMENT_MESSAGES, false);
+        Bukkit.getWorlds().get(0).setGameRule(GameRules.LIMITED_CRAFTING, true); // Still does show messages - still need PlayerRecipeDiscoverEvent
+        Bukkit.getWorlds().get(0).setDifficulty(Difficulty.PEACEFUL);
     }
 
     public static final Set<Material> toDestroy = new HashSet<Material>();

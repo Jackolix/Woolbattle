@@ -11,7 +11,7 @@ import codes.Elix.Woolbattle.gamestates.LobbyState;
 import codes.Elix.Woolbattle.items.LobbyItems;
 import codes.Elix.Woolbattle.listeners.ConnectionListener;
 import codes.Elix.Woolbattle.listeners.GameProtectionListener;
-import codes.Elix.Woolbattle.listeners.KeepDayTask;
+import codes.Elix.Woolbattle.listeners.PlacedWoolCooldown;
 import codes.Elix.Woolbattle.util.Console;
 import codes.Elix.Woolbattle.util.SchematicManager;
 import codes.Elix.Woolbattle.util.mongo.Database;
@@ -20,10 +20,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.Tag;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -54,6 +51,7 @@ public class Woolbattle extends JavaPlugin {
     private static Woolbattle plugin;
     public static boolean debug;
     public static boolean useDB;
+    private static PlacedWoolCooldown placedWoolCooldown;
 
     @Override
     public void onEnable() {
@@ -104,7 +102,10 @@ public class Woolbattle extends JavaPlugin {
         pluginManager.registerEvents(chat, this);
         pluginManager.registerEvents(new codes.Elix.Woolbattle.gui.PerkConfigGUI(), this);
 
-        new KeepDayTask().runTaskTimer(this, 0L, 100L);
+        placedWoolCooldown = new PlacedWoolCooldown();
+        pluginManager.registerEvents(placedWoolCooldown, this);
+        GameProtectionListener.setGamerules();
+
         if (useDB) {
             new Database();
             Console.send(Component.text("MongoDB connection enabled", NamedTextColor.GREEN));
@@ -155,7 +156,11 @@ public class Woolbattle extends JavaPlugin {
 
 
     @Override
-    public void onDisable() {}
+    public void onDisable() {
+        if (placedWoolCooldown != null) {
+            placedWoolCooldown.shutdown();
+        }
+    }
 
 
     public static void safewool() {
@@ -258,6 +263,7 @@ public class Woolbattle extends JavaPlugin {
         return gameStateManager;
     }
     public static Woolbattle getPlugin() { return plugin; }
+    public static PlacedWoolCooldown getPlacedWoolCooldown() { return placedWoolCooldown; }
     private void PluginMessage() {
         Console.send("""
 

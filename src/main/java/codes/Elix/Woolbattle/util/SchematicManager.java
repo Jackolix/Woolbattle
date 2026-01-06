@@ -325,9 +325,9 @@ public class SchematicManager {
         // Apply the schematic origin offset to spawn coordinates
         // This ensures spawn points move with the schematic when origin offset is applied
         com.sk89q.worldedit.math.BlockVector3 offset = Worldloader.getLastOriginOffset();
-        spawnX -= offset.getX();
-        spawnY -= offset.getY();
-        spawnZ -= offset.getZ();
+        spawnX -= offset.x();
+        spawnY -= offset.y();
+        spawnZ -= offset.z();
 
         return new Location(
             org.bukkit.Bukkit.getServer().getWorlds().get(0),
@@ -347,9 +347,9 @@ public class SchematicManager {
 
         // Apply the schematic origin offset to spawn coordinates
         com.sk89q.worldedit.math.BlockVector3 offset = Worldloader.getLastOriginOffset();
-        spawnX -= offset.getX();
-        spawnY -= offset.getY();
-        spawnZ -= offset.getZ();
+        spawnX -= offset.x();
+        spawnY -= offset.y();
+        spawnZ -= offset.z();
 
         return new Location(
             org.bukkit.Bukkit.getServer().getWorlds().get(0),

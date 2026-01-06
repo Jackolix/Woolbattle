@@ -1,6 +1,7 @@
 package codes.Elix.Woolbattle.game.perks;
 
 import codes.Elix.Woolbattle.config.PerkConfig;
+import codes.Elix.Woolbattle.game.HelpClasses.CustomPlayer;
 import codes.Elix.Woolbattle.game.PerkHelper;
 import codes.Elix.Woolbattle.items.Items;
 import codes.Elix.Woolbattle.main.Woolbattle;
@@ -56,12 +57,17 @@ public class freezer implements Listener {
 
     @EventHandler
     public void onFreezerDamage(EntityDamageByEntityEvent e) {
-        if (!(e.getDamager() instanceof Snowball)) return;
+        if (!(e.getDamager() instanceof Snowball snowball)) return;
         if (!(e.getEntity() instanceof Player player)) return;
 
-        Projectile snowball = (Projectile) e.getDamager();
-
         if (!(snowball.hasMetadata("Freezer"))) return;
+
+        Player shooter = (Player) snowball.getShooter();
+
+        CustomPlayer customShooter = CustomPlayer.getCustomPlayer(shooter);
+        CustomPlayer customHitted= CustomPlayer.getCustomPlayer(player);
+
+        if (customHitted.getTeam().equals(customShooter.getTeam())) return;
         
         PerkConfig.PerkSettings settings = getSettings();
         player.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 

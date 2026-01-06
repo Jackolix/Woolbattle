@@ -4,6 +4,7 @@
 package codes.Elix.Woolbattle.game.perks;
 
 import codes.Elix.Woolbattle.config.PerkConfig;
+import codes.Elix.Woolbattle.game.HelpClasses.CustomPlayer;
 import codes.Elix.Woolbattle.game.PerkHelper;
 import codes.Elix.Woolbattle.items.Items;
 import codes.Elix.Woolbattle.main.Woolbattle;
@@ -37,10 +38,15 @@ public class switcher implements Listener {
         if (!(event.getDamager() instanceof Snowball)) return;
 
         Projectile projectile = (Projectile) event.getDamager();
+        if (!projectile.hasMetadata("Switcher")) return;
+
         Player shooter = (Player) projectile.getShooter();
         Player hitted = (Player) event.getEntity();
 
-        if (!projectile.hasMetadata("Switcher")) return;
+        CustomPlayer customShooter = CustomPlayer.getCustomPlayer(shooter);
+        CustomPlayer customHitted= CustomPlayer.getCustomPlayer(hitted);
+
+        if (customHitted.getTeam().equals(customShooter.getTeam())) return;
 
         Location location1 = shooter.getLocation();
         Location location2 = hitted.getLocation();
@@ -49,7 +55,7 @@ public class switcher implements Listener {
         hitted.teleport(location1);
 
         shooter.playSound(shooter.getLocation(), Sound.ENTITY_PLAYER_BURP, 1F, 1F);
-            // hitted.playSound(hitted.getLocation(), Sound.ENTITY_PLAYER_BURP, 1F, 1F);
+        hitted.playSound(hitted.getLocation(), Sound.ENTITY_PLAYER_BURP, 1F, 1F);
     }
 
     @EventHandler

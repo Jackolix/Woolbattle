@@ -46,6 +46,11 @@ public class IngameScoreboard {
         lines.add("  ");
         lines.add("§8» §7Map");
         lines.add(" §7• " + MapName);
+        lines.add("§8» §7Hit");
+        String hit = "§4false";
+        if (CustomPlayer.getCustomPlayer(player).isHitted() == true)
+            hit = "§3true";
+        lines.add(" §4• " + hit);
         lines.add(" ");
         lines.add("§8» §7Leben");
         lines.add(" §7• §4❤ " + LiveSystem.Team.get("red").getLifes() + " §8- " + Colorname1);

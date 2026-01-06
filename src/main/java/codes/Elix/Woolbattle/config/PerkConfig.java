@@ -30,15 +30,15 @@ public class PerkConfig {
     
     private void loadConfig() {
         configFile = new File(Woolbattle.getPlugin().getDataFolder(), "perks.yml");
-        
+
         if (!configFile.exists()) {
             createDefaultConfig();
         }
-        
+
         config = YamlConfiguration.loadConfiguration(configFile);
         loadPerkSettings();
     }
-    
+
     private void createDefaultConfig() {
         try {
             configFile.getParentFile().mkdirs();
@@ -147,6 +147,7 @@ public class PerkConfig {
             defaultConfig.set("perks.doublejump.cooldown_recharger", 1);
             defaultConfig.set("perks.doublejump.cost", 5);
             defaultConfig.set("perks.doublejump.height", 1.5);
+            defaultConfig.set("perks.doublejump.rocket_jump_height", 2.0);
 
             defaultConfig.save(configFile);
         } catch (IOException e) {
@@ -227,6 +228,7 @@ public class PerkConfig {
                     break;
                 case "doublejump":
                     settings.setDoubleJumpHeight(perkSection.getDouble("height", 1.5));
+                    settings.setRocketJumpHeight(perkSection.getDouble("rocket_jump_height", 2.0));
                     break;
             }
 
@@ -320,6 +322,7 @@ public class PerkConfig {
                         break;
                     case "doublejump":
                         config.set("perks." + perkName + ".height", settings.getDoubleJumpHeight());
+                        config.set("perks." + perkName + ".rocket_jump_height", settings.getRocketJumpHeight());
                         break;
                 }
             }
@@ -400,6 +403,7 @@ public class PerkConfig {
 
         // DoubleJump specific
         private double doubleJumpHeight = 1.5;
+        private double rocketJumpHeight = 2.0;
 
         public PerkSettings(int cooldown, int cooldownRecharger, int cost, double projectileVelocity) {
             this.cooldown = cooldown;
@@ -444,6 +448,7 @@ public class PerkConfig {
         public int getAutoTriggerHeight() { return autoTriggerHeight; }
         public double getEnderpearlVelocity() { return enderpearlVelocity; }
         public double getDoubleJumpHeight() { return doubleJumpHeight; }
+        public double getRocketJumpHeight() { return rocketJumpHeight; }
 
         // Setters
         public void setCooldown(int cooldown) { this.cooldown = cooldown; }
@@ -481,5 +486,6 @@ public class PerkConfig {
         public void setAutoTriggerHeight(int autoTriggerHeight) { this.autoTriggerHeight = autoTriggerHeight; }
         public void setEnderpearlVelocity(double enderpearlVelocity) { this.enderpearlVelocity = enderpearlVelocity; }
         public void setDoubleJumpHeight(double doubleJumpHeight) { this.doubleJumpHeight = doubleJumpHeight; }
+        public void setRocketJumpHeight(double rocketJumpHeight) { this.rocketJumpHeight = rocketJumpHeight; }
     }
 }

@@ -16,9 +16,10 @@ java {
 
 dependencies {
 
-  paperweight.paperDevBundle("1.21.8-R0.1-SNAPSHOT")
-  compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.9.2")
-  compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.9.2") { isTransitive = false }
+  paperweight.paperDevBundle("1.21.11-R0.1-SNAPSHOT")
+  implementation(platform("com.intellectualsites.bom:bom-newest:1.55")) // Ref: https://github.com/IntellectualSites/bom
+  compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core")
+  compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit") { isTransitive = false }
   implementation("fr.mrmicky:fastboard:2.1.5") // Modern scoreboard library
   implementation("org.mongodb:mongodb-driver-reactivestreams:4.8.1") // Database
   implementation("org.springframework.data:spring-data-mongodb:4.0.1") // Database

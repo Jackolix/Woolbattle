@@ -3,10 +3,12 @@ package codes.Elix.Woolbattle.game.perks;
 import codes.Elix.Woolbattle.config.PerkConfig;
 import codes.Elix.Woolbattle.game.PerkHelper;
 import codes.Elix.Woolbattle.items.Items;
+import codes.Elix.Woolbattle.listeners.PlacedWoolCooldown;
 import codes.Elix.Woolbattle.main.Woolbattle;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -47,30 +49,118 @@ public class platform implements Listener {
 
     private void placeBlocks(Location location, Material material) {
         PerkConfig.PerkSettings settings = getSettings();
+        PlacedWoolCooldown cooldown = Woolbattle.getPlacedWoolCooldown();
+
         //move the location down with the platform size setting
         location.add(0, -2, 0);
 
-        if (location.add(2,0,-1).getBlock().getType() == Material.AIR) location.getBlock().setType(material);
-        if (location.add(0,0,1).getBlock().getType() == Material.AIR) location.getBlock().setType(material);
-        if (location.add(0,0,1).getBlock().getType() == Material.AIR) location.getBlock().setType(material);
-        if (location.add(-1,0,1).getBlock().getType() == Material.AIR) location.getBlock().setType(material);
-        if (location.add(0,0,-1).getBlock().getType() == Material.AIR) location.getBlock().setType(material);
-        if (location.add(0,0,-1).getBlock().getType() == Material.AIR) location.getBlock().setType(material);
-        if (location.add(0,0,-1).getBlock().getType() == Material.AIR) location.getBlock().setType(material);
-        if (location.add(0,0,-1).getBlock().getType() == Material.AIR) location.getBlock().setType(material);
-        if (location.add(-1,0,0).getBlock().getType() == Material.AIR) location.getBlock().setType(material);
-        if (location.add(0,0,1).getBlock().getType() == Material.AIR) location.getBlock().setType(material);
-        if (location.add(0,0,1).getBlock().getType() == Material.AIR) location.getBlock().setType(material);
-        if (location.add(0,0,1).getBlock().getType() == Material.AIR) location.getBlock().setType(material);
-        if (location.add(0,0,1).getBlock().getType() == Material.AIR) location.getBlock().setType(material);
-        if (location.add(-1,0,0).getBlock().getType() == Material.AIR) location.getBlock().setType(material);
-        if (location.add(0,0,-1).getBlock().getType() == Material.AIR) location.getBlock().setType(material);
-        if (location.add(0,0,-1).getBlock().getType() == Material.AIR) location.getBlock().setType(material);
-        if (location.add(0,0,-1).getBlock().getType() == Material.AIR) location.getBlock().setType(material);
-        if (location.add(0,0,-1).getBlock().getType() == Material.AIR) location.getBlock().setType(material);
-        if (location.add(-1,0,1).getBlock().getType() == Material.AIR) location.getBlock().setType(material);
-        if (location.add(0,0,1).getBlock().getType() == Material.AIR) location.getBlock().setType(material);
-        if (location.add(0,0,1).getBlock().getType() == Material.AIR) location.getBlock().setType(material);
+        Block block;
+
+        block = location.add(2,0,-1).getBlock();
+        if (block.getType() == Material.AIR) {
+            block.setType(material);
+            if (cooldown != null) cooldown.trackBlock(block);
+        }
+        block = location.add(0,0,1).getBlock();
+        if (block.getType() == Material.AIR) {
+            block.setType(material);
+            if (cooldown != null) cooldown.trackBlock(block);
+        }
+        block = location.add(0,0,1).getBlock();
+        if (block.getType() == Material.AIR) {
+            block.setType(material);
+            if (cooldown != null) cooldown.trackBlock(block);
+        }
+        block = location.add(-1,0,1).getBlock();
+        if (block.getType() == Material.AIR) {
+            block.setType(material);
+            if (cooldown != null) cooldown.trackBlock(block);
+        }
+        block = location.add(0,0,-1).getBlock();
+        if (block.getType() == Material.AIR) {
+            block.setType(material);
+            if (cooldown != null) cooldown.trackBlock(block);
+        }
+        block = location.add(0,0,-1).getBlock();
+        if (block.getType() == Material.AIR) {
+            block.setType(material);
+            if (cooldown != null) cooldown.trackBlock(block);
+        }
+        block = location.add(0,0,-1).getBlock();
+        if (block.getType() == Material.AIR) {
+            block.setType(material);
+            if (cooldown != null) cooldown.trackBlock(block);
+        }
+        block = location.add(0,0,-1).getBlock();
+        if (block.getType() == Material.AIR) {
+            block.setType(material);
+            if (cooldown != null) cooldown.trackBlock(block);
+        }
+        block = location.add(-1,0,0).getBlock();
+        if (block.getType() == Material.AIR) {
+            block.setType(material);
+            if (cooldown != null) cooldown.trackBlock(block);
+        }
+        block = location.add(0,0,1).getBlock();
+        if (block.getType() == Material.AIR) {
+            block.setType(material);
+            if (cooldown != null) cooldown.trackBlock(block);
+        }
+        block = location.add(0,0,1).getBlock();
+        if (block.getType() == Material.AIR) {
+            block.setType(material);
+            if (cooldown != null) cooldown.trackBlock(block);
+        }
+        block = location.add(0,0,1).getBlock();
+        if (block.getType() == Material.AIR) {
+            block.setType(material);
+            if (cooldown != null) cooldown.trackBlock(block);
+        }
+        block = location.add(0,0,1).getBlock();
+        if (block.getType() == Material.AIR) {
+            block.setType(material);
+            if (cooldown != null) cooldown.trackBlock(block);
+        }
+        block = location.add(-1,0,0).getBlock();
+        if (block.getType() == Material.AIR) {
+            block.setType(material);
+            if (cooldown != null) cooldown.trackBlock(block);
+        }
+        block = location.add(0,0,-1).getBlock();
+        if (block.getType() == Material.AIR) {
+            block.setType(material);
+            if (cooldown != null) cooldown.trackBlock(block);
+        }
+        block = location.add(0,0,-1).getBlock();
+        if (block.getType() == Material.AIR) {
+            block.setType(material);
+            if (cooldown != null) cooldown.trackBlock(block);
+        }
+        block = location.add(0,0,-1).getBlock();
+        if (block.getType() == Material.AIR) {
+            block.setType(material);
+            if (cooldown != null) cooldown.trackBlock(block);
+        }
+        block = location.add(0,0,-1).getBlock();
+        if (block.getType() == Material.AIR) {
+            block.setType(material);
+            if (cooldown != null) cooldown.trackBlock(block);
+        }
+        block = location.add(-1,0,1).getBlock();
+        if (block.getType() == Material.AIR) {
+            block.setType(material);
+            if (cooldown != null) cooldown.trackBlock(block);
+        }
+        block = location.add(0,0,1).getBlock();
+        if (block.getType() == Material.AIR) {
+            block.setType(material);
+            if (cooldown != null) cooldown.trackBlock(block);
+        }
+        block = location.add(0,0,1).getBlock();
+        if (block.getType() == Material.AIR) {
+            block.setType(material);
+            if (cooldown != null) cooldown.trackBlock(block);
+        }
     }
     public static void enable() {
         Bukkit.getPluginManager().registerEvents(new platform(), Woolbattle.getPlugin());

@@ -42,7 +42,7 @@ public class LobbyCountdown extends Countdown{
                         .append(Component.text(seconds, NamedTextColor.GREEN))
                         .append(Component.text(" Sekunden.", NamedTextColor.GRAY)));
                 TextComponent lastSecond = Woolbattle.PREFIX.append(Component.text("Das Spiel startet in ")
-                        .append(Component.text(" einer ", NamedTextColor.GREEN))
+                        .append(Component.text("einer ", NamedTextColor.GREEN))
                         .append(Component.text("Sekunde.", NamedTextColor.GRAY)));
 
                 switch (seconds) {

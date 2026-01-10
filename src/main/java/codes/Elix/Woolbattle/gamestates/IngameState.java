@@ -3,6 +3,7 @@
 
 package codes.Elix.Woolbattle.gamestates;
 
+import codes.Elix.Woolbattle.config.GameConfig;
 import codes.Elix.Woolbattle.game.BowShoot;
 import codes.Elix.Woolbattle.game.DoubleJump;
 import codes.Elix.Woolbattle.game.EnderPearl;
@@ -300,6 +301,21 @@ public class IngameState extends GameState {
         }
     }
     
+    /**
+     * Apply spawn invulnerability to a player based on game settings.
+     */
+    private void applySpawnInvulnerability(Player player) {
+        int invulnSeconds = GameConfig.getInstance().getInvulnerabilityOnSpawnSeconds();
+        if (invulnSeconds > 0) {
+            player.setInvulnerable(true);
+            Bukkit.getScheduler().runTaskLater(Woolbattle.getPlugin(), () -> {
+                if (player.isOnline()) {
+                    player.setInvulnerable(false);
+                }
+            }, invulnSeconds * 20L); // Convert seconds to ticks
+        }
+    }
+    
     private void teleportTeamsToSpawns() {
         Console.send(Component.text("Teleporting teams to spawn locations...", NamedTextColor.YELLOW));
         
@@ -315,6 +331,7 @@ public class IngameState extends GameState {
                 Location redSpawn = SchematicManager.getTeamSpawn(selectedMap, "red");
                 for (Player player : red.getMembers()) {
                     player.teleport(redSpawn);
+                    applySpawnInvulnerability(player);
                     Console.send(Component.text("Teleported ", NamedTextColor.WHITE)
                         .append(Component.text(player.getName(), NamedTextColor.GREEN))
                         .append(Component.text(" to ", NamedTextColor.WHITE))
@@ -328,6 +345,7 @@ public class IngameState extends GameState {
                 Location blueSpawn = SchematicManager.getTeamSpawn(selectedMap, "blue");
                 for (Player player : blue.getMembers()) {
                     player.teleport(blueSpawn);
+                    applySpawnInvulnerability(player);
                     Console.send(Component.text("Teleported ", NamedTextColor.WHITE)
                         .append(Component.text(player.getName(), NamedTextColor.GREEN))
                         .append(Component.text(" to ", NamedTextColor.WHITE))
@@ -341,6 +359,7 @@ public class IngameState extends GameState {
                 Location greenSpawn = SchematicManager.getTeamSpawn(selectedMap, "green");
                 for (Player player : green.getMembers()) {
                     player.teleport(greenSpawn);
+                    applySpawnInvulnerability(player);
                     Console.send(Component.text("Teleported ", NamedTextColor.WHITE)
                         .append(Component.text(player.getName(), NamedTextColor.GREEN))
                         .append(Component.text(" to ", NamedTextColor.WHITE))
@@ -354,6 +373,7 @@ public class IngameState extends GameState {
                 Location yellowSpawn = SchematicManager.getTeamSpawn(selectedMap, "yellow");
                 for (Player player : yellow.getMembers()) {
                     player.teleport(yellowSpawn);
+                    applySpawnInvulnerability(player);
                     Console.send(Component.text("Teleported ", NamedTextColor.WHITE)
                         .append(Component.text(player.getName(), NamedTextColor.GREEN))
                         .append(Component.text(" to ", NamedTextColor.WHITE))

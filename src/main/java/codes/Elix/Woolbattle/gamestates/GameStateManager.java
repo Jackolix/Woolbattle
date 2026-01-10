@@ -3,6 +3,7 @@
 
 package codes.Elix.Woolbattle.gamestates;
 
+import codes.Elix.Woolbattle.config.GameConfig;
 import codes.Elix.Woolbattle.main.Woolbattle;
 
 public class GameStateManager {
@@ -14,8 +15,9 @@ public class GameStateManager {
     public GameStateManager(Woolbattle plugin) {
         this.plugin = plugin;
         gamestates = new GameState[3];
-        LobbyState.MIN_PLAYERS = Woolbattle.getPlugin().getConfig().getInt("PlayersToStartCountdown");
-        LobbyState.MAX_PLAYERS = Woolbattle.getPlugin().getConfig().getInt("MaxPlayers");
+        // Use GameConfig for player settings
+        LobbyState.MIN_PLAYERS = GameConfig.getInstance().getMinPlayersToStart();
+        LobbyState.MAX_PLAYERS = GameConfig.getInstance().getMaxPlayers();
 
         gamestates[GameState.LOBBY_STATE] = new LobbyState(this);
         gamestates[GameState.INGAME_STATE] = new IngameState();

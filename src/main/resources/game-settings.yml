@@ -1,0 +1,167 @@
+# ============================================
+# Woolbattle Game Settings Configuration
+# ============================================
+# This file contains all configurable game settings.
+# Changes can be made in-game via /gamesettings command (requires OP or woolbattle.admin.gamesettings permission)
+# or by editing this file directly and using /gamesettings reload
+
+# ============================================
+# Combat & Damage Settings
+# ============================================
+combat:
+  # Time window (in seconds) for crediting kills when a player falls into void after being hit
+  hit_timer_seconds: 10
+  
+  # Global multiplier for knockback strength (1.0 = normal, 2.0 = double knockback)
+  global_knockback_multiplier: 1.0
+  
+  # Enable/disable fall damage
+  fall_damage_enabled: false
+  
+  # Enable/disable fire damage
+  fire_damage_enabled: false
+  
+  # Enable/disable PvP combat
+  pvp_enabled: true
+
+# ============================================
+# Game Flow Settings
+# ============================================
+game_flow:
+  # Countdown duration (in seconds) before game starts in lobby
+  lobby_countdown_seconds: 30
+  
+  # Minimum number of players required to start the countdown
+  min_players_to_start: 2
+  
+  # Maximum number of players allowed in the game
+  max_players: 4
+  
+  # Automatically start game when max players is reached
+  auto_start_when_full: true
+  
+  # Countdown duration (in seconds) after game ends before returning to lobby
+  game_end_countdown: 10
+
+# ============================================
+# Team Settings
+# ============================================
+teams:
+  # Number of players per team
+  team_size: 2
+  
+  # Number of teams (2-4 supported: Red, Blue, Green, Yellow)
+  number_of_teams: 2
+  
+  # Allow players to switch teams in lobby
+  allow_team_switching: true
+  
+  # Automatically balance teams (distribute players evenly)
+  auto_team_balance: true
+  
+  # Enable friendly fire (team members can damage each other)
+  friendly_fire: false
+
+# ============================================
+# Wool & Building Settings
+# ============================================
+wool_building:
+  # Enable automatic wool regeneration in inventory
+  wool_regeneration_enabled: true
+  
+  # Interval (in ticks) between wool regeneration (20 ticks = 1 second)
+  wool_regen_interval_ticks: 20
+  
+  # Maximum wool blocks per player
+  max_wool_per_player: 64
+  
+  # Cooldown (in ticks) after placing wool before placing another
+  placed_wool_cooldown_ticks: 10
+  
+  # Players have infinite arrows
+  infinite_arrows: true
+  
+  # Allow breaking blocks other than wool
+  allow_block_breaking: false
+
+# ============================================
+# Lives & Respawn Settings
+# ============================================
+lives_respawn:
+  # Default number of lives per player (can be changed via voting)
+  default_lives: 12
+  
+  # Delay (in seconds) before respawning after death
+  respawn_delay_seconds: 3
+  
+  # Y-level below which counts as void death
+  void_death_y_level: 0
+  
+  # Players keep their inventory when they die
+  keep_inventory_on_death: true
+  
+  # Invulnerability duration (in seconds) after spawning/respawning
+  invulnerability_on_spawn_seconds: 3
+
+# ============================================
+# Passive Perk Settings
+# ============================================
+passive_perks:
+  # Enable double jump ability for all players
+  double_jump_enabled: true
+  
+  # Double jump height multiplier (0.8 = 80% of normal jump)
+  double_jump_height: 0.8
+  
+  # Enable rocket jump from bow shots
+  rocket_jump_enabled: true
+  
+  # Rocket jump height multiplier
+  rocket_jump_height: 0.5
+  
+  # Enable the Recharger passive perk for cooldown reduction
+  recharger_enabled: true
+  
+  # Cooldown reduction multiplier when Recharger is equipped (0.5 = 50% cooldown time)
+  recharger_cooldown_reduction: 0.5
+
+# ============================================
+# Advanced Settings
+# ============================================
+advanced:
+  # Enable debug logging for troubleshooting
+  debug_mode: false
+  
+  # Performance mode (reduces particles and effects)
+  performance_mode: false
+  
+  # Global multiplier for all perk cooldowns (2.0 = double cooldown time)
+  global_cooldown_multiplier: 1.0
+  
+  # Enable MongoDB database connection
+  mongodb_enabled: false
+  
+  # Enable scoreboard display
+  scoreboard_enabled: true
+  
+  # Enable particle effects
+  particles_enabled: true
+
+# ============================================
+# Map & World Settings
+# ============================================
+maps:
+  # Enable map voting in lobby
+  map_voting_enabled: true
+  
+  # Duration (in seconds) for map voting
+  voting_duration_seconds: 20
+  
+  # Select random map if vote results in a tie
+  random_on_tie: true
+  
+  # Show vote counts to all players during voting
+  show_vote_counts: true
+  
+  # Enable automatic teleportation when falling into void
+  void_teleport_enabled: true

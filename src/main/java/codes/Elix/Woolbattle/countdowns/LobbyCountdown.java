@@ -3,6 +3,7 @@
 
 package codes.Elix.Woolbattle.countdowns;
 
+import codes.Elix.Woolbattle.config.GameConfig;
 import codes.Elix.Woolbattle.gamestates.GameState;
 import codes.Elix.Woolbattle.gamestates.GameStateManager;
 import codes.Elix.Woolbattle.gamestates.LobbyState;
@@ -29,8 +30,8 @@ public class LobbyCountdown extends Countdown{
     private boolean isRunning;
     public LobbyCountdown(GameStateManager gameStateManager) {
         this.gameStateManager = gameStateManager;
-        // seconds = COUNTDOWN_TIME;
-        seconds = Woolbattle.getPlugin().getConfig().getInt("LobbyCountdown");
+        // Use GameConfig for dynamic countdown configuration
+        seconds = GameConfig.getInstance().getLobbyCountdownSeconds();
     }
 
     @Override
@@ -83,7 +84,7 @@ public class LobbyCountdown extends Countdown{
         if (isRunning) {
             Bukkit.getScheduler().cancelTask(taskID);
             isRunning = false;
-            seconds = COUNTDOWN_TIME;
+            seconds = GameConfig.getInstance().getLobbyCountdownSeconds();
         }
     }
 
@@ -118,7 +119,7 @@ public class LobbyCountdown extends Countdown{
     public int getSeconds() {
         if (isRunning)
             return seconds;
-        return COUNTDOWN_TIME;
+        return GameConfig.getInstance().getLobbyCountdownSeconds();
     }
 
     public void setSeconds(int seconds) {

@@ -18,9 +18,10 @@ public class Fix implements CommandExecutor {
         if (!(sender instanceof Player player)) return false;
 
         // Clean up stuck cooldown state before fixing inventory
-        if (Items.interact.contains(player)) {
+        if (Items.interact.contains(player) || Items.perkCooldowns.containsKey(player)) {
             player.sendMessage(ChatColor.YELLOW + "Clearing stuck cooldown state...");
             Items.interact.remove(player);
+            Items.perkCooldowns.remove(player);
 
             // Cancel any running cooldown tasks
             if (Items.tasks.containsKey(player)) {

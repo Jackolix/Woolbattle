@@ -164,15 +164,33 @@ public class IngameState extends GameState {
                         continue;  // Skip self, don't exit the method
                     CustomPlayer customPlayer1 = CustomPlayer.getCustomPlayer(players);
                     if (customPlayer1.getTeam() == null) {
-                        customPlayer.setTeam(red);
-                        customPlayer1.setTeam(blue);
+                        red.addMember(player);
+                        blue.addMember(players);
+                        Console.send(Component.text("Added ", NamedTextColor.WHITE)
+                                .append(Component.text(player.getName(), NamedTextColor.GREEN))
+                                .append(Component.text(" to Team", NamedTextColor.WHITE))
+                                .append(Component.text(" Red", NamedTextColor.RED)));
+                        Console.send(Component.text("Added ", NamedTextColor.WHITE)
+                                .append(Component.text(players.getName(), NamedTextColor.GREEN))
+                                .append(Component.text(" to Team", NamedTextColor.WHITE))
+                                .append(Component.text(" Blue", NamedTextColor.BLUE)));
                     } else {
                         if (customPlayer1.getTeam() == red) {
-                            customPlayer.setTeam(blue);
-                        } else
-                            customPlayer.setTeam(red);
+                            blue.addMember(player);
+                            Console.send(Component.text("Added ", NamedTextColor.WHITE)
+                                    .append(Component.text(player.getName(), NamedTextColor.GREEN))
+                                    .append(Component.text(" to Team", NamedTextColor.WHITE))
+                                    .append(Component.text(" Blue", NamedTextColor.BLUE)));
+                        } else {
+                            red.addMember(player);
+                            Console.send(Component.text("Added ", NamedTextColor.WHITE)
+                                    .append(Component.text(player.getName(), NamedTextColor.GREEN))
+                                    .append(Component.text(" to Team", NamedTextColor.WHITE))
+                                    .append(Component.text(" Red", NamedTextColor.RED)));
+                        }
                     }
                 }
+            return;  // Exit early after handling 2-player case
         }
 
 

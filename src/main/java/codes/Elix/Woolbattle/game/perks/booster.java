@@ -16,6 +16,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 
 import java.util.Objects;
 
@@ -37,16 +38,27 @@ public class booster implements Listener {
         if (!Woolbattle.debug)
             if (!Items.cost(player, settings.getCost())) return;
 
-        // Apply speed boost effect
-        player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 
-            settings.getSpeedDuration() * 20, settings.getSpeedStrength()));
-            
-        // Apply jump boost effect  
-        player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP_BOOST,
-            settings.getJumpDuration() * 20, settings.getJumpStrength()));
+        // Apply velocity boost (original method)
+        Vector vector = player.getLocation().getDirection().multiply(2.75D).setY(2D);
+        player.setVelocity(vector);
+        
+        // Apply speed effect if duration > 0
+        if (settings.getSpeedDuration() > 0 && settings.getSpeedStrength() > 0) {
+            int duration = settings.getSpeedDuration() * 20; // Convert seconds to ticks
+            int amplifier = settings.getSpeedStrength() - 1; // Amplifier is 0-based (0 = level I, 1 = level II, etc.)
+            player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, duration, amplifier, false, true));
+        }
+        
+        // Apply jump boost effect if duration > 0
+        if (settings.getJumpDuration() > 0 && settings.getJumpStrength() > 0) {
+            int duration = settings.getJumpDuration() * 20; // Convert seconds to ticks
+            int amplifier = settings.getJumpStrength() - 1; // Amplifier is 0-based (0 = level I, 1 = level II, etc.)
+            player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP_BOOST, duration, amplifier, false, true));
+        }
             
         player.playSound(player.getLocation(), Sound.ENTITY_CAT_HISS, 1F, 1F);
 
+        // Cooldown implementation
         int cooldown = Objects.equals(PerkHelper.passive(player), "recharger")
             ? settings.getCooldownRecharger()
             : settings.getCooldown();

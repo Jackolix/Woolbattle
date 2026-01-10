@@ -73,11 +73,11 @@ public class switcher implements Listener {
 
         event.setCancelled(true);
 
-        // Check if player is already on cooldown
-        if (Items.interact.contains(player)) {
+        // Check if switcher is on cooldown for this player
+        if (Items.isPerkOnCooldown(player, "§3Tauscher")) {
             return;
         }
-        
+
         PerkConfig.PerkSettings settings = getSettings();
         
         if (!Woolbattle.debug)

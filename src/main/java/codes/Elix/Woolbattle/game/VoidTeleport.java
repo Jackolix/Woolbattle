@@ -35,14 +35,18 @@ public class VoidTeleport implements Listener {
         if (!(GameStateManager.getCurrentGameState() instanceof IngameState)) return;
         Player player = event.getPlayer();
         if (player.getGameMode() == GameMode.SPECTATOR) return;
-        if (player.getLocation().getBlockY() <= -25) {
+        
+        // Get map-specific void level instead of hardcoded -25
+        String selectedMap = SchematicManager.getSelectedMap();
+        int voidLevel = SchematicManager.getVoidLevel(selectedMap);
+        
+        if (player.getLocation().getBlockY() <= voidLevel) {
             CustomPlayer customPlayer = CustomPlayer.getCustomPlayer(player);
             Team team = customPlayer.getTeam();
 
             // If player has no team, make them spectator
             if (team == null) {
                 IngameState.addSpectator(player);
-                String selectedMap = SchematicManager.getSelectedMap();
                 Location spectatorSpawn = SchematicManager.getSpectatorSpawn(selectedMap);
                 player.teleport(spectatorSpawn);
                 return;
@@ -54,7 +58,6 @@ public class VoidTeleport implements Listener {
                 team.setDead(true);
                 IngameState.addSpectator(player);
                 // Use schematic-based spectator spawn instead of hardcoded location
-                String selectedMap = SchematicManager.getSelectedMap();
                 Location spectatorSpawn = SchematicManager.getSpectatorSpawn(selectedMap);
                 player.teleport(spectatorSpawn);
                 if (checkTeams() != null) {
@@ -63,7 +66,8 @@ public class VoidTeleport implements Listener {
                 return;
             }
 
-            if (customPlayer.isHitted()) {
+            // Check if player was hit within the last 10 seconds
+            if (customPlayer.isHitValid()) {
                 String damager;
                 String prefix;
                 TextColor damagerColor = TextColor.color(255, 0, 0); // Default red
@@ -96,7 +100,6 @@ public class VoidTeleport implements Listener {
             }
 
             // Use schematic-based team spawn instead of hardcoded location
-            String selectedMap = SchematicManager.getSelectedMap();
             String teamKey = team.getName().toLowerCase();
             Location teamSpawn = SchematicManager.getTeamSpawn(selectedMap, teamKey);
             player.teleport(teamSpawn);

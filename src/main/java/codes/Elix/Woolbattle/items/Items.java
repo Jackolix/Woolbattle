@@ -24,13 +24,17 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class Items {
     //TODO: Enchantments zum Array machen
 
-    public static ArrayList<Player> interact = new ArrayList<>();
+    @Deprecated
+    public static ArrayList<Player> interact = new ArrayList<>(); // Deprecated: Use perkCooldowns instead
+    public static Map<Player, Set<String>> perkCooldowns = new HashMap<>(); // Tracks which perks are on cooldown per player
     public static Map<Player, Map<String, Integer>> tasks = new HashMap<>();
     public static HashMap<Player, Perk> perks = new HashMap<>();
 
@@ -308,8 +312,42 @@ public class Items {
         return true;
     }
 
+    /**
+     * Check if a specific perk is on cooldown for a player
+     * @param player The player to check
+     * @param perkName The name of the perk to check
+     * @return true if the perk is on cooldown, false otherwise
+     */
+    public static boolean isPerkOnCooldown(Player player, String perkName) {
+        return perkCooldowns.containsKey(player) && perkCooldowns.get(player).contains(perkName);
+    }
+
+    /**
+     * Add a perk to the cooldown list for a player
+     * @param player The player
+     * @param perkName The name of the perk
+     */
+    public static void addPerkCooldown(Player player, String perkName) {
+        perkCooldowns.computeIfAbsent(player, k -> new HashSet<>()).add(perkName);
+    }
+
+    /**
+     * Remove a perk from the cooldown list for a player
+     * @param player The player
+     * @param perkName The name of the perk
+     */
+    public static void removePerkCooldown(Player player, String perkName) {
+        if (perkCooldowns.containsKey(player)) {
+            perkCooldowns.get(player).remove(perkName);
+            if (perkCooldowns.get(player).isEmpty()) {
+                perkCooldowns.remove(player);
+            }
+        }
+    }
+
     public static void visualCooldown(Player player, int cooldown, Material perk, int slot, String perkname) {
-        interact.add(player);
+        interact.add(player);  // Keep for backward compatibility
+        addPerkCooldown(player, perkname);  // Add perk-specific cooldown
         ItemStack item = new ItemStack(perk);
         ItemMeta itemMeta = item.getItemMeta();
         itemMeta.displayName(convertLegacyText(perkname));
@@ -327,7 +365,8 @@ public class Items {
                 } else {
                     // create(player.getInventory(), item, perkname, slot);
                     player.getInventory().setItem(slot, item);
-                    interact.remove(player);
+                    interact.remove(player);  // Keep for backward compatibility
+                    removePerkCooldown(player, perkname);  // Remove perk-specific cooldown
                     cancel(tasks.get(player).get(perkname));
                 }
             }

@@ -111,6 +111,7 @@ public class PerkItems {
         switch (Objects.requireNonNull(Pperk != null ? Pperk.toString() : null)) {
             case "aufzug" -> Items.createPassivePerk(player.getInventory(),  Material.LADDER, "§3Aufzug", Pperkslot);
             case "exploding_arrow" -> Items.createPassivePerk(player.getInventory(), Material.TNT, "§3Explodierender Pfeil", Pperkslot);
+            case "ghost_arrow" -> Items.createPassivePerk(player.getInventory(), Material.SPECTRAL_ARROW, "§3Geisterpfeil", Pperkslot);
             case "IDK" -> Items.createPassivePerk(player.getInventory(), Material.FISHING_ROD, "§3IDK", Pperkslot);
             case "arrowrain" -> Items.createPassivePerk(player.getInventory(), Material.DISPENSER, "§3Pfeilregen", Pperkslot);
             case "recharger" -> Items.createPassivePerk(player.getInventory(), Material.IRON_CHESTPLATE, "§3Recharger", Pperkslot);

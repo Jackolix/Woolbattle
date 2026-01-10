@@ -39,24 +39,17 @@ public class SetHitted implements CommandExecutor, TabCompleter {
                 } else if (args.length == 1) {
                     CustomPlayer customPlayer = CustomPlayer.getCustomPlayer(Bukkit.getPlayer(args[0]));
                     if (!customPlayer.isHitted()) {
-                        // Player p = Bukkit.getPlayer(args[0]);
-                        // LiveSystem.hitted.add(p);
                         customPlayer.addHitted(null);
                     }
 
                 } else if (args.length == 2) {
-
                     CustomPlayer p = CustomPlayer.getCustomPlayer(Bukkit.getPlayer(args[0]));
-                    // LiveSystem.hitted.add(p);
                     p.addHitted(null);
 
-                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Woolbattle.getPlugin(), new Runnable() {
-                        @Override
-                        public void run() {
-                            // LiveSystem.hitted.remove(args[0]);
-                            p.removeHitted();
-                            Console.send("Removed " + args[0].toString() + " from hitted.");
-                        }}, 20L *Integer.parseInt(args[1]));
+                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Woolbattle.getPlugin(), () -> {
+                        p.removeHitted();
+                        Console.send("Removed " + args[0] + " from hitted.");
+                    }, 20L * Integer.parseInt(args[1]));
 
                 } else
                     player.sendMessage("Use /hitted <player> <countdown>");
@@ -72,37 +65,17 @@ public class SetHitted implements CommandExecutor, TabCompleter {
                 CustomPlayer player = CustomPlayer.getCustomPlayer(p);
                 if (!player.isHitted())
                     player.addHitted(null);
-                    /*
-                if (!(LiveSystem.hitted.contains(args[0]))) {
-                    Player p = Bukkit.getPlayer(args[0]);
-                    CustomPlayer player = CustomPlayer.getCustomPlayer(p);
-                    player.addHitted(null);
-                    LiveSystem.hitted.add(p);
-                }
-                     */
 
             } else if (args.length == 2) {
                 Player p = Bukkit.getPlayer(args[0]);
                 CustomPlayer player = CustomPlayer.getCustomPlayer(p);
                 if (!player.isHitted()) {
                     player.addHitted(null);
-                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Woolbattle.getPlugin(), new Runnable() {
-                        @Override
-                        public void run() {
-                            player.removeHitted();
-                            Console.send("Removed " + p.getName() + " from hitted.");
-                        }}, 20L *Integer.parseInt(args[1]));
+                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Woolbattle.getPlugin(), () -> {
+                        player.removeHitted();
+                        Console.send("Removed " + p.getName() + " from hitted.");
+                    }, 20L * Integer.parseInt(args[1]));
                 }
-                /*
-                LiveSystem.hitted.add(p);
-                Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Woolbattle.getPlugin(), new Runnable() {
-                    @Override
-                    public void run() {
-                        LiveSystem.hitted.remove(args[0]);
-                        Console.send("Removed " + args[0] + " from hitted.");
-                    }}, 20L *Integer.parseInt(args[1]));
-
-                 */
 
             } else
                 Console.send("Use /hitted <player> <countdown>");

@@ -49,6 +49,11 @@ public class TeamColorManager {
      */
     public static void updatePlayerColor(Player player) {
         if (!player.isOnline()) return;
+        
+        // Initialize scoreboard if not already done
+        if (scoreboard == null) {
+            initialize();
+        }
 
         CustomPlayer customPlayer = CustomPlayer.getCustomPlayer(player);
         Team team = customPlayer != null ? customPlayer.getTeam() : null;
@@ -105,6 +110,11 @@ public class TeamColorManager {
      * Remove a player from all scoreboard teams.
      */
     private static void removeFromAllTeams(Player player) {
+        // Initialize scoreboard if not already done
+        if (scoreboard == null) {
+            initialize();
+        }
+        
         String playerName = player.getName();
         for (org.bukkit.scoreboard.Team team : scoreboard.getTeams()) {
             if (team.getName().startsWith("wb_")) {
@@ -118,6 +128,11 @@ public class TeamColorManager {
      * Useful when resetting the game state.
      */
     public static void clearAll() {
+        // Initialize scoreboard if not already done
+        if (scoreboard == null) {
+            initialize();
+        }
+        
         for (org.bukkit.scoreboard.Team team : scoreboard.getTeams()) {
             if (team.getName().startsWith("wb_")) {
                 for (String entry : team.getEntries()) {

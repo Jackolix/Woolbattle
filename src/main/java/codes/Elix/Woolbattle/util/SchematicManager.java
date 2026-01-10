@@ -374,4 +374,9 @@ public class SchematicManager {
         
         return new Location[]{pos1, pos2};
     }
+    
+    public static int getVoidLevel(String schematicFileName) {
+        FileConfiguration config = getSchematicConfig(schematicFileName);
+        return config.getInt("game.void-level", -25);
+    }
 }

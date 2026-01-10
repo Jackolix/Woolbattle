@@ -107,7 +107,7 @@ public class LobbyItems implements Listener {
         Inventory inventory = Bukkit.createInventory(null, 9*4, Component.text("Verfügbare Perks:", NamedTextColor.DARK_AQUA));
         Items.createPassivePerk(inventory, Material.LADDER, false, "§3Aufzug", "Teleportiere dich mit der Enderperle auf den getroffenen Block!", null, "§6Cooldown: 3 Enderperlen", 0);
         Items.createPassivePerk(inventory, Material.TNT, false, "§3Explodierender Pfeil", "Ein besonderer Pfeil der alles in die Luft sprengt!", "§6Preis: 8 Wolle", "Nach Pfeilen: 8", 1);
-        Items.createPassivePerk(inventory, Material.FISHING_ROD, false, "§3IDK", "IDK", "IDK", "IDK", 2);
+        Items.createPassivePerk(inventory, Material.SPECTRAL_ARROW, false, "§3Geisterpfeil", "Deine Pfeile fliegen durch Blöcke und treffen Spieler dahinter!", null, "§6Nach Pfeilen: 7", 2);
         Items.createPassivePerk(inventory, Material.DISPENSER, false, "§3Pfeilregen", "Lässt einen Pfeilregen herunter prasseln", "§6Preis: 4 Wolle", "§cCooldown: 6", 3);
         Items.createPassivePerk(inventory, Material.IRON_CHESTPLATE, false, "§3Recharger", "Verringert den Cooldown deiner Perks um 20%", "§6Preis: 20 Wolle", null, 4);
         Items.createPassivePerk(inventory, Material.CACTUS, false, "§3Reflector", "Gibt das dir zugefügte Knockback zu 30% an deinen Gegner zurück!", "§6Preis: 15 Wolle", "§6Cooldown: 13", 5);
@@ -397,7 +397,7 @@ public class LobbyItems implements Listener {
             switch (clicked) {
                 case LADDER -> PerkItems.selectPassive(player, "aufzug");
                 case TNT -> PerkItems.selectPassive(player, "exploding_arrow");
-                case FISHING_ROD -> PerkItems.selectPassive(player, "IDK");
+                case SPECTRAL_ARROW -> PerkItems.selectPassive(player, "ghost_arrow");
                 case DISPENSER -> PerkItems.selectPassive(player, "arrowrain");
                 case IRON_CHESTPLATE -> PerkItems.selectPassive(player, "recharger");
                 case CACTUS -> PerkItems.selectPassive(player, "reflector");
@@ -559,7 +559,7 @@ public class LobbyItems implements Listener {
                 switch (Objects.requireNonNull(Pperk).toString()) {
                     case "aufzug" -> Items.createPassivePerk(inventory, Material.LADDER, true, "§3Aufzug", "Teleportiere dich mit der Enderperle auf den getroffenen Block!", null, "§6Cooldown: 3 Enderperlen", 0);
                     case "exploding_arrow" -> Items.createPassivePerk(inventory, Material.TNT, true, "§3Explodierender Pfeil", "Ein besonderer Pfeil der alles in die Luft sprengt!", "§6Preis: 8 Wolle", "Nach Pfeilen: 8", 1);
-                    case "IDK" -> Items.createPassivePerk(inventory, Material.FISHING_ROD, true, "§3IDK", "IDK", "IDK", "IDK", 2);
+                    case "ghost_arrow" -> Items.createPassivePerk(inventory, Material.SPECTRAL_ARROW, true, "§3Geisterpfeil", "Deine Pfeile fliegen durch Blöcke und treffen Spieler dahinter!", null, "§6Nach Pfeilen: 7", 2);
                     case "arrowrain" -> Items.createPassivePerk(inventory, Material.DISPENSER, true, "§3Pfeilregen", "Lässt einen Pfeilegen herunter prasseln", "§6Preis: 4 Wolle", "§cCooldown: 6", 3);
                     case "recharger" -> Items.createPassivePerk(inventory, Material.IRON_CHESTPLATE, true, "§3Recharger", "Verringert den Cooldown deiner Perks um 20%", "§6Preis: 20 Wolle", null, 4);
                     case "reflector" -> Items.createPassivePerk(inventory, Material.CACTUS, true, "§3Reflector", "Gibt das dir zugefügte Knockback zu 30% an deinen Gegner zurück!", "§6Preis: 15 Wolle", "§6Cooldown: 13", 5);
@@ -686,6 +686,7 @@ public class LobbyItems implements Listener {
     static {
         passivePerks.add("§3Aufzug");
         passivePerks.add("§3Explodierender Pfeil");
+        passivePerks.add("§3Geisterpfeil");
         passivePerks.add("§3IDK");
         passivePerks.add("§3Pfeilregen");
         passivePerks.add("§3Recharger");

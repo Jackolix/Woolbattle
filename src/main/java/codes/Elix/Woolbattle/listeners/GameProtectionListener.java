@@ -141,19 +141,9 @@ public class GameProtectionListener implements Listener {
 
         // LiveSystem.hitted.add((Player) event.getEntity());
         CustomPlayer.getCustomPlayer((Player) event.getEntity()).addHitted((Player) causePlayer);
-        IngameScoreboard.update((Player) event.getEntity()); //Debug
 
         event.setDamage(0.00000000001D);
         ((Player) event.getEntity()).setHealth(20);
-
-        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Woolbattle.getPlugin(), new Runnable() {
-            @Override
-            public void run() {
-                //LiveSystem.hitted.remove((Player) event.getEntity());
-                CustomPlayer.getCustomPlayer((Player) event.getEntity()).removeHitted();
-                IngameScoreboard.update((Player) event.getEntity()); //Debug
-            }
-        }, 20 * 10);
     }
 
 
@@ -247,12 +237,12 @@ public class GameProtectionListener implements Listener {
     }
 
     public static void setGamerules() {
-        Bukkit.getWorlds().get(0).setGameRule(GameRules.ADVANCE_TIME, false);
-        Bukkit.getServer().getWorlds().get(0).setTime(5000L);
-        Bukkit.getWorlds().get(0).setGameRule(GameRules.RESPAWN_RADIUS, 0);
-        Bukkit.getWorlds().get(0).setGameRule(GameRules.SHOW_ADVANCEMENT_MESSAGES, false);
-        Bukkit.getWorlds().get(0).setGameRule(GameRules.LIMITED_CRAFTING, true); // Still does show messages - still need PlayerRecipeDiscoverEvent
-        Bukkit.getWorlds().get(0).setDifficulty(Difficulty.PEACEFUL);
+        Bukkit.getWorlds().getFirst().setGameRule(GameRules.ADVANCE_TIME, false);
+        Bukkit.getServer().getWorlds().getFirst().setTime(5000L);
+        Bukkit.getWorlds().getFirst().setGameRule(GameRules.RESPAWN_RADIUS, 0);
+        Bukkit.getWorlds().getFirst().setGameRule(GameRules.SHOW_ADVANCEMENT_MESSAGES, false);
+        Bukkit.getWorlds().getFirst().setGameRule(GameRules.LIMITED_CRAFTING, true); // Still does show messages - still need PlayerRecipeDiscoverEvent
+        Bukkit.getWorlds().getFirst().setDifficulty(Difficulty.PEACEFUL);
     }
 
     public static final Set<Material> toDestroy = new HashSet<Material>();

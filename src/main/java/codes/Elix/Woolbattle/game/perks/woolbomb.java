@@ -1,6 +1,7 @@
 package codes.Elix.Woolbattle.game.perks;
 
 import codes.Elix.Woolbattle.config.PerkConfig;
+import codes.Elix.Woolbattle.game.HelpClasses.CustomPlayer;
 import codes.Elix.Woolbattle.game.PerkHelper;
 import codes.Elix.Woolbattle.items.Items;
 import codes.Elix.Woolbattle.main.Woolbattle;
@@ -41,6 +42,9 @@ public class woolbomb implements Listener {
         TNTPrimed tnt = (TNTPrimed) Bukkit.getWorlds().get(0).spawnEntity(location, EntityType.TNT);
         tnt.setFuseTicks(settings.getFuseTicks());
 
+        // Get the player who threw the woolbomb
+        Player shooter = (Player) event.getEntity().getShooter();
+
         @NotNull Collection<Entity> list = location.getNearbyEntities(settings.getExplosionRadius(), settings.getExplosionRadius(), settings.getExplosionRadius());
         ArrayList<Player> players = new ArrayList<>();
         for (Entity entity : list) {
@@ -54,10 +58,18 @@ public class woolbomb implements Listener {
         //int redux = 5; // You don't want the player flying thousands of blocks
         // player.setVelocity(new Vector(xPos/redux, 0.5, zPos/redux));
 
-        Bukkit.getScheduler().scheduleAsyncDelayedTask(Woolbattle.getPlugin(), new Runnable() {
+        Bukkit.getScheduler().scheduleSyncDelayedTask(Woolbattle.getPlugin(), new Runnable() {
             @Override
             public void run() {
                 for (Player player : players) {
+                    // Mark the player as hit by the shooter
+                    if (shooter != null && !player.equals(shooter)) {
+                        CustomPlayer customPlayer = CustomPlayer.getCustomPlayer(player);
+                        if (customPlayer != null) {
+                            customPlayer.addHitted(shooter);
+                        }
+                    }
+                    
                     int xPos = location.getBlockX() - player.getLocation().getBlockX();
                     int zPos = location.getBlockZ() - player.getLocation().getBlockZ();
                     double redux = 0.25; // You don't want the player flying thousands of blocks

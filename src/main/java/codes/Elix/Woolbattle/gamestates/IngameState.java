@@ -70,6 +70,7 @@ public class IngameState extends GameState {
         BowShoot.enable();
         grabber.enable();
         slime.enable();
+        portal.enable();
 
         for (Player player : Items.perks.keySet())
             if (!player.isOnline())
@@ -83,6 +84,7 @@ public class IngameState extends GameState {
         BowShoot.cleanup();
         EnderPearl.disable();
         mine.disable();
+        portal.disable();
     }
 
     public void setLifes() {

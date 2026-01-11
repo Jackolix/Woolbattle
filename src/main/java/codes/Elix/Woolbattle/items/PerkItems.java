@@ -74,7 +74,7 @@ public class PerkItems {
             case "linebuilder" -> Items.create(player.getInventory(), Material.STICK, "§3Linebuilder", Fperkslot);
             case "minigun" -> Items.create(player.getInventory(), Material.DIAMOND_HORSE_ARMOR, "§3Minigun", Fperkslot);
             case "pfeilbombe" -> Items.create(player.getInventory(), Material.FIRE_CHARGE, "§3Pfeilbombe", Fperkslot);
-            case "portal" -> Items.create(player.getInventory(), Material.OBSIDIAN, "§3Portal", Fperkslot);
+            case "portal" -> Items.create(player.getInventory(), Material.ENDER_EYE, "§5Portal", Fperkslot);
             case "rettungskapsel" -> Items.create(player.getInventory(), Material.RED_STAINED_GLASS, "§3Rettungskapsel", Fperkslot);
             case "rettungsplattform" -> Items.create(player.getInventory(), Material.BLAZE_ROD, "§3Rettungsplattform", Fperkslot);
             case "rope" -> Items.create(player.getInventory(), Material.VINE, "§3Rope", Fperkslot);
@@ -96,7 +96,7 @@ public class PerkItems {
             case "linebuilder" -> Items.create(player.getInventory(), Material.STICK, "§3Linebuilder", Sperkslot);
             case "minigun" -> Items.create(player.getInventory(), Material.DIAMOND_HORSE_ARMOR, "§3Minigun", Sperkslot);
             case "pfeilbombe" -> Items.create(player.getInventory(), Material.FIRE_CHARGE, "§3Pfeilbombe", Sperkslot);
-            case "portal" -> Items.create(player.getInventory(), Material.OBSIDIAN, "§3Portal", Sperkslot);
+            case "portal" -> Items.create(player.getInventory(), Material.ENDER_EYE, "§5Portal", Sperkslot);
             case "rettungskapsel" -> Items.create(player.getInventory(), Material.RED_STAINED_GLASS, "§3Rettungskapsel", Sperkslot);
             case "rettungsplattform" -> Items.create(player.getInventory(), Material.BLAZE_ROD, "§3Rettungsplattform", Sperkslot);
             case "rope" -> Items.create(player.getInventory(), Material.VINE, "§3Rope", Sperkslot);

@@ -177,6 +177,14 @@ public class PerkConfig {
             defaultConfig.set("perks.slime.reference_y", 64);
             defaultConfig.set("perks.slime.platform_duration", 10);
 
+            // Portal defaults
+            defaultConfig.set("perks.portal.cooldown", 16);
+            defaultConfig.set("perks.portal.cooldown_recharger", 12);
+            defaultConfig.set("perks.portal.cost", 6);
+            defaultConfig.set("perks.portal.portal_timeout_seconds", 5);
+            defaultConfig.set("perks.portal.portal_usage_cooldown_seconds", 1);
+            defaultConfig.set("perks.portal.min_distance", 3);
+
             defaultConfig.save(configFile);
         } catch (IOException e) {
             e.printStackTrace();
@@ -276,6 +284,11 @@ public class PerkConfig {
                     settings.setSlimeMaxVelocity(perkSection.getDouble("max_velocity", 2.0));
                     settings.setSlimeReferenceY(perkSection.getInt("reference_y", 64));
                     settings.setSlimePlatformDuration(perkSection.getInt("platform_duration", 10));
+                    break;
+                case "portal":
+                    settings.setPortalTimeoutSeconds(perkSection.getInt("portal_timeout_seconds", 5));
+                    settings.setPortalUsageCooldownSeconds(perkSection.getInt("portal_usage_cooldown_seconds", 1));
+                    settings.setPortalMinDistance(perkSection.getInt("min_distance", 3));
                     break;
             }
 
@@ -390,6 +403,11 @@ public class PerkConfig {
                         config.set("perks." + perkName + ".reference_y", settings.getSlimeReferenceY());
                         config.set("perks." + perkName + ".platform_duration", settings.getSlimePlatformDuration());
                         break;
+                    case "portal":
+                        config.set("perks." + perkName + ".portal_timeout_seconds", settings.getPortalTimeoutSeconds());
+                        config.set("perks." + perkName + ".portal_usage_cooldown_seconds", settings.getPortalUsageCooldownSeconds());
+                        config.set("perks." + perkName + ".min_distance", settings.getPortalMinDistance());
+                        break;
                 }
             }
 
@@ -490,6 +508,11 @@ public class PerkConfig {
         private int slimeReferenceY = 64;
         private int slimePlatformDuration = 10;
 
+        // Portal specific
+        private int portalTimeoutSeconds = 5;
+        private int portalUsageCooldownSeconds = 1;
+        private int portalMinDistance = 3;
+
         public PerkSettings(int cooldown, int cooldownRecharger, int cost, double projectileVelocity) {
             this.cooldown = cooldown;
             this.cooldownRecharger = cooldownRecharger;
@@ -547,6 +570,9 @@ public class PerkConfig {
         public double getSlimeMaxVelocity() { return slimeMaxVelocity; }
         public int getSlimeReferenceY() { return slimeReferenceY; }
         public int getSlimePlatformDuration() { return slimePlatformDuration; }
+        public int getPortalTimeoutSeconds() { return portalTimeoutSeconds; }
+        public int getPortalUsageCooldownSeconds() { return portalUsageCooldownSeconds; }
+        public int getPortalMinDistance() { return portalMinDistance; }
 
         // Setters
         public void setCooldown(int cooldown) { this.cooldown = cooldown; }
@@ -598,5 +624,8 @@ public class PerkConfig {
         public void setSlimeMaxVelocity(double slimeMaxVelocity) { this.slimeMaxVelocity = slimeMaxVelocity; }
         public void setSlimeReferenceY(int slimeReferenceY) { this.slimeReferenceY = slimeReferenceY; }
         public void setSlimePlatformDuration(int slimePlatformDuration) { this.slimePlatformDuration = slimePlatformDuration; }
+        public void setPortalTimeoutSeconds(int portalTimeoutSeconds) { this.portalTimeoutSeconds = portalTimeoutSeconds; }
+        public void setPortalUsageCooldownSeconds(int portalUsageCooldownSeconds) { this.portalUsageCooldownSeconds = portalUsageCooldownSeconds; }
+        public void setPortalMinDistance(int portalMinDistance) { this.portalMinDistance = portalMinDistance; }
     }
 }

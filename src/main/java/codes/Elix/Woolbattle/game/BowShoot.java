@@ -14,6 +14,7 @@ import org.bukkit.Particle;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
@@ -76,51 +77,57 @@ public class BowShoot implements Listener {
     }
     
     private void handleArrowShoot(Player player, AbstractArrow projectile) {
-        if (bomb.containsKey(player)) {
-            int amount = bomb.get(player);
-            amount++;
-            if (amount >= 8) {
-                projectile.setMetadata("bomb", new FixedMetadataValue(Woolbattle.getPlugin(), "keineAhnungWiesoIchDasBrauch"));
-                bomb.put(player, 0);
-            } else
-                bomb.put(player, amount);
-        }
+        // Check if this is a minigun arrow - if so, don't count it towards passive perk rotations
+        boolean isMinigunArrow = projectile.hasMetadata("minigun_arrow");
         
-        // Ghost Arrow passive perk - activates every 7 arrows
-        if (ghostArrow.containsKey(player)) {
-            int amount = ghostArrow.get(player);
-            amount++;
-            if (amount >= 7) {
-                projectile.setMetadata("ghost_arrow", new FixedMetadataValue(Woolbattle.getPlugin(), player.getName()));
-                ghostArrow.put(player, 0);
-                
-                // Make the ghost arrow visually distinct
-                projectile.setGlowing(true);
-                if (projectile instanceof Arrow arrow) {
-                    arrow.setColor(org.bukkit.Color.fromRGB(138, 43, 226)); // Purple/violet color
-                }
-                
-                // Store the initial velocity from bow shoot - this is the most accurate!
-                Vector initialVelocity = projectile.getVelocity().clone();
-                projectile.setMetadata("ghost_velocity", new FixedMetadataValue(Woolbattle.getPlugin(), initialVelocity));
-                
-                // Create task to show particle trail
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        if (!projectile.isValid() || projectile.isDead() || projectile.isOnGround()) {
-                            this.cancel();
-                            return;
-                        }
-                        
-                        // Spawn purple particle trail
-                        player.getWorld().spawnParticle(Particle.WITCH, projectile.getLocation(), 1, 0.05, 0.05, 0.05, 0);
+        if (!isMinigunArrow) {
+            // Only count non-minigun arrows for passive perk rotation
+            if (bomb.containsKey(player)) {
+                int amount = bomb.get(player);
+                amount++;
+                if (amount >= 8) {
+                    projectile.setMetadata("bomb", new FixedMetadataValue(Woolbattle.getPlugin(), "keineAhnungWiesoIchDasBrauch"));
+                    bomb.put(player, 0);
+                } else
+                    bomb.put(player, amount);
+            }
+            
+            // Ghost Arrow passive perk - activates every 7 arrows
+            if (ghostArrow.containsKey(player)) {
+                int amount = ghostArrow.get(player);
+                amount++;
+                if (amount >= 7) {
+                    projectile.setMetadata("ghost_arrow", new FixedMetadataValue(Woolbattle.getPlugin(), player.getName()));
+                    ghostArrow.put(player, 0);
+                    
+                    // Make the ghost arrow visually distinct
+                    projectile.setGlowing(true);
+                    if (projectile instanceof Arrow arrow) {
+                        arrow.setColor(org.bukkit.Color.fromRGB(138, 43, 226)); // Purple/violet color
                     }
-                }.runTaskTimer(Woolbattle.getPlugin(), 0L, 2L);
-            } else {
-                ghostArrow.put(player, amount);
-                // Show arrow counter to player
-                player.sendActionBar("§7Ghost Arrow: §d" + amount + "§8/§d7");
+                    
+                    // Store the initial velocity from bow shoot - this is the most accurate!
+                    Vector initialVelocity = projectile.getVelocity().clone();
+                    projectile.setMetadata("ghost_velocity", new FixedMetadataValue(Woolbattle.getPlugin(), initialVelocity));
+                    
+                    // Create task to show particle trail
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            if (!projectile.isValid() || projectile.isDead() || projectile.isOnGround()) {
+                                this.cancel();
+                                return;
+                            }
+                            
+                            // Spawn purple particle trail
+                            player.getWorld().spawnParticle(Particle.WITCH, projectile.getLocation(), 1, 0.05, 0.05, 0.05, 0);
+                        }
+                    }.runTaskTimer(Woolbattle.getPlugin(), 0L, 2L);
+                } else {
+                    ghostArrow.put(player, amount);
+                    // Show arrow counter to player
+                    player.sendActionBar("§7Ghost Arrow: §d" + amount + "§8/§d7");
+                }
             }
         }
         
@@ -286,6 +293,32 @@ public class BowShoot implements Listener {
     }
 
     @EventHandler
+    public void onArrowDamage(EntityDamageByEntityEvent event) {
+        // Check if this is an arrow hitting a player
+        if (!(event.getDamager() instanceof Arrow arrow)) return;
+        if (!(event.getEntity() instanceof Player victim)) return;
+        
+        // Check if this is a minigun arrow
+        if (!arrow.hasMetadata("minigun_arrow")) return;
+        
+        // Reduce knockback for minigun arrows
+        // Arrow knockback is applied through the engine after this event,
+        // so we'll apply a corrective velocity adjustment
+        Bukkit.getScheduler().runTaskLater(Woolbattle.getPlugin(), () -> {
+            if (victim.isValid() && !victim.isDead()) {
+                // Get current velocity after arrow knockback
+                Vector velocity = victim.getVelocity();
+                
+                // Apply knockback reduction (70% of normal = 30% less knockback)
+                double reductionFactor = 1.0 - Minigun.getKnockbackReduction();
+                velocity.multiply(reductionFactor);
+                
+                victim.setVelocity(velocity);
+            }
+        }, 0L);
+    }
+
+    @EventHandler
     public void onEntityExplode(ExplosionPrimeEvent event){
         if(event.getEntity().getType() == EntityType.TNT){
             if (!event.getEntity().hasMetadata("exploding_arrow")) return;
@@ -306,6 +339,7 @@ public class BowShoot implements Listener {
     public static void enable() {
         bomb.clear();
         ghostArrow.clear();
+        Minigun.enable();
         for (Player player : Bukkit.getOnlinePlayers()) {
             codes.Elix.Woolbattle.game.HelpClasses.Team team = CustomPlayer.getCustomPlayer(player).getTeam();
             if (team == null || Objects.equals(team.getName(), "spectator")) continue;
@@ -320,6 +354,7 @@ public class BowShoot implements Listener {
         arrows.clear();
         bomb.clear();
         ghostArrow.clear();
+        Minigun.cleanup();
         if(globalParticleTask != null && !globalParticleTask.isCancelled()){
             globalParticleTask.cancel();
             globalParticleTask = null;

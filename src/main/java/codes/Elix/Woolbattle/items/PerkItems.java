@@ -116,6 +116,7 @@ public class PerkItems {
             case "ghost_arrow" -> Items.createPassivePerk(player.getInventory(), Material.SPECTRAL_ARROW, "§3Geisterpfeil", Pperkslot);
             case "IDK" -> Items.createPassivePerk(player.getInventory(), Material.FISHING_ROD, "§3IDK", Pperkslot);
             case "arrowrain" -> Items.createPassivePerk(player.getInventory(), Material.DISPENSER, "§3Pfeilregen", Pperkslot);
+            case "minigun" -> Items.createPassivePerk(player.getInventory(), Material.DIAMOND_HOE, "§3Minigun", Pperkslot);
             case "recharger" -> Items.createPassivePerk(player.getInventory(), Material.IRON_CHESTPLATE, "§3Recharger", Pperkslot);
             case "reflector" -> Items.createPassivePerk(player.getInventory(), Material.CACTUS, "§3Reflector", Pperkslot);
             case "rocket_jump" -> Items.createPassivePerk(player.getInventory(), Material.RABBIT_FOOT, "§3Rocket Jump", Pperkslot);

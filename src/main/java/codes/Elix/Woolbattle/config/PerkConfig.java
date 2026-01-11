@@ -15,9 +15,11 @@ public class PerkConfig {
     private FileConfiguration config;
     private File configFile;
     private Map<String, PerkSettings> perkSettings;
+    private Map<String, PassivePerkSettings> passivePerkSettings;
     
     private PerkConfig() {
         this.perkSettings = new HashMap<>();
+        this.passivePerkSettings = new HashMap<>();
         loadConfig();
     }
     
@@ -37,6 +39,7 @@ public class PerkConfig {
 
         config = YamlConfiguration.loadConfiguration(configFile);
         loadPerkSettings();
+        loadPassivePerkSettings();
     }
 
     private void createDefaultConfig() {
@@ -177,17 +180,49 @@ public class PerkConfig {
             defaultConfig.set("perks.slime.reference_y", 64);
             defaultConfig.set("perks.slime.platform_duration", 10);
 
-            // Portal defaults
-            defaultConfig.set("perks.portal.cooldown", 16);
-            defaultConfig.set("perks.portal.cooldown_recharger", 12);
-            defaultConfig.set("perks.portal.cost", 6);
-            defaultConfig.set("perks.portal.portal_timeout_seconds", 5);
-            defaultConfig.set("perks.portal.portal_usage_cooldown_seconds", 1);
-            defaultConfig.set("perks.portal.min_distance", 3);
+             // Portal defaults
+             defaultConfig.set("perks.portal.cooldown", 16);
+             defaultConfig.set("perks.portal.cooldown_recharger", 12);
+             defaultConfig.set("perks.portal.cost", 6);
+             defaultConfig.set("perks.portal.portal_timeout_seconds", 5);
+             defaultConfig.set("perks.portal.portal_usage_cooldown_seconds", 1);
+             defaultConfig.set("perks.portal.min_distance", 3);
+             
+             // Minigun passive perk defaults
+             defaultConfig.set("passives.minigun.trigger_arrows", 4);
+             defaultConfig.set("passives.minigun.knockback_reduction", 0.3);
+             defaultConfig.set("passives.minigun.velocity_reduction", 0.3);
+             defaultConfig.set("passives.minigun.duration_ticks", 40);
+             defaultConfig.set("passives.minigun.fire_interval_ticks", 3);
+             defaultConfig.set("passives.minigun.arrows_to_fire", 14);
 
-            defaultConfig.save(configFile);
+             defaultConfig.save(configFile);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+    
+    private void loadPassivePerkSettings() {
+        ConfigurationSection passivesSection = config.getConfigurationSection("passives");
+        if (passivesSection == null) return;
+        
+        for (String passiveName : passivesSection.getKeys(false)) {
+            ConfigurationSection passiveSection = passivesSection.getConfigurationSection(passiveName);
+            if (passiveSection == null) continue;
+            
+            PassivePerkSettings settings = new PassivePerkSettings();
+            
+            // Load minigun settings
+            if (passiveName.equalsIgnoreCase("minigun")) {
+                settings.setTriggerArrows(passiveSection.getInt("trigger_arrows", 4));
+                settings.setKnockbackReduction(passiveSection.getDouble("knockback_reduction", 0.3));
+                settings.setVelocityReduction(passiveSection.getDouble("velocity_reduction", 0.3));
+                settings.setDurationTicks(passiveSection.getInt("duration_ticks", 40));
+                settings.setFireIntervalTicks(passiveSection.getInt("fire_interval_ticks", 3));
+                settings.setArrowsToFire(passiveSection.getInt("arrows_to_fire", 14));
+            }
+            
+            passivePerkSettings.put(passiveName.toLowerCase(), settings);
         }
     }
     
@@ -300,6 +335,10 @@ public class PerkConfig {
         return perkSettings.getOrDefault(perkName.toLowerCase(), getDefaultSettings());
     }
     
+    public PassivePerkSettings getPassivePerkSettings(String passiveName) {
+        return passivePerkSettings.getOrDefault(passiveName.toLowerCase(), new PassivePerkSettings());
+    }
+    
     private PerkSettings getDefaultSettings() {
         return new PerkSettings(5, 3, 5, 1.5);
     }
@@ -307,8 +346,10 @@ public class PerkConfig {
     public void reloadConfig() {
         config = YamlConfiguration.loadConfiguration(configFile);
         perkSettings.clear();
+        passivePerkSettings.clear();
         loadPerkSettings();
-        System.out.println("[PERK CONFIG] Configuration reloaded, loaded " + perkSettings.size() + " perk settings");
+        loadPassivePerkSettings();
+        System.out.println("[PERK CONFIG] Configuration reloaded, loaded " + perkSettings.size() + " perk settings and " + passivePerkSettings.size() + " passive perk settings");
     }
     
     public void saveConfig() {
@@ -407,6 +448,25 @@ public class PerkConfig {
                         config.set("perks." + perkName + ".portal_timeout_seconds", settings.getPortalTimeoutSeconds());
                         config.set("perks." + perkName + ".portal_usage_cooldown_seconds", settings.getPortalUsageCooldownSeconds());
                         config.set("perks." + perkName + ".min_distance", settings.getPortalMinDistance());
+                        break;
+                }
+            }
+            
+            // Save passive perk settings
+            for (Map.Entry<String, PassivePerkSettings> entry : passivePerkSettings.entrySet()) {
+                String passiveName = entry.getKey();
+                PassivePerkSettings settings = entry.getValue();
+                
+                System.out.println("[PERK CONFIG] Saving passive perk: " + passiveName);
+                
+                switch (passiveName.toLowerCase()) {
+                    case "minigun":
+                        config.set("passives." + passiveName + ".trigger_arrows", settings.getTriggerArrows());
+                        config.set("passives." + passiveName + ".knockback_reduction", settings.getKnockbackReduction());
+                        config.set("passives." + passiveName + ".velocity_reduction", settings.getVelocityReduction());
+                        config.set("passives." + passiveName + ".duration_ticks", settings.getDurationTicks());
+                        config.set("passives." + passiveName + ".fire_interval_ticks", settings.getFireIntervalTicks());
+                        config.set("passives." + passiveName + ".arrows_to_fire", settings.getArrowsToFire());
                         break;
                 }
             }
@@ -627,5 +687,33 @@ public class PerkConfig {
         public void setPortalTimeoutSeconds(int portalTimeoutSeconds) { this.portalTimeoutSeconds = portalTimeoutSeconds; }
         public void setPortalUsageCooldownSeconds(int portalUsageCooldownSeconds) { this.portalUsageCooldownSeconds = portalUsageCooldownSeconds; }
         public void setPortalMinDistance(int portalMinDistance) { this.portalMinDistance = portalMinDistance; }
+    }
+    
+    public static class PassivePerkSettings {
+        // Minigun settings
+        private int triggerArrows = 4;
+        private double knockbackReduction = 0.3;
+        private double velocityReduction = 0.3;
+        private int durationTicks = 40;
+        private int fireIntervalTicks = 3;
+        private int arrowsToFire = 14;
+        
+        public PassivePerkSettings() {}
+        
+        // Getters
+        public int getTriggerArrows() { return triggerArrows; }
+        public double getKnockbackReduction() { return knockbackReduction; }
+        public double getVelocityReduction() { return velocityReduction; }
+        public int getDurationTicks() { return durationTicks; }
+        public int getFireIntervalTicks() { return fireIntervalTicks; }
+        public int getArrowsToFire() { return arrowsToFire; }
+        
+        // Setters
+        public void setTriggerArrows(int triggerArrows) { this.triggerArrows = triggerArrows; }
+        public void setKnockbackReduction(double knockbackReduction) { this.knockbackReduction = knockbackReduction; }
+        public void setVelocityReduction(double velocityReduction) { this.velocityReduction = velocityReduction; }
+        public void setDurationTicks(int durationTicks) { this.durationTicks = durationTicks; }
+        public void setFireIntervalTicks(int fireIntervalTicks) { this.fireIntervalTicks = fireIntervalTicks; }
+        public void setArrowsToFire(int arrowsToFire) { this.arrowsToFire = arrowsToFire; }
     }
 }

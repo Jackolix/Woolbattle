@@ -150,6 +150,17 @@ perks:
     reference_y: 64                # Y-level where max velocity is applied
     platform_duration: 10          # How long platform stays (seconds)
 
+# Passive Perks Configuration
+passives:
+  # Minigun Passive Perk - Auto-fires arrows after every Nth shot
+  minigun:
+    trigger_arrows: 4              # Number of arrows before minigun activates
+    knockback_reduction: 0.3       # Knockback reduction for minigun arrows (0.3 = 30% less)
+    velocity_reduction: 0.3        # Velocity reduction for minigun arrows (0.3 = 30% less speed/distance)
+    duration_ticks: 40             # How long minigun effect lasts (40 ticks = 2 seconds)
+    fire_interval_ticks: 3         # Ticks between each minigun arrow (3 ticks = 0.15 seconds)
+    arrows_to_fire: 14             # Total number of arrows fired during minigun effect
+
 # Global Perk Settings
 global:
   # Passive Perks

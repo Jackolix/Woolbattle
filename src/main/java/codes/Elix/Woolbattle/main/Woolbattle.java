@@ -106,6 +106,7 @@ public class Woolbattle extends JavaPlugin {
         pluginManager.registerEvents(new LobbyItems(), this);
         pluginManager.registerEvents(new VoidTeleport(), this);
         pluginManager.registerEvents(new BowShoot(), this);
+        pluginManager.registerEvents(new Minigun(), this);
         pluginManager.registerEvents(chat, this);
         pluginManager.registerEvents(new codes.Elix.Woolbattle.gui.PerkConfigGUI(), this);
         pluginManager.registerEvents(new codes.Elix.Woolbattle.gui.GameSettingsGUI(), this);

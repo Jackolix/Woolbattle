@@ -118,7 +118,8 @@ public class LobbyItems implements Listener {
         Items.createPassivePerk(inventory, Material.ARROW, false, "§3SlowArrow", "Verlangsame den Gegner!", "§6Preis: 2 Wolle", "§6Nach Pfeilen: 3", 9);
         Items.createPassivePerk(inventory, Material.SPIDER_SPAWN_EGG,false, "§3Spinne", "Klettere wie eine Spinne an einer Wand hoch!", "§6Preis: 2 Wolle je Sekunde klettern", null, 10); //TODO Falscher Byte Code
         Items.createPassivePerk(inventory, Material.DIAMOND_BOOTS, false, "§3Stomper", "Katapultiert alle Gegner in deiner Nähe nach einem Doppelsprung weg!", "§6Preis: 10 Wolle", "§6Nach Sprüngen: 2", 11);
-        Items.create(inventory, Material.GOLDEN_HOE,"§3SlimePlattform", 12);
+        Items.createPassivePerk(inventory, Material.DIAMOND_HOE, false, "§3Minigun", "Schießt automatisch Pfeile nach jedem 4. Schuss!", "§6Preis: 12 Wolle", "§6Nach Pfeilen: 4", 12);
+        Items.create(inventory, Material.GOLDEN_HOE,"§3SlimePlattform", 13);
         Items.create(inventory, Material.DARK_OAK_DOOR, false, "§3Back", 35);
         checkSelectet(player, inventory);
     }
@@ -402,10 +403,11 @@ public class LobbyItems implements Listener {
                 case CACTUS -> PerkItems.selectPassive(player, "reflector");
                 case RABBIT_FOOT -> PerkItems.selectPassive(player, "rocket_jump");
                 case GOLD_INGOT -> PerkItems.selectPassive(player, "portal");
-                case BLAZE_ROD -> PerkItems.selectPassive(player, "shockarrow");
+                case BLAZE_POWDER -> PerkItems.selectPassive(player, "shockarrow");
                 case ARROW -> PerkItems.selectPassive(player, "slowarrow");
                 case SPIDER_SPAWN_EGG -> PerkItems.selectPassive(player, "spider");
                 case DIAMOND_BOOTS -> PerkItems.selectPassive(player, "stomper");
+                case DIAMOND_HOE -> PerkItems.selectPassive(player, "minigun");
                 case GOLDEN_HOE -> PerkItems.selectPassive(player, "slimeplattform");
                 case DARK_OAK_DOOR -> {
                     PerkVorInventory(player);
@@ -562,11 +564,12 @@ public class LobbyItems implements Listener {
                     case "reflector" -> Items.createPassivePerk(inventory, Material.CACTUS, true, "§3Reflector", "Gibt das dir zugefügte Knockback zu 30% an deinen Gegner zurück!", "§6Preis: 15 Wolle", "§6Cooldown: 13", 5);
                     case "rocket_jump" -> Items.createPassivePerk(inventory, Material.RABBIT_FOOT, true, "§3Rocket Jump", "Lässt dich einen höheren Doppelsprung machen!", "§6Preis: 14 Wolle", null, 6);
                     case "portal" -> Items.createPassivePerk(inventory, Material.GOLD_INGOT, true, "§3IDK", "", "§6Preis: 8 Wolle", "§6Cooldown: 2", 7);
-                    case "shockarrow" -> Items.create(inventory, Material.RED_STAINED_GLASS, true, "§3Rettungskapsel", "Umhüllt dich mit Blöcken", 15, 30, 8);
+                    case "shockarrow" -> Items.create(inventory, Material.BLAZE_POWDER, true, "§3Schock Pfeil", "Blockiere die Perks deines Gegners!", 10, 8, 8);
                     case "slowarrow" -> Items.createPassivePerk(inventory, Material.ARROW, true, "§3SlowArrow", "Verlangsame den Gegener!", "§6Preis: 2 Wolle", "§6Nach Pfeilen: 3", 9);
                     case "spider" -> Items.createPassivePerk(inventory, Material.SPIDER_SPAWN_EGG, true, "§3Spinne", "Klettere wie eine Spinne an einer Wand hoch!", "§6Preis: 2 Wolle je Sekunde klettern", null, 10);
                     case "stomper" -> Items.createPassivePerk(inventory, Material.DIAMOND_BOOTS, true, "§3Stomper", "Katapultiert alle Gegner in deiner Nähe nach einem Doppelsprung weg!", "§6Preis: 10 Wolle", "§6Nach Sprüngen: 2", 11);
-                    case "slimeplattform" -> Items.create(inventory, Material.GOLDEN_HOE, true, "§3SlimePlattform", 12);
+                    case "minigun" -> Items.createPassivePerk(inventory, Material.DIAMOND_HOE, true, "§3Minigun", "Schießt automatisch Pfeile nach jedem 4. Schuss!", "§6Preis: 12 Wolle", "§6Nach Pfeilen: 4", 12);
+                    case "slimeplattform" -> Items.create(inventory, Material.GOLDEN_HOE, true, "§3SlimePlattform", 13);
                     default -> Console.send("[NO_PASSIVE_PERK]: " + player.getName());
                 }
             }
@@ -686,11 +689,12 @@ public class LobbyItems implements Listener {
         passivePerks.add("§3Geisterpfeil");
         passivePerks.add("§3IDK");
         passivePerks.add("§3Pfeilregen");
+        passivePerks.add("§3Minigun");
         passivePerks.add("§3Recharger");
         passivePerks.add("§3Reflector");
         passivePerks.add("§3Rocket Jump");
         passivePerks.add("§3IDK1");
-        passivePerks.add("§3Rettungskapsel");
+        passivePerks.add("§3Schock Pfeil");
         passivePerks.add("§3SlowArrow");
         passivePerks.add("§3Spinne");
         passivePerks.add("§3Stomper");

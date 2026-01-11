@@ -68,6 +68,7 @@ public class PerkConfigGUI implements Listener {
 
         addPerkConfigItem(inventory, 28, Material.ENDER_PEARL, "EnderPearl", "Configure enderpearl settings");
         addPerkConfigItem(inventory, 29, Material.FEATHER, "DoubleJump", "Configure double jump settings");
+        addPerkConfigItem(inventory, 30, Material.DIAMOND_HOE, "Minigun", "Configure minigun passive perk");
 
         // Control buttons
         addControlButton(inventory, 45, Material.EMERALD_BLOCK, 
@@ -129,6 +130,12 @@ public class PerkConfigGUI implements Listener {
     }
     
     public static void openPerkConfigGUI(Player player, String perkName) {
+        // Handle passive perks separately
+        if (perkName.equalsIgnoreCase("minigun")) {
+            openPassivePerkConfigGUI(player, perkName);
+            return;
+        }
+        
         PerkConfig.PerkSettings settings = PerkConfig.getInstance().getPerkSettings(perkName.toLowerCase());
         
         Inventory inventory = Bukkit.createInventory(null, 54, Component.text("Configure " + perkName, NamedTextColor.DARK_PURPLE));
@@ -250,6 +257,44 @@ public class PerkConfigGUI implements Listener {
         player.openInventory(inventory);
     }
     
+    public static void openPassivePerkConfigGUI(Player player, String passiveName) {
+        PerkConfig.PassivePerkSettings settings = PerkConfig.getInstance().getPassivePerkSettings(passiveName.toLowerCase());
+        
+        Inventory inventory = Bukkit.createInventory(null, 54, Component.text("Configure " + passiveName, NamedTextColor.DARK_PURPLE));
+        
+        // Minigun-specific settings
+        if (passiveName.equalsIgnoreCase("minigun")) {
+            addConfigSetting(inventory, 10, Material.ARROW, "Trigger Arrows", String.valueOf(settings.getTriggerArrows()), "trigger_arrows");
+            addConfigSetting(inventory, 11, Material.FEATHER, "Knockback Reduction", String.valueOf(settings.getKnockbackReduction()), "knockback_reduction");
+            addConfigSetting(inventory, 12, Material.ELYTRA, "Velocity Reduction", String.valueOf(settings.getVelocityReduction()), "velocity_reduction");
+            addConfigSetting(inventory, 13, Material.CLOCK, "Duration (ticks)", String.valueOf(settings.getDurationTicks()), "duration_ticks");
+            addConfigSetting(inventory, 14, Material.REDSTONE, "Fire Interval (ticks)", String.valueOf(settings.getFireIntervalTicks()), "fire_interval_ticks");
+            addConfigSetting(inventory, 15, Material.SPECTRAL_ARROW, "Arrows To Fire", String.valueOf(settings.getArrowsToFire()), "arrows_to_fire");
+        }
+        
+        // Control buttons
+        addControlButton(inventory, 45, Material.GREEN_WOOL, 
+            Component.text("Save & Apply", NamedTextColor.GREEN).decorate(net.kyori.adventure.text.format.TextDecoration.BOLD),
+            "Save and apply changes");
+        addControlButton(inventory, 53, Material.BLUE_WOOL, 
+            Component.text("Back to Main Menu", NamedTextColor.AQUA).decorate(net.kyori.adventure.text.format.TextDecoration.BOLD),
+            "Return to perk selection");
+        
+        // Decorative items
+        for (int i : Arrays.asList(0,1,2,3,4,5,6,7,8,9,17,18,26,27,35,36,44,47,48,49,50,51,52)) {
+            if (inventory.getItem(i) == null) {
+                ItemStack glass = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
+                ItemMeta meta = glass.getItemMeta();
+                meta.displayName(Component.text(" "));
+                meta.addItemFlags(ItemFlag.HIDE_DESTROYS);
+                glass.setItemMeta(meta);
+                inventory.setItem(i, glass);
+            }
+        }
+        
+        player.openInventory(inventory);
+    }
+    
     private static void addConfigSetting(Inventory inventory, int slot, Material material, String displayName, String currentValue, String settingKey) {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
@@ -340,6 +385,7 @@ public class PerkConfigGUI implements Listener {
             case STONE_PRESSURE_PLATE -> openPerkConfigGUI(player, "Mine");
             case TRIPWIRE_HOOK -> openPerkConfigGUI(player, "Blink");
             case SLIME_BALL -> openPerkConfigGUI(player, "Slime");
+            case DIAMOND_HOE -> openPerkConfigGUI(player, "Minigun");
             default -> System.out.println("[PERK CONFIG GUI] No handler for material: " + type);
         }
     }
@@ -406,6 +452,12 @@ public class PerkConfigGUI implements Listener {
             System.out.println("[PERK CONFIG GUI] Player: " + player.getName());
             System.out.println("[PERK CONFIG GUI] Perk: " + perkName + ", Setting: " + settingKey + ", Change: " + change);
             
+            // Handle passive perks
+            if (perkName.equalsIgnoreCase("minigun")) {
+                modifyPassivePerkSetting(player, perkName, settingKey, change);
+                return;
+            }
+            
             PerkConfig.PerkSettings settings = PerkConfig.getInstance().getPerkSettings(perkName.toLowerCase());
             System.out.println("[PERK CONFIG GUI] Got settings object: " + settings.hashCode());
             
@@ -415,9 +467,9 @@ public class PerkConfigGUI implements Listener {
             double newValue = Math.max(0, currentValue + change);
             
             // For double values, ensure reasonable precision
-            if (settingKey.contains("velocity") || settingKey.contains("multiplier") || 
+            if (settingKey.contains("velocity") || settingKey.contains("multiplier") || settingKey.contains("reduction") ||
                 settingKey.equals("slime_min_velocity") || settingKey.equals("slime_max_velocity")) {
-                newValue = Math.round(newValue * 10.0) / 10.0; // Round to 1 decimal
+                newValue = Math.round(newValue * 100.0) / 100.0; // Round to 2 decimals
             } else {
                 newValue = Math.round(newValue); // Round to integer
             }
@@ -440,6 +492,59 @@ public class PerkConfigGUI implements Listener {
         } catch (Exception e) {
             player.sendMessage(Component.text("Error modifying setting: " + e.getMessage(), NamedTextColor.RED));
             e.printStackTrace();
+        }
+    }
+    
+    private void modifyPassivePerkSetting(Player player, String passiveName, String settingKey, int change) {
+        try {
+            PerkConfig.PassivePerkSettings settings = PerkConfig.getInstance().getPassivePerkSettings(passiveName.toLowerCase());
+            
+            double currentValue = getCurrentPassiveSettingValue(settings, settingKey);
+            double newValue = Math.max(0, currentValue + change);
+            
+            // For double values, ensure reasonable precision
+            if (settingKey.contains("reduction")) {
+                newValue = Math.min(1.0, Math.round(newValue * 100.0) / 100.0); // Cap at 1.0 (100%), round to 2 decimals
+                change = (int) Math.signum(change); // Make change smaller for percentages
+                newValue = Math.max(0, currentValue + (change * 0.05)); // 5% increments
+                newValue = Math.min(1.0, Math.round(newValue * 100.0) / 100.0);
+            } else {
+                newValue = Math.round(newValue); // Round to integer
+            }
+            
+            setPassiveSettingValue(settings, settingKey, newValue);
+            
+            player.sendMessage(Component.text("Updated " + settingKey + " to " + newValue, NamedTextColor.GREEN));
+            
+            // Refresh the GUI
+            Bukkit.getScheduler().runTask(Woolbattle.getPlugin(), () -> openPassivePerkConfigGUI(player, passiveName));
+            
+        } catch (Exception e) {
+            player.sendMessage(Component.text("Error modifying setting: " + e.getMessage(), NamedTextColor.RED));
+            e.printStackTrace();
+        }
+    }
+    
+    private double getCurrentPassiveSettingValue(PerkConfig.PassivePerkSettings settings, String settingKey) {
+        return switch (settingKey) {
+            case "trigger_arrows" -> settings.getTriggerArrows();
+            case "knockback_reduction" -> settings.getKnockbackReduction();
+            case "velocity_reduction" -> settings.getVelocityReduction();
+            case "duration_ticks" -> settings.getDurationTicks();
+            case "fire_interval_ticks" -> settings.getFireIntervalTicks();
+            case "arrows_to_fire" -> settings.getArrowsToFire();
+            default -> 0;
+        };
+    }
+    
+    private void setPassiveSettingValue(PerkConfig.PassivePerkSettings settings, String settingKey, double value) {
+        switch (settingKey) {
+            case "trigger_arrows" -> settings.setTriggerArrows((int) value);
+            case "knockback_reduction" -> settings.setKnockbackReduction(value);
+            case "velocity_reduction" -> settings.setVelocityReduction(value);
+            case "duration_ticks" -> settings.setDurationTicks((int) value);
+            case "fire_interval_ticks" -> settings.setFireIntervalTicks((int) value);
+            case "arrows_to_fire" -> settings.setArrowsToFire((int) value);
         }
     }
     
@@ -585,11 +690,26 @@ public class PerkConfigGUI implements Listener {
                     return;
                 }
                 
-                PerkConfig.PerkSettings settings = PerkConfig.getInstance().getPerkSettings(context.perkName.toLowerCase());
-                setSettingValue(settings, settingKey, value);
-                
-                player.sendMessage(Component.text("Updated " + settingKey + " to " + value, NamedTextColor.GREEN));
-                Bukkit.getScheduler().runTask(Woolbattle.getPlugin(), () -> openPerkConfigGUI(player, context.perkName));
+                // Handle passive perks
+                if (context.perkName.equalsIgnoreCase("minigun")) {
+                    PerkConfig.PassivePerkSettings settings = PerkConfig.getInstance().getPassivePerkSettings(context.perkName.toLowerCase());
+                    
+                    // Cap reduction values at 1.0 (100%)
+                    if (settingKey.contains("reduction")) {
+                        value = Math.min(1.0, value);
+                    }
+                    
+                    setPassiveSettingValue(settings, settingKey, value);
+                    
+                    player.sendMessage(Component.text("Updated " + settingKey + " to " + value, NamedTextColor.GREEN));
+                    Bukkit.getScheduler().runTask(Woolbattle.getPlugin(), () -> openPassivePerkConfigGUI(player, context.perkName));
+                } else {
+                    PerkConfig.PerkSettings settings = PerkConfig.getInstance().getPerkSettings(context.perkName.toLowerCase());
+                    setSettingValue(settings, settingKey, value);
+                    
+                    player.sendMessage(Component.text("Updated " + settingKey + " to " + value, NamedTextColor.GREEN));
+                    Bukkit.getScheduler().runTask(Woolbattle.getPlugin(), () -> openPerkConfigGUI(player, context.perkName));
+                }
                 
             } catch (NumberFormatException e) {
                 player.sendMessage(Component.text("Invalid number format! Please enter a valid number.", NamedTextColor.RED));

@@ -67,9 +67,15 @@ public class GameSettingsGUI implements Listener {
         addLinkItem(inventory, 16, Material.COMMAND_BLOCK, "Perk Configuration", "Open Perk Config GUI");
         
         // Control buttons
-        Items.create(inventory, Material.EMERALD_BLOCK, "§a§lReload Config", 45);
-        Items.create(inventory, Material.BARRIER, "§c§lReset All to Defaults", 46);
-        Items.create(inventory, Material.REDSTONE_BLOCK, "§c§lClose", 53);
+        addControlButton(inventory, 45, Material.EMERALD_BLOCK, 
+            Component.text("Reload Config", NamedTextColor.GREEN).decorate(net.kyori.adventure.text.format.TextDecoration.BOLD),
+            "Reload settings from file");
+        addControlButton(inventory, 46, Material.BARRIER, 
+            Component.text("Reset All to Defaults", NamedTextColor.RED).decorate(net.kyori.adventure.text.format.TextDecoration.BOLD),
+            "Reset all settings to defaults");
+        addControlButton(inventory, 53, Material.REDSTONE_BLOCK, 
+            Component.text("Close", NamedTextColor.RED).decorate(net.kyori.adventure.text.format.TextDecoration.BOLD),
+            "Close this menu");
         
         // Decorative items
         fillEmptySlots(inventory);
@@ -111,6 +117,21 @@ public class GameSettingsGUI implements Listener {
         inventory.setItem(slot, item);
     }
     
+    private static void addControlButton(Inventory inventory, int slot, Material material, Component displayName, String description) {
+        ItemStack item = new ItemStack(material);
+        ItemMeta meta = item.getItemMeta();
+        meta.displayName(displayName);
+        
+        if (description != null && !description.isEmpty()) {
+            List<Component> lore = new ArrayList<>();
+            lore.add(Component.text(description, NamedTextColor.GRAY));
+            meta.lore(lore);
+        }
+        
+        item.setItemMeta(meta);
+        inventory.setItem(slot, item);
+    }
+    
     /**
      * Open a category-specific settings menu.
      */
@@ -129,9 +150,15 @@ public class GameSettingsGUI implements Listener {
         }
         
         // Control buttons
-        Items.create(inventory, Material.GREEN_WOOL, "§a§lSave & Apply", 45);
-        Items.create(inventory, Material.YELLOW_WOOL, "§e§lReset Category", 46);
-        Items.create(inventory, Material.BLUE_WOOL, "§b§lBack to Main Menu", 53);
+        addControlButton(inventory, 45, Material.GREEN_WOOL, 
+            Component.text("Save & Apply", NamedTextColor.GREEN).decorate(net.kyori.adventure.text.format.TextDecoration.BOLD),
+            "Save and apply changes");
+        addControlButton(inventory, 46, Material.YELLOW_WOOL, 
+            Component.text("Reset Category", NamedTextColor.YELLOW).decorate(net.kyori.adventure.text.format.TextDecoration.BOLD),
+            "Reset this category to defaults");
+        addControlButton(inventory, 53, Material.BLUE_WOOL, 
+            Component.text("Back to Main Menu", NamedTextColor.AQUA).decorate(net.kyori.adventure.text.format.TextDecoration.BOLD),
+            "Return to main settings menu");
         
         // Decorative items
         fillEmptySlots(inventory);
@@ -289,9 +316,17 @@ public class GameSettingsGUI implements Listener {
         ItemMeta meta = item.getItemMeta();
         meta.displayName(Component.text(displayName, NamedTextColor.AQUA));
         
-        String status = currentValue ? "§a✓ ENABLED" : "§c✗ DISABLED";
+        Component statusComponent;
+        if (currentValue) {
+            statusComponent = Component.text("Status: ", NamedTextColor.GRAY)
+                .append(Component.text("✓ ENABLED", NamedTextColor.GREEN));
+        } else {
+            statusComponent = Component.text("Status: ", NamedTextColor.GRAY)
+                .append(Component.text("✗ DISABLED", NamedTextColor.RED));
+        }
+        
         List<Component> lore = new ArrayList<>();
-        lore.add(Component.text("Status: " + status, currentValue ? NamedTextColor.GREEN : NamedTextColor.RED));
+        lore.add(statusComponent);
         lore.add(Component.text(description, NamedTextColor.GRAY));
         lore.add(Component.text(""));
         lore.add(Component.text("Click to toggle", NamedTextColor.YELLOW));

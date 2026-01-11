@@ -9,10 +9,7 @@ import codes.Elix.Woolbattle.gamestates.GameStateManager;
 import codes.Elix.Woolbattle.gamestates.LobbyState;
 import codes.Elix.Woolbattle.items.MapVoting;
 import codes.Elix.Woolbattle.main.Woolbattle;
-import codes.Elix.Woolbattle.util.LobbyScoreboard;
-import codes.Elix.Woolbattle.util.LobbyTabList;
-import codes.Elix.Woolbattle.util.SchematicManager;
-import codes.Elix.Woolbattle.util.Worldloader;
+import codes.Elix.Woolbattle.util.*;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -58,6 +55,7 @@ public class LobbyCountdown extends Countdown{
                         
                         // Use config-based loading for the game map
                         SchematicManager.loadSchematicWithConfig(winningMap);
+                        IngameScoreboard.MapName = winningMap;
                         System.out.println("[Woolbattle] Loading map with config: " + winningMap);
                         Woolbattle.safewool();
                         gameStateManager.setGameState(GameState.INGAME_STATE);

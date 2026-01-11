@@ -119,6 +119,37 @@ perks:
     height: 1.5                    # Jump height multiplier
     rocket_jump_height: 2.0        # Jump height with rocket_jump passive
 
+  # Mine Perk - Placeable explosive trap
+  mine:
+    cooldown: 10                   # Cooldown in seconds
+    cooldown_recharger: 7          # Cooldown with recharger passive
+    cost: 6                        # Wool cost to use perk
+    max_mines_per_player: 3        # Maximum mines per player
+    mine_duration_seconds: 30      # How long mine lasts before disappearing
+    explosion_radius: 4            # Radius to detect nearby players
+    fuse_ticks: 10                 # TNT fuse time (20 ticks = 1 second)
+    knockback_multiplier: 1.2      # Knockback strength multiplier
+    knockback_y_velocity: 0.6      # Upward velocity component
+    explosion_delay_ticks: 10      # Delay before applying knockback
+
+  # Blink Perk - Short-range teleportation
+  blink:
+    cooldown: 10                   # Cooldown in seconds
+    cooldown_recharger: 6          # Cooldown with recharger passive
+    cost: 5                        # Wool cost to use perk
+    max_distance: 5                # Maximum teleport distance in blocks
+
+  # Slime Perk - Bounce platform with height-dependent velocity
+  slime:
+    cooldown: 8                    # Cooldown in seconds
+    cooldown_recharger: 5          # Cooldown with recharger passive
+    cost: 4                        # Wool cost to use perk
+    max_height: 30                 # Maximum height player can be launched
+    min_velocity: 1.0              # Minimum upward velocity
+    max_velocity: 2.0              # Maximum upward velocity (at low heights)
+    reference_y: 64                # Y-level where max velocity is applied
+    platform_duration: 10          # How long platform stays (seconds)
+
 # Global Perk Settings
 global:
   # Passive Perks

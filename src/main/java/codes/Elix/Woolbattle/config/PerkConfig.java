@@ -149,6 +149,34 @@ public class PerkConfig {
             defaultConfig.set("perks.doublejump.height", 1.5);
             defaultConfig.set("perks.doublejump.rocket_jump_height", 2.0);
 
+            // Mine defaults
+            defaultConfig.set("perks.mine.cooldown", 10);
+            defaultConfig.set("perks.mine.cooldown_recharger", 7);
+            defaultConfig.set("perks.mine.cost", 6);
+            defaultConfig.set("perks.mine.max_mines_per_player", 3);
+            defaultConfig.set("perks.mine.mine_duration_seconds", 30);
+            defaultConfig.set("perks.mine.explosion_radius", 4);
+            defaultConfig.set("perks.mine.fuse_ticks", 10);
+            defaultConfig.set("perks.mine.knockback_multiplier", 1.2);
+            defaultConfig.set("perks.mine.knockback_y_velocity", 0.6);
+            defaultConfig.set("perks.mine.explosion_delay_ticks", 10);
+
+            // Blink defaults
+            defaultConfig.set("perks.blink.cooldown", 10);
+            defaultConfig.set("perks.blink.cooldown_recharger", 6);
+            defaultConfig.set("perks.blink.cost", 5);
+            defaultConfig.set("perks.blink.max_distance", 5);
+
+            // Slime defaults
+            defaultConfig.set("perks.slime.cooldown", 8);
+            defaultConfig.set("perks.slime.cooldown_recharger", 5);
+            defaultConfig.set("perks.slime.cost", 4);
+            defaultConfig.set("perks.slime.max_height", 30);
+            defaultConfig.set("perks.slime.min_velocity", 1.0);
+            defaultConfig.set("perks.slime.max_velocity", 2.0);
+            defaultConfig.set("perks.slime.reference_y", 64);
+            defaultConfig.set("perks.slime.platform_duration", 10);
+
             defaultConfig.save(configFile);
         } catch (IOException e) {
             e.printStackTrace();
@@ -229,6 +257,25 @@ public class PerkConfig {
                 case "doublejump":
                     settings.setDoubleJumpHeight(perkSection.getDouble("height", 1.5));
                     settings.setRocketJumpHeight(perkSection.getDouble("rocket_jump_height", 2.0));
+                    break;
+                case "mine":
+                    settings.setMaxMinesPerPlayer(perkSection.getInt("max_mines_per_player", 3));
+                    settings.setMineDurationSeconds(perkSection.getInt("mine_duration_seconds", 30));
+                    settings.setMineExplosionRadius(perkSection.getInt("explosion_radius", 4));
+                    settings.setMineFuseTicks(perkSection.getInt("fuse_ticks", 10));
+                    settings.setMineKnockbackMultiplier(perkSection.getDouble("knockback_multiplier", 1.2));
+                    settings.setMineKnockbackYVelocity(perkSection.getDouble("knockback_y_velocity", 0.6));
+                    settings.setMineExplosionDelayTicks(perkSection.getInt("explosion_delay_ticks", 10));
+                    break;
+                case "blink":
+                    settings.setBlinkMaxDistance(perkSection.getInt("max_distance", 5));
+                    break;
+                case "slime":
+                    settings.setSlimeMaxHeight(perkSection.getInt("max_height", 30));
+                    settings.setSlimeMinVelocity(perkSection.getDouble("min_velocity", 1.0));
+                    settings.setSlimeMaxVelocity(perkSection.getDouble("max_velocity", 2.0));
+                    settings.setSlimeReferenceY(perkSection.getInt("reference_y", 64));
+                    settings.setSlimePlatformDuration(perkSection.getInt("platform_duration", 10));
                     break;
             }
 
@@ -324,6 +371,25 @@ public class PerkConfig {
                         config.set("perks." + perkName + ".height", settings.getDoubleJumpHeight());
                         config.set("perks." + perkName + ".rocket_jump_height", settings.getRocketJumpHeight());
                         break;
+                    case "mine":
+                        config.set("perks." + perkName + ".max_mines_per_player", settings.getMaxMinesPerPlayer());
+                        config.set("perks." + perkName + ".mine_duration_seconds", settings.getMineDurationSeconds());
+                        config.set("perks." + perkName + ".explosion_radius", settings.getMineExplosionRadius());
+                        config.set("perks." + perkName + ".fuse_ticks", settings.getMineFuseTicks());
+                        config.set("perks." + perkName + ".knockback_multiplier", settings.getMineKnockbackMultiplier());
+                        config.set("perks." + perkName + ".knockback_y_velocity", settings.getMineKnockbackYVelocity());
+                        config.set("perks." + perkName + ".explosion_delay_ticks", settings.getMineExplosionDelayTicks());
+                        break;
+                    case "blink":
+                        config.set("perks." + perkName + ".max_distance", settings.getBlinkMaxDistance());
+                        break;
+                    case "slime":
+                        config.set("perks." + perkName + ".max_height", settings.getSlimeMaxHeight());
+                        config.set("perks." + perkName + ".min_velocity", settings.getSlimeMinVelocity());
+                        config.set("perks." + perkName + ".max_velocity", settings.getSlimeMaxVelocity());
+                        config.set("perks." + perkName + ".reference_y", settings.getSlimeReferenceY());
+                        config.set("perks." + perkName + ".platform_duration", settings.getSlimePlatformDuration());
+                        break;
                 }
             }
 
@@ -405,6 +471,25 @@ public class PerkConfig {
         private double doubleJumpHeight = 1.5;
         private double rocketJumpHeight = 2.0;
 
+        // Mine specific
+        private int maxMinesPerPlayer = 3;
+        private int mineDurationSeconds = 30;
+        private int mineExplosionRadius = 4;
+        private int mineFuseTicks = 10;
+        private double mineKnockbackMultiplier = 1.2;
+        private double mineKnockbackYVelocity = 0.6;
+        private int mineExplosionDelayTicks = 10;
+
+        // Blink specific
+        private int blinkMaxDistance = 5;
+
+        // Slime specific
+        private int slimeMaxHeight = 30;
+        private double slimeMinVelocity = 1.0;
+        private double slimeMaxVelocity = 2.0;
+        private int slimeReferenceY = 64;
+        private int slimePlatformDuration = 10;
+
         public PerkSettings(int cooldown, int cooldownRecharger, int cost, double projectileVelocity) {
             this.cooldown = cooldown;
             this.cooldownRecharger = cooldownRecharger;
@@ -449,6 +534,19 @@ public class PerkConfig {
         public double getEnderpearlVelocity() { return enderpearlVelocity; }
         public double getDoubleJumpHeight() { return doubleJumpHeight; }
         public double getRocketJumpHeight() { return rocketJumpHeight; }
+        public int getMaxMinesPerPlayer() { return maxMinesPerPlayer; }
+        public int getMineDurationSeconds() { return mineDurationSeconds; }
+        public int getMineExplosionRadius() { return mineExplosionRadius; }
+        public int getMineFuseTicks() { return mineFuseTicks; }
+        public double getMineKnockbackMultiplier() { return mineKnockbackMultiplier; }
+        public double getMineKnockbackYVelocity() { return mineKnockbackYVelocity; }
+        public int getMineExplosionDelayTicks() { return mineExplosionDelayTicks; }
+        public int getBlinkMaxDistance() { return blinkMaxDistance; }
+        public int getSlimeMaxHeight() { return slimeMaxHeight; }
+        public double getSlimeMinVelocity() { return slimeMinVelocity; }
+        public double getSlimeMaxVelocity() { return slimeMaxVelocity; }
+        public int getSlimeReferenceY() { return slimeReferenceY; }
+        public int getSlimePlatformDuration() { return slimePlatformDuration; }
 
         // Setters
         public void setCooldown(int cooldown) { this.cooldown = cooldown; }
@@ -487,5 +585,18 @@ public class PerkConfig {
         public void setEnderpearlVelocity(double enderpearlVelocity) { this.enderpearlVelocity = enderpearlVelocity; }
         public void setDoubleJumpHeight(double doubleJumpHeight) { this.doubleJumpHeight = doubleJumpHeight; }
         public void setRocketJumpHeight(double rocketJumpHeight) { this.rocketJumpHeight = rocketJumpHeight; }
+        public void setMaxMinesPerPlayer(int maxMinesPerPlayer) { this.maxMinesPerPlayer = maxMinesPerPlayer; }
+        public void setMineDurationSeconds(int mineDurationSeconds) { this.mineDurationSeconds = mineDurationSeconds; }
+        public void setMineExplosionRadius(int mineExplosionRadius) { this.mineExplosionRadius = mineExplosionRadius; }
+        public void setMineFuseTicks(int mineFuseTicks) { this.mineFuseTicks = mineFuseTicks; }
+        public void setMineKnockbackMultiplier(double mineKnockbackMultiplier) { this.mineKnockbackMultiplier = mineKnockbackMultiplier; }
+        public void setMineKnockbackYVelocity(double mineKnockbackYVelocity) { this.mineKnockbackYVelocity = mineKnockbackYVelocity; }
+        public void setMineExplosionDelayTicks(int mineExplosionDelayTicks) { this.mineExplosionDelayTicks = mineExplosionDelayTicks; }
+        public void setBlinkMaxDistance(int blinkMaxDistance) { this.blinkMaxDistance = blinkMaxDistance; }
+        public void setSlimeMaxHeight(int slimeMaxHeight) { this.slimeMaxHeight = slimeMaxHeight; }
+        public void setSlimeMinVelocity(double slimeMinVelocity) { this.slimeMinVelocity = slimeMinVelocity; }
+        public void setSlimeMaxVelocity(double slimeMaxVelocity) { this.slimeMaxVelocity = slimeMaxVelocity; }
+        public void setSlimeReferenceY(int slimeReferenceY) { this.slimeReferenceY = slimeReferenceY; }
+        public void setSlimePlatformDuration(int slimePlatformDuration) { this.slimePlatformDuration = slimePlatformDuration; }
     }
 }

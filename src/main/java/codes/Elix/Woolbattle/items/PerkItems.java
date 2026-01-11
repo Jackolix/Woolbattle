@@ -66,7 +66,8 @@ public class PerkItems {
         PerkHelper.updatePerks(player, oldPerk, perk);
 
         switch (Objects.requireNonNull(Fperk != null ? Fperk.toString() : null)) {
-            case "booster" -> Items.create(player.getInventory(), Material.TRIPWIRE_HOOK, "§3Booster", Fperkslot);
+            case "booster" -> Items.create(player.getInventory(), Material.FIREWORK_ROCKET, "§3Booster", Fperkslot);
+            case "blink" -> Items.create(player.getInventory(), Material.TRIPWIRE_HOOK, "§3Blink", Fperkslot);
             case "enterhaken" -> Items.create(player.getInventory(), Material.FISHING_ROD, "§3Enterhaken", Fperkslot);
             case "freezer" -> Items.create(player.getInventory(), Material.PACKED_ICE, "§3Freezer", Fperkslot);
             case "großvatersuhr" -> Items.create(player.getInventory(), Material.CLOCK, "§3Großvaters Uhr", Fperkslot);
@@ -79,7 +80,7 @@ public class PerkItems {
             case "rope" -> Items.create(player.getInventory(), Material.VINE, "§3Rope", Fperkslot);
             case "schutzschild" -> Items.create(player.getInventory(), Material.EMERALD, "§3Schuztschild", Fperkslot);
             case "slimeplattform" -> Items.create(player.getInventory(), Material.SLIME_BALL, "§3SlimePlattform", Fperkslot);
-            case "sprengsatz" -> Items.create(player.getInventory(), Material.STONE_PRESSURE_PLATE, "§3Sprengsatz", Fperkslot);
+            case "sprengsatz", "mine" -> Items.create(player.getInventory(), Material.STONE_PRESSURE_PLATE, "§cMine", Fperkslot);
             case "tauscher" -> Items.create(player.getInventory(), Material.SNOWBALL, "§3Tauscher", Fperkslot);
             case "klospülung" -> Items.create(player.getInventory(), Material.GLASS_BOTTLE, "§3Klospülung", Fperkslot);
             case "wandgenerator" -> Items.create(player.getInventory(), Material.RED_STAINED_GLASS_PANE, "§3Wandgenerator", Fperkslot);
@@ -87,7 +88,8 @@ public class PerkItems {
             case "grabber" -> Items.create(player.getInventory(), Material.CARROT_ON_A_STICK, "§3The Grabber", Fperkslot);
         }
         switch (Objects.requireNonNull(Sperk != null ? Sperk.toString() : null)) {
-            case "booster" -> Items.create(player.getInventory(), Material.TRIPWIRE_HOOK, "§3Booster", Sperkslot);
+            case "booster" -> Items.create(player.getInventory(), Material.FIREWORK_ROCKET, "§3Booster", Sperkslot);
+            case "blink" -> Items.create(player.getInventory(), Material.TRIPWIRE_HOOK, "§3Blink", Sperkslot);
             case "enterhaken" -> Items.create(player.getInventory(), Material.FISHING_ROD, "§3Enterhaken", Sperkslot);
             case "freezer" -> Items.create(player.getInventory(), Material.PACKED_ICE, "§3Freezer", Sperkslot);
             case "großvatersuhr" -> Items.create(player.getInventory(), Material.CLOCK, "§3Großvaters Uhr", Sperkslot);
@@ -100,7 +102,7 @@ public class PerkItems {
             case "rope" -> Items.create(player.getInventory(), Material.VINE, "§3Rope", Sperkslot);
             case "schutzschild" -> Items.create(player.getInventory(), Material.EMERALD, "§3Schuztschild", Sperkslot);
             case "slimeplattform" -> Items.create(player.getInventory(), Material.SLIME_BALL, "§3SlimePlattform", Sperkslot);
-            case "sprengsatz" -> Items.create(player.getInventory(), Material.STONE_PRESSURE_PLATE, "§3Sprengsatz", Sperkslot);
+            case "sprengsatz", "mine" -> Items.create(player.getInventory(), Material.STONE_PRESSURE_PLATE, "§cMine", Sperkslot);
             case "tauscher" -> Items.create(player.getInventory(), Material.SNOWBALL, "§3Tauscher", Sperkslot);
             case "klospülung" -> Items.create(player.getInventory(), Material.GLASS_BOTTLE, "§3Klospülung", Sperkslot);
             case "wandgenerator" -> Items.create(player.getInventory(), Material.RED_STAINED_GLASS_PANE, "§3Wandgenerator", Sperkslot);

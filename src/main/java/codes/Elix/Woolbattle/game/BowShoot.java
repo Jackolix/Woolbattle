@@ -3,17 +3,21 @@
 
 package codes.Elix.Woolbattle.game;
 
+import codes.Elix.Woolbattle.config.GameConfig;
 import codes.Elix.Woolbattle.game.HelpClasses.CustomPlayer;
 import codes.Elix.Woolbattle.items.Items;
 import codes.Elix.Woolbattle.main.Woolbattle;
-import codes.Elix.Woolbattle.util.Console;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
@@ -22,13 +26,19 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
 
 public class BowShoot implements Listener {
 
     public static ArrayList<Projectile> arrows = new ArrayList<>();
     public static HashMap<Player, Integer> bomb = new HashMap<>();
     public static HashMap<Player, Integer> ghostArrow = new HashMap<>();
+    // Key: shooter, Value: [Player target, int hitCount, long lastHitMillis]
+    public static HashMap<Player, Object[]> hitCombo = new HashMap<>();
     private static BukkitRunnable globalParticleTask = null;
 
 
@@ -76,51 +86,57 @@ public class BowShoot implements Listener {
     }
     
     private void handleArrowShoot(Player player, AbstractArrow projectile) {
-        if (bomb.containsKey(player)) {
-            int amount = bomb.get(player);
-            amount++;
-            if (amount >= 8) {
-                projectile.setMetadata("bomb", new FixedMetadataValue(Woolbattle.getPlugin(), "keineAhnungWiesoIchDasBrauch"));
-                bomb.put(player, 0);
-            } else
-                bomb.put(player, amount);
-        }
+        // Check if this is a minigun arrow - if so, don't count it towards passive perk rotations
+        boolean isMinigunArrow = projectile.hasMetadata("minigun_arrow");
         
-        // Ghost Arrow passive perk - activates every 7 arrows
-        if (ghostArrow.containsKey(player)) {
-            int amount = ghostArrow.get(player);
-            amount++;
-            if (amount >= 7) {
-                projectile.setMetadata("ghost_arrow", new FixedMetadataValue(Woolbattle.getPlugin(), player.getName()));
-                ghostArrow.put(player, 0);
-                
-                // Make the ghost arrow visually distinct
-                projectile.setGlowing(true);
-                if (projectile instanceof Arrow arrow) {
-                    arrow.setColor(org.bukkit.Color.fromRGB(138, 43, 226)); // Purple/violet color
-                }
-                
-                // Store the initial velocity from bow shoot - this is the most accurate!
-                Vector initialVelocity = projectile.getVelocity().clone();
-                projectile.setMetadata("ghost_velocity", new FixedMetadataValue(Woolbattle.getPlugin(), initialVelocity));
-                
-                // Create task to show particle trail
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        if (!projectile.isValid() || projectile.isDead() || projectile.isOnGround()) {
-                            this.cancel();
-                            return;
-                        }
-                        
-                        // Spawn purple particle trail
-                        player.getWorld().spawnParticle(Particle.WITCH, projectile.getLocation(), 1, 0.05, 0.05, 0.05, 0);
+        if (!isMinigunArrow) {
+            // Only count non-minigun arrows for passive perk rotation
+            if (bomb.containsKey(player)) {
+                int amount = bomb.get(player);
+                amount++;
+                if (amount >= 8) {
+                    projectile.setMetadata("bomb", new FixedMetadataValue(Woolbattle.getPlugin(), "keineAhnungWiesoIchDasBrauch"));
+                    bomb.put(player, 0);
+                } else
+                    bomb.put(player, amount);
+            }
+            
+            // Ghost Arrow passive perk - activates every 7 arrows
+            if (ghostArrow.containsKey(player)) {
+                int amount = ghostArrow.get(player);
+                amount++;
+                if (amount >= 7) {
+                    projectile.setMetadata("ghost_arrow", new FixedMetadataValue(Woolbattle.getPlugin(), player.getName()));
+                    ghostArrow.put(player, 0);
+                    
+                    // Make the ghost arrow visually distinct
+                    projectile.setGlowing(true);
+                    if (projectile instanceof Arrow arrow) {
+                        arrow.setColor(org.bukkit.Color.fromRGB(138, 43, 226)); // Purple/violet color
                     }
-                }.runTaskTimer(Woolbattle.getPlugin(), 0L, 2L);
-            } else {
-                ghostArrow.put(player, amount);
-                // Show arrow counter to player
-                player.sendActionBar("§7Ghost Arrow: §d" + amount + "§8/§d7");
+                    
+                    // Store the initial velocity from bow shoot - this is the most accurate!
+                    Vector initialVelocity = projectile.getVelocity().clone();
+                    projectile.setMetadata("ghost_velocity", new FixedMetadataValue(Woolbattle.getPlugin(), initialVelocity));
+                    
+                    // Create task to show particle trail
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            if (!projectile.isValid() || projectile.isDead() || projectile.isOnGround()) {
+                                this.cancel();
+                                return;
+                            }
+                            
+                            // Spawn purple particle trail
+                            player.getWorld().spawnParticle(Particle.WITCH, projectile.getLocation(), 1, 0.05, 0.05, 0.05, 0);
+                        }
+                    }.runTaskTimer(Woolbattle.getPlugin(), 0L, 2L);
+                } else {
+                    ghostArrow.put(player, amount);
+                    // Show arrow counter to player
+                    player.sendActionBar("§7Ghost Arrow: §d" + amount + "§8/§d7");
+                }
             }
         }
         
@@ -286,12 +302,106 @@ public class BowShoot implements Listener {
     }
 
     @EventHandler
+    public void onArrowDamage(EntityDamageByEntityEvent event) {
+        // Check if this is an arrow hitting a player
+        if (!(event.getDamager() instanceof Arrow arrow)) return;
+        if (!(event.getEntity() instanceof Player victim)) return;
+        
+        // Check if this is a minigun arrow
+        if (!arrow.hasMetadata("minigun_arrow")) return;
+        
+        // Reduce knockback for minigun arrows
+        // Arrow knockback is applied through the engine after this event,
+        // so we'll apply a corrective velocity adjustment
+        Bukkit.getScheduler().runTaskLater(Woolbattle.getPlugin(), () -> {
+            if (victim.isValid() && !victim.isDead()) {
+                // Get current velocity after arrow knockback
+                Vector velocity = victim.getVelocity();
+                
+                // Apply knockback reduction (70% of normal = 30% less knockback)
+                double reductionFactor = 1.0 - Minigun.getKnockbackReduction();
+                velocity.multiply(reductionFactor);
+                
+                victim.setVelocity(velocity);
+            }
+        }, 0L);
+    }
+
+    @EventHandler
     public void onEntityExplode(ExplosionPrimeEvent event){
         if(event.getEntity().getType() == EntityType.TNT){
             if (!event.getEntity().hasMetadata("exploding_arrow")) return;
             // event.setCancelled(true);
             event.setRadius(1.0F);
         }
+    }
+
+    @EventHandler
+    public void onBowHitCombo(EntityDamageByEntityEvent event) {
+        if (!(event.getDamager() instanceof Arrow arrow)) return;
+        if (!(event.getEntity() instanceof Player victim)) return;
+        if (!(arrow.getShooter() instanceof Player shooter)) return;
+
+        codes.Elix.Woolbattle.game.HelpClasses.Team shooterTeam = CustomPlayer.getCustomPlayer(shooter).getTeam();
+        if (shooterTeam != null && shooterTeam.getMembers().contains(victim)) return;
+
+        long now = System.currentTimeMillis();
+
+        if (hitCombo.containsKey(shooter)) {
+            Object[] combo = hitCombo.get(shooter);
+            Player prevTarget = (Player) combo[0];
+            int count = (int) combo[1];
+            long lastHit = (long) combo[2];
+
+            long comboWindowMs = GameConfig.getInstance().getBowComboWindowSeconds() * 1000L;
+            if (!prevTarget.equals(victim) || (now - lastHit) > comboWindowMs) {
+                hitCombo.put(shooter, new Object[]{victim, 1, now});
+                return;
+            }
+
+            count++;
+            if (count >= GameConfig.getInstance().getBowComboRequired()) {
+                hitCombo.remove(shooter);
+                triggerComboExplosion(shooter, victim);
+            } else {
+                hitCombo.put(shooter, new Object[]{victim, count, now});
+            }
+        } else {
+            hitCombo.put(shooter, new Object[]{victim, 1, now});
+        }
+    }
+
+    private void triggerComboExplosion(Player shooter, Player victim) {
+        Location loc = victim.getLocation();
+        World world = loc.getWorld();
+
+        world.spawnParticle(Particle.EXPLOSION, loc, 5, 0.3, 0.3, 0.3, 0);
+        world.spawnParticle(Particle.LARGE_SMOKE, loc, 20, 0.5, 0.5, 0.5, 0.05);
+        world.playSound(loc, Sound.ENTITY_GENERIC_EXPLODE, 1.0f, 1.2f);
+
+        double radius = 3.0;
+        List<Block> toBreak = new ArrayList<>();
+        for (Block block : new ArrayList<>(Woolbattle.blocks)) {
+            if (block.getLocation().distance(loc) <= radius) {
+                toBreak.add(block);
+            }
+        }
+        for (Block block : toBreak) {
+            world.spawnParticle(Particle.BLOCK_CRUMBLE, block.getLocation().add(0.5, 0.5, 0.5),
+                10, 0.3, 0.3, 0.3, 0, block.getBlockData());
+            block.setType(Material.AIR);
+            Woolbattle.blocks.remove(block);
+        }
+
+        for (Entity entity : loc.getNearbyEntities(5, 5, 5)) {
+            if (!(entity instanceof Player nearby)) continue;
+            Vector dir = nearby.getLocation().toVector().subtract(loc.toVector());
+            if (dir.lengthSquared() < 0.01) dir = new Vector(0, 1, 0);
+            dir.normalize().multiply(1.5).setY(0.4);
+            nearby.setVelocity(dir);
+        }
+
+        shooter.sendMessage("§6§lCOMBO! §eYou triggered an explosion on §c" + victim.getName());
     }
 
     public void check(Player player) {
@@ -306,6 +416,9 @@ public class BowShoot implements Listener {
     public static void enable() {
         bomb.clear();
         ghostArrow.clear();
+        hitCombo.clear();
+        Minigun.enable();
+        WoolGenerator.enable();
         for (Player player : Bukkit.getOnlinePlayers()) {
             codes.Elix.Woolbattle.game.HelpClasses.Team team = CustomPlayer.getCustomPlayer(player).getTeam();
             if (team == null || Objects.equals(team.getName(), "spectator")) continue;
@@ -320,6 +433,10 @@ public class BowShoot implements Listener {
         arrows.clear();
         bomb.clear();
         ghostArrow.clear();
+        hitCombo.clear();
+        Minigun.cleanup();
+        Thief.cleanup();
+        WoolGenerator.cleanup();
         if(globalParticleTask != null && !globalParticleTask.isCancelled()){
             globalParticleTask.cancel();
             globalParticleTask = null;

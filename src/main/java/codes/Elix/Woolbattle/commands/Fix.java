@@ -2,7 +2,6 @@ package codes.Elix.Woolbattle.commands;
 
 import codes.Elix.Woolbattle.items.Items;
 import codes.Elix.Woolbattle.items.PerkItems;
-import codes.Elix.Woolbattle.main.Woolbattle;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;

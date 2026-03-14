@@ -2,6 +2,7 @@ package codes.Elix.Woolbattle.main;
 
 
 import codes.Elix.Woolbattle.commands.*;
+import codes.Elix.Woolbattle.config.GameConfig;
 import codes.Elix.Woolbattle.countdowns.LobbyCountdown;
 import codes.Elix.Woolbattle.game.*;
 import codes.Elix.Woolbattle.game.HelpClasses.Team;
@@ -20,7 +21,10 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.Tag;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -62,6 +66,11 @@ public class Woolbattle extends JavaPlugin {
         config = getConfig();
         debug = getConfig().getBoolean("Debug");
         useDB = getConfig().getBoolean("MongoDB");
+        
+        // Initialize GameConfig singleton
+        GameConfig.getInstance();
+        Console.send(Component.text("Game settings configuration loaded", NamedTextColor.GREEN));
+        
         checkFiles();
         SchematicManager.scanSchematics();
 
@@ -92,6 +101,7 @@ public class Woolbattle extends JavaPlugin {
         getCommand("visualizewool").setExecutor(new VisualizeWool());
         getCommand("reloadperks").setExecutor(new ReloadPerks());
         getCommand("perkconfig").setExecutor(new PerkConfigCommand());
+        getCommand("gamesettings").setExecutor(new GameSettingsCommand());
 
         pluginManager.registerEvents(new ConnectionListener(), this);
         pluginManager.registerEvents(new DoubleJump(), this);
@@ -99,8 +109,13 @@ public class Woolbattle extends JavaPlugin {
         pluginManager.registerEvents(new LobbyItems(), this);
         pluginManager.registerEvents(new VoidTeleport(), this);
         pluginManager.registerEvents(new BowShoot(), this);
+        pluginManager.registerEvents(new Minigun(), this);
+        pluginManager.registerEvents(new Thief(), this);
+        pluginManager.registerEvents(new WoolGenerator(), this);
+        pluginManager.registerEvents(new Stomper(), this);
         pluginManager.registerEvents(chat, this);
         pluginManager.registerEvents(new codes.Elix.Woolbattle.gui.PerkConfigGUI(), this);
+        pluginManager.registerEvents(new codes.Elix.Woolbattle.gui.GameSettingsGUI(), this);
 
         placedWoolCooldown = new PlacedWoolCooldown();
         pluginManager.registerEvents(placedWoolCooldown, this);

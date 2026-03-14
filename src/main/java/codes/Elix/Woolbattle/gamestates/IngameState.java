@@ -3,9 +3,11 @@
 
 package codes.Elix.Woolbattle.gamestates;
 
+import codes.Elix.Woolbattle.config.GameConfig;
 import codes.Elix.Woolbattle.game.BowShoot;
 import codes.Elix.Woolbattle.game.DoubleJump;
 import codes.Elix.Woolbattle.game.EnderPearl;
+import codes.Elix.Woolbattle.game.Stomper;
 import codes.Elix.Woolbattle.game.HelpClasses.CustomPlayer;
 import codes.Elix.Woolbattle.game.HelpClasses.Team;
 import codes.Elix.Woolbattle.game.LiveSystem;
@@ -16,6 +18,7 @@ import codes.Elix.Woolbattle.items.Voting;
 import codes.Elix.Woolbattle.main.Woolbattle;
 import codes.Elix.Woolbattle.util.Console;
 import codes.Elix.Woolbattle.util.IngameScoreboard;
+import codes.Elix.Woolbattle.util.IngameTabList;
 import codes.Elix.Woolbattle.util.SchematicManager;
 import codes.Elix.Woolbattle.util.mongo.UpdateObjekt;
 import net.kyori.adventure.text.Component;
@@ -47,6 +50,7 @@ public class IngameState extends GameState {
             current.getInventory().clear();
             Items.standartitems(current);
             IngameScoreboard.setup(current);
+            IngameTabList.setup(current);
             PerkItems.equip(current);
         }
         boots();
@@ -54,6 +58,7 @@ public class IngameState extends GameState {
         DoubleJump.enable();
         switcher.enable();
         booster.enable();
+        blink.enable();
         clock.enable();
         platform.enable();
         rettungsplattform.enable();
@@ -62,8 +67,12 @@ public class IngameState extends GameState {
         woolbomb.enable();
         rope.enable();
         enterhaken.enable();
+        mine.enable();
         BowShoot.enable();
         grabber.enable();
+        slime.enable();
+        portal.enable();
+        Stomper.enable();
 
         for (Player player : Items.perks.keySet())
             if (!player.isOnline())
@@ -76,6 +85,8 @@ public class IngameState extends GameState {
         DoubleJump.disable();
         BowShoot.cleanup();
         EnderPearl.disable();
+        mine.disable();
+        portal.disable();
     }
 
     public void setLifes() {
@@ -156,43 +167,6 @@ public class IngameState extends GameState {
         Team blue = LiveSystem.Team.get("blue");
         Team green = LiveSystem.Team.get("green");
         Team yellow = LiveSystem.Team.get("yellow");
-
-        if (LiveSystem.Teams == 2) { // TODO
-            if (Bukkit.getOnlinePlayers().size() == 2)
-                for (Player players : Bukkit.getOnlinePlayers()) {
-                    if (players.getName().equals(player.getName()))
-                        continue;  // Skip self, don't exit the method
-                    CustomPlayer customPlayer1 = CustomPlayer.getCustomPlayer(players);
-                    if (customPlayer1.getTeam() == null) {
-                        red.addMember(player);
-                        blue.addMember(players);
-                        Console.send(Component.text("Added ", NamedTextColor.WHITE)
-                                .append(Component.text(player.getName(), NamedTextColor.GREEN))
-                                .append(Component.text(" to Team", NamedTextColor.WHITE))
-                                .append(Component.text(" Red", NamedTextColor.RED)));
-                        Console.send(Component.text("Added ", NamedTextColor.WHITE)
-                                .append(Component.text(players.getName(), NamedTextColor.GREEN))
-                                .append(Component.text(" to Team", NamedTextColor.WHITE))
-                                .append(Component.text(" Blue", NamedTextColor.BLUE)));
-                    } else {
-                        if (customPlayer1.getTeam() == red) {
-                            blue.addMember(player);
-                            Console.send(Component.text("Added ", NamedTextColor.WHITE)
-                                    .append(Component.text(player.getName(), NamedTextColor.GREEN))
-                                    .append(Component.text(" to Team", NamedTextColor.WHITE))
-                                    .append(Component.text(" Blue", NamedTextColor.BLUE)));
-                        } else {
-                            red.addMember(player);
-                            Console.send(Component.text("Added ", NamedTextColor.WHITE)
-                                    .append(Component.text(player.getName(), NamedTextColor.GREEN))
-                                    .append(Component.text(" to Team", NamedTextColor.WHITE))
-                                    .append(Component.text(" Red", NamedTextColor.RED)));
-                        }
-                    }
-                }
-            return;  // Exit early after handling 2-player case
-        }
-
 
         if (red.getMembers().size() < LiveSystem.TeamSize) {
             red.addMember(player);
@@ -286,6 +260,7 @@ public class IngameState extends GameState {
         player.teleport(spectatorSpawn);
         // LiveSystem.Team.put(player, "spectator");
         IngameScoreboard.setup(player);
+        IngameTabList.setup(player);
     }
     
     private static Location getSpectatorSpawnLocation() {
@@ -297,6 +272,21 @@ public class IngameState extends GameState {
             Console.send("Failed to get spectator spawn from config, using default: " + e.getMessage());
             // Fallback to default location
             return new Location(Bukkit.getServer().getWorlds().get(0), 0, 80, 0);
+        }
+    }
+    
+    /**
+     * Apply spawn invulnerability to a player based on game settings.
+     */
+    private void applySpawnInvulnerability(Player player) {
+        int invulnSeconds = GameConfig.getInstance().getInvulnerabilityOnSpawnSeconds();
+        if (invulnSeconds > 0) {
+            player.setInvulnerable(true);
+            Bukkit.getScheduler().runTaskLater(Woolbattle.getPlugin(), () -> {
+                if (player.isOnline()) {
+                    player.setInvulnerable(false);
+                }
+            }, invulnSeconds * 20L); // Convert seconds to ticks
         }
     }
     
@@ -315,6 +305,7 @@ public class IngameState extends GameState {
                 Location redSpawn = SchematicManager.getTeamSpawn(selectedMap, "red");
                 for (Player player : red.getMembers()) {
                     player.teleport(redSpawn);
+                    applySpawnInvulnerability(player);
                     Console.send(Component.text("Teleported ", NamedTextColor.WHITE)
                         .append(Component.text(player.getName(), NamedTextColor.GREEN))
                         .append(Component.text(" to ", NamedTextColor.WHITE))
@@ -328,6 +319,7 @@ public class IngameState extends GameState {
                 Location blueSpawn = SchematicManager.getTeamSpawn(selectedMap, "blue");
                 for (Player player : blue.getMembers()) {
                     player.teleport(blueSpawn);
+                    applySpawnInvulnerability(player);
                     Console.send(Component.text("Teleported ", NamedTextColor.WHITE)
                         .append(Component.text(player.getName(), NamedTextColor.GREEN))
                         .append(Component.text(" to ", NamedTextColor.WHITE))
@@ -341,6 +333,7 @@ public class IngameState extends GameState {
                 Location greenSpawn = SchematicManager.getTeamSpawn(selectedMap, "green");
                 for (Player player : green.getMembers()) {
                     player.teleport(greenSpawn);
+                    applySpawnInvulnerability(player);
                     Console.send(Component.text("Teleported ", NamedTextColor.WHITE)
                         .append(Component.text(player.getName(), NamedTextColor.GREEN))
                         .append(Component.text(" to ", NamedTextColor.WHITE))
@@ -354,6 +347,7 @@ public class IngameState extends GameState {
                 Location yellowSpawn = SchematicManager.getTeamSpawn(selectedMap, "yellow");
                 for (Player player : yellow.getMembers()) {
                     player.teleport(yellowSpawn);
+                    applySpawnInvulnerability(player);
                     Console.send(Component.text("Teleported ", NamedTextColor.WHITE)
                         .append(Component.text(player.getName(), NamedTextColor.GREEN))
                         .append(Component.text(" to ", NamedTextColor.WHITE))

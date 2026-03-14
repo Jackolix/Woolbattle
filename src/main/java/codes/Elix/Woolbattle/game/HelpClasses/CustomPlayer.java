@@ -1,5 +1,6 @@
 package codes.Elix.Woolbattle.game.HelpClasses;
 
+import codes.Elix.Woolbattle.config.GameConfig;
 import codes.Elix.Woolbattle.util.IngameScoreboard;
 import org.bukkit.entity.Player;
 
@@ -9,7 +10,6 @@ import java.util.HashMap;
 public class CustomPlayer {
 
     private static HashMap<Player, CustomPlayer> playerhelper = new HashMap<>();
-    private static final long HIT_DURATION_MILLIS = 10000; // 10 seconds in milliseconds
     
     private final Player player;
     private String teamName;
@@ -73,9 +73,9 @@ public class CustomPlayer {
     }
     
     /**
-     * Checks if the hit is still valid (within 10 seconds).
+     * Checks if the hit is still valid (within configured hit timer duration).
      * 
-     * @return true if the player was hit within the last 10 seconds, false otherwise
+     * @return true if the player was hit within the configured time window, false otherwise
      */
     public boolean isHitValid() {
         if (!hitted || hitTimestamp == 0) {
@@ -84,8 +84,9 @@ public class CustomPlayer {
         
         long currentTime = System.currentTimeMillis();
         long elapsedMillis = currentTime - hitTimestamp;
+        long hitDurationMillis = GameConfig.getInstance().getHitTimerMillis();
         
-        return elapsedMillis <= HIT_DURATION_MILLIS;
+        return elapsedMillis <= hitDurationMillis;
     }
     
     /**

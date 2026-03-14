@@ -6,13 +6,12 @@ package codes.Elix.Woolbattle.listeners;
 import codes.Elix.Woolbattle.commands.Build;
 import codes.Elix.Woolbattle.game.HelpClasses.CustomPlayer;
 import codes.Elix.Woolbattle.game.HelpClasses.Team;
+import codes.Elix.Woolbattle.game.WoolGenerator;
 import codes.Elix.Woolbattle.gamestates.GameStateManager;
 import codes.Elix.Woolbattle.gamestates.IngameState;
 import codes.Elix.Woolbattle.gamestates.LobbyState;
 import codes.Elix.Woolbattle.items.Items;
 import codes.Elix.Woolbattle.main.Woolbattle;
-import codes.Elix.Woolbattle.util.IngameScoreboard;
-import net.kyori.adventure.text.Component;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
@@ -21,7 +20,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.*;
-import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerRecipeDiscoverEvent;
@@ -74,8 +72,9 @@ public class GameProtectionListener implements Listener {
             }
         }
 
-        // Prevent pickup if player already has 196 or more total wool
-        if (totalWool >= 196) {
+        // Prevent pickup if player already has reached the wool limit
+        int woolLimit = WoolGenerator.getWoolLimit(player);
+        if (totalWool >= woolLimit) {
             event.setCancelled(true);
         } else {
             // Update flight ability after picking up wool
@@ -181,10 +180,12 @@ public class GameProtectionListener implements Listener {
                 ItemStack item = new ItemStack(Items.getWoolColor(player));
                 item.setAmount(1);
                 player.getInventory().addItem(item);
+                player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 1.0f, 0.5f);
             } else {
                 ItemStack item = new ItemStack(Items.getWoolColor(player));
                 item.setAmount(2);
                 player.getInventory().addItem(item);
+                player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 1.0f, 0.5f);
             }
 
             if (Items.amount(player, Material.ARROW) == 0) {
@@ -200,15 +201,17 @@ public class GameProtectionListener implements Listener {
 
     @EventHandler
     public void onBlockBuild(BlockPlaceEvent event) {
-        if (event instanceof Player) return;
+        Player player = event.getPlayer();
+        if (Build.BuildPlayers.contains(player)) return;
         if (GameStateManager.getCurrentGameState() instanceof LobbyState) {
             event.setCancelled(true);
             return;
         }
-        Player player = event.getPlayer();
-        if (IngameState.spectator.contains(player)) event.setCancelled(true);
+        if (IngameState.spectator.contains(player)) {
+            event.setCancelled(true);
+            return;
+        }
         if (Tag.WOOL.isTagged(event.getBlock().getType())) return;
-        if (Build.BuildPlayers.contains(player)) return;
         event.setCancelled(true);
     }
 

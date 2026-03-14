@@ -7,6 +7,7 @@ import codes.Elix.Woolbattle.config.PerkConfig;
 import codes.Elix.Woolbattle.game.PerkHelper;
 import codes.Elix.Woolbattle.items.Items;
 import codes.Elix.Woolbattle.main.Woolbattle;
+import com.destroystokyo.paper.event.player.PlayerLaunchProjectileEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -30,7 +31,7 @@ public class booster implements Listener {
     @EventHandler
     public void onBoosterInteract(PlayerInteractEvent event) {
         if (event.getItem() == null) return;
-        if (event.getItem().getType() != Material.TRIPWIRE_HOOK) return;
+        if (event.getItem().getType() != Material.FIREWORK_ROCKET) return;
         
         Player player = event.getPlayer();
         PerkConfig.PerkSettings settings = getSettings();
@@ -65,8 +66,15 @@ public class booster implements Listener {
             
         int slot = player.getInventory().getHeldItemSlot();
         if (!Woolbattle.debug)
-            Items.visualCooldown(player, cooldown, Material.TRIPWIRE_HOOK, slot, "§3booster");
+            Items.visualCooldown(player, cooldown, Material.FIREWORK_ROCKET, slot, "§3booster");
     }
+
+    @EventHandler
+    public void onFireworkLaunch(PlayerLaunchProjectileEvent event) {
+        if (event.getItemStack().getType() != Material.FIREWORK_ROCKET) return;
+        event.setCancelled(true);
+    }
+
     public static void enable() { Bukkit.getPluginManager().registerEvents(new booster(), Woolbattle.getPlugin()); }
     public static void disable() {}
 }

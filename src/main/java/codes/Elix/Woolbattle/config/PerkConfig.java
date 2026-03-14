@@ -15,9 +15,11 @@ public class PerkConfig {
     private FileConfiguration config;
     private File configFile;
     private Map<String, PerkSettings> perkSettings;
+    private Map<String, PassivePerkSettings> passivePerkSettings;
     
     private PerkConfig() {
         this.perkSettings = new HashMap<>();
+        this.passivePerkSettings = new HashMap<>();
         loadConfig();
     }
     
@@ -37,6 +39,7 @@ public class PerkConfig {
 
         config = YamlConfiguration.loadConfiguration(configFile);
         loadPerkSettings();
+        loadPassivePerkSettings();
     }
 
     private void createDefaultConfig() {
@@ -50,9 +53,11 @@ public class PerkConfig {
             defaultConfig.set("perks.freezer.cooldown", 5);
             defaultConfig.set("perks.freezer.cooldown_recharger", 3);
             defaultConfig.set("perks.freezer.cost", 5);
-            defaultConfig.set("perks.freezer.freeze_time_seconds", 3);
-            defaultConfig.set("perks.freezer.slowness_strength", 5);
+            defaultConfig.set("perks.freezer.player_freeze_duration", 1.5);
+            defaultConfig.set("perks.freezer.ground_freeze_duration", 4);
+            defaultConfig.set("perks.freezer.ground_freeze_radius", 2);
             defaultConfig.set("perks.freezer.projectile_velocity", 1.6);
+            defaultConfig.set("perks.freezer.disable_gravity", true);
             
             // Grabber perk defaults
             defaultConfig.set("perks.grabber.cooldown", 10);
@@ -149,9 +154,107 @@ public class PerkConfig {
             defaultConfig.set("perks.doublejump.height", 1.5);
             defaultConfig.set("perks.doublejump.rocket_jump_height", 2.0);
 
-            defaultConfig.save(configFile);
+            // Mine defaults
+            defaultConfig.set("perks.mine.cooldown", 10);
+            defaultConfig.set("perks.mine.cooldown_recharger", 7);
+            defaultConfig.set("perks.mine.cost", 6);
+            defaultConfig.set("perks.mine.max_mines_per_player", 3);
+            defaultConfig.set("perks.mine.mine_duration_seconds", 30);
+            defaultConfig.set("perks.mine.explosion_radius", 4);
+            defaultConfig.set("perks.mine.fuse_ticks", 10);
+            defaultConfig.set("perks.mine.knockback_multiplier", 1.2);
+            defaultConfig.set("perks.mine.knockback_y_velocity", 0.6);
+            defaultConfig.set("perks.mine.explosion_delay_ticks", 10);
+
+            // Blink defaults
+            defaultConfig.set("perks.blink.cooldown", 10);
+            defaultConfig.set("perks.blink.cooldown_recharger", 6);
+            defaultConfig.set("perks.blink.cost", 5);
+            defaultConfig.set("perks.blink.max_distance", 5);
+
+            // Slime defaults
+            defaultConfig.set("perks.slime.cooldown", 8);
+            defaultConfig.set("perks.slime.cooldown_recharger", 5);
+            defaultConfig.set("perks.slime.cost", 4);
+            defaultConfig.set("perks.slime.max_height", 30);
+            defaultConfig.set("perks.slime.min_velocity", 1.0);
+            defaultConfig.set("perks.slime.max_velocity", 2.0);
+            defaultConfig.set("perks.slime.reference_y", 64);
+            defaultConfig.set("perks.slime.platform_duration", 10);
+
+             // Portal defaults
+             defaultConfig.set("perks.portal.cooldown", 16);
+             defaultConfig.set("perks.portal.cooldown_recharger", 12);
+             defaultConfig.set("perks.portal.cost", 6);
+             defaultConfig.set("perks.portal.portal_timeout_seconds", 5);
+             defaultConfig.set("perks.portal.portal_usage_cooldown_seconds", 1);
+             defaultConfig.set("perks.portal.min_distance", 3);
+             
+             // Generator passive perk defaults
+             defaultConfig.set("passives.generator.blocks_per_interval", 3);
+             defaultConfig.set("passives.generator.generation_interval_ticks", 20);
+             defaultConfig.set("passives.generator.extra_stack_size", 64);
+
+             // Minigun passive perk defaults
+             defaultConfig.set("passives.minigun.trigger_arrows", 4);
+             defaultConfig.set("passives.minigun.knockback_reduction", 0.3);
+             defaultConfig.set("passives.minigun.velocity_reduction", 0.3);
+             defaultConfig.set("passives.minigun.duration_ticks", 40);
+             defaultConfig.set("passives.minigun.fire_interval_ticks", 3);
+             defaultConfig.set("passives.minigun.arrows_to_fire", 14);
+
+             defaultConfig.set("passives.thief.wool_steal_amount", 7);
+             defaultConfig.set("passives.thief.hits_to_steal", 3);
+             defaultConfig.set("passives.thief.extra_stack_size", 64);
+
+             // Aufzug passive perk defaults
+             defaultConfig.set("passives.aufzug.trigger_pearls", 5);
+             defaultConfig.set("passives.aufzug.max_scan_height", 50);
+
+             defaultConfig.save(configFile);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+    
+    private void loadPassivePerkSettings() {
+        ConfigurationSection passivesSection = config.getConfigurationSection("passives");
+        if (passivesSection == null) return;
+        
+        for (String passiveName : passivesSection.getKeys(false)) {
+            ConfigurationSection passiveSection = passivesSection.getConfigurationSection(passiveName);
+            if (passiveSection == null) continue;
+            
+            PassivePerkSettings settings = new PassivePerkSettings();
+            
+            // Load minigun settings
+            if (passiveName.equalsIgnoreCase("minigun")) {
+                settings.setTriggerArrows(passiveSection.getInt("trigger_arrows", 4));
+                settings.setKnockbackReduction(passiveSection.getDouble("knockback_reduction", 0.3));
+                settings.setVelocityReduction(passiveSection.getDouble("velocity_reduction", 0.3));
+                settings.setDurationTicks(passiveSection.getInt("duration_ticks", 40));
+                settings.setFireIntervalTicks(passiveSection.getInt("fire_interval_ticks", 3));
+                settings.setArrowsToFire(passiveSection.getInt("arrows_to_fire", 14));
+            } else if (passiveName.equalsIgnoreCase("generator")) {
+                settings.setGeneratorBlocksPerInterval(passiveSection.getInt("blocks_per_interval", 3));
+                settings.setGeneratorIntervalTicks(passiveSection.getInt("generation_interval_ticks", 20));
+                settings.setGeneratorExtraStackSize(passiveSection.getInt("extra_stack_size", 64));
+            } else if (passiveName.equalsIgnoreCase("thief")) {
+                settings.setThiefWoolStealAmount(passiveSection.getInt("wool_steal_amount", 7));
+                settings.setThiefHitsToSteal(passiveSection.getInt("hits_to_steal", 3));
+                settings.setThiefExtraStackSize(passiveSection.getInt("extra_stack_size", 64));
+            } else if (passiveName.equalsIgnoreCase("stomper")) {
+                settings.setStomperMinFallHeight(passiveSection.getInt("min_fall_height", 3));
+                settings.setStomperShockwaveRadius(passiveSection.getInt("shockwave_radius", 4));
+                settings.setStomperDestroyRadius(passiveSection.getInt("destroy_radius", 2));
+                settings.setStomperKnockbackStrength(passiveSection.getDouble("knockback_strength", 1.5));
+                settings.setStomperKnockbackY(passiveSection.getDouble("knockback_y", 0.5));
+            } else if (passiveName.equalsIgnoreCase("aufzug")) {
+                settings.setAufzugTriggerPearls(passiveSection.getInt("trigger_pearls", 5));
+                settings.setAufzugMaxScanHeight(passiveSection.getInt("max_scan_height", 50));
+            }
+
+            passivePerkSettings.put(passiveName.toLowerCase(), settings);
         }
     }
     
@@ -173,8 +276,10 @@ public class PerkConfig {
             // Load perk-specific settings
             switch (perkName.toLowerCase()) {
                 case "freezer":
-                    settings.setFreezeTimeSeconds(perkSection.getInt("freeze_time_seconds", 3));
-                    settings.setSlownessStrength(perkSection.getInt("slowness_strength", 5));
+                    settings.setPlayerFreezeDuration(perkSection.getDouble("player_freeze_duration", 1.5));
+                    settings.setGroundFreezeDuration(perkSection.getInt("ground_freeze_duration", 4));
+                    settings.setGroundFreezeRadius(perkSection.getInt("ground_freeze_radius", 2));
+                    settings.setDisableGravity(perkSection.getBoolean("disable_gravity", true));
                     break;
                 case "grabber":
                     settings.setGrabTimeoutSeconds(perkSection.getInt("grab_timeout_seconds", 4));
@@ -230,6 +335,30 @@ public class PerkConfig {
                     settings.setDoubleJumpHeight(perkSection.getDouble("height", 1.5));
                     settings.setRocketJumpHeight(perkSection.getDouble("rocket_jump_height", 2.0));
                     break;
+                case "mine":
+                    settings.setMaxMinesPerPlayer(perkSection.getInt("max_mines_per_player", 3));
+                    settings.setMineDurationSeconds(perkSection.getInt("mine_duration_seconds", 30));
+                    settings.setMineExplosionRadius(perkSection.getInt("explosion_radius", 4));
+                    settings.setMineFuseTicks(perkSection.getInt("fuse_ticks", 10));
+                    settings.setMineKnockbackMultiplier(perkSection.getDouble("knockback_multiplier", 1.2));
+                    settings.setMineKnockbackYVelocity(perkSection.getDouble("knockback_y_velocity", 0.6));
+                    settings.setMineExplosionDelayTicks(perkSection.getInt("explosion_delay_ticks", 10));
+                    break;
+                case "blink":
+                    settings.setBlinkMaxDistance(perkSection.getInt("max_distance", 5));
+                    break;
+                case "slime":
+                    settings.setSlimeMaxHeight(perkSection.getInt("max_height", 30));
+                    settings.setSlimeMinVelocity(perkSection.getDouble("min_velocity", 1.0));
+                    settings.setSlimeMaxVelocity(perkSection.getDouble("max_velocity", 2.0));
+                    settings.setSlimeReferenceY(perkSection.getInt("reference_y", 64));
+                    settings.setSlimePlatformDuration(perkSection.getInt("platform_duration", 10));
+                    break;
+                case "portal":
+                    settings.setPortalTimeoutSeconds(perkSection.getInt("portal_timeout_seconds", 5));
+                    settings.setPortalUsageCooldownSeconds(perkSection.getInt("portal_usage_cooldown_seconds", 1));
+                    settings.setPortalMinDistance(perkSection.getInt("min_distance", 3));
+                    break;
             }
 
             perkSettings.put(perkName.toLowerCase(), settings);
@@ -240,6 +369,10 @@ public class PerkConfig {
         return perkSettings.getOrDefault(perkName.toLowerCase(), getDefaultSettings());
     }
     
+    public PassivePerkSettings getPassivePerkSettings(String passiveName) {
+        return passivePerkSettings.getOrDefault(passiveName.toLowerCase(), new PassivePerkSettings());
+    }
+    
     private PerkSettings getDefaultSettings() {
         return new PerkSettings(5, 3, 5, 1.5);
     }
@@ -247,8 +380,10 @@ public class PerkConfig {
     public void reloadConfig() {
         config = YamlConfiguration.loadConfiguration(configFile);
         perkSettings.clear();
+        passivePerkSettings.clear();
         loadPerkSettings();
-        System.out.println("[PERK CONFIG] Configuration reloaded, loaded " + perkSettings.size() + " perk settings");
+        loadPassivePerkSettings();
+        System.out.println("[PERK CONFIG] Configuration reloaded, loaded " + perkSettings.size() + " perk settings and " + passivePerkSettings.size() + " passive perk settings");
     }
     
     public void saveConfig() {
@@ -267,8 +402,10 @@ public class PerkConfig {
                 // Save perk-specific settings
                 switch (perkName.toLowerCase()) {
                     case "freezer":
-                        config.set("perks." + perkName + ".freeze_time_seconds", settings.getFreezeTimeSeconds());
-                        config.set("perks." + perkName + ".slowness_strength", settings.getSlownessStrength());
+                        config.set("perks." + perkName + ".player_freeze_duration", settings.getPlayerFreezeDuration());
+                        config.set("perks." + perkName + ".ground_freeze_duration", settings.getGroundFreezeDuration());
+                        config.set("perks." + perkName + ".ground_freeze_radius", settings.getGroundFreezeRadius());
+                        config.set("perks." + perkName + ".disable_gravity", settings.isDisableGravity());
                         break;
                     case "grabber":
                         config.set("perks." + perkName + ".grab_timeout_seconds", settings.getGrabTimeoutSeconds());
@@ -324,6 +461,70 @@ public class PerkConfig {
                         config.set("perks." + perkName + ".height", settings.getDoubleJumpHeight());
                         config.set("perks." + perkName + ".rocket_jump_height", settings.getRocketJumpHeight());
                         break;
+                    case "mine":
+                        config.set("perks." + perkName + ".max_mines_per_player", settings.getMaxMinesPerPlayer());
+                        config.set("perks." + perkName + ".mine_duration_seconds", settings.getMineDurationSeconds());
+                        config.set("perks." + perkName + ".explosion_radius", settings.getMineExplosionRadius());
+                        config.set("perks." + perkName + ".fuse_ticks", settings.getMineFuseTicks());
+                        config.set("perks." + perkName + ".knockback_multiplier", settings.getMineKnockbackMultiplier());
+                        config.set("perks." + perkName + ".knockback_y_velocity", settings.getMineKnockbackYVelocity());
+                        config.set("perks." + perkName + ".explosion_delay_ticks", settings.getMineExplosionDelayTicks());
+                        break;
+                    case "blink":
+                        config.set("perks." + perkName + ".max_distance", settings.getBlinkMaxDistance());
+                        break;
+                    case "slime":
+                        config.set("perks." + perkName + ".max_height", settings.getSlimeMaxHeight());
+                        config.set("perks." + perkName + ".min_velocity", settings.getSlimeMinVelocity());
+                        config.set("perks." + perkName + ".max_velocity", settings.getSlimeMaxVelocity());
+                        config.set("perks." + perkName + ".reference_y", settings.getSlimeReferenceY());
+                        config.set("perks." + perkName + ".platform_duration", settings.getSlimePlatformDuration());
+                        break;
+                    case "portal":
+                        config.set("perks." + perkName + ".portal_timeout_seconds", settings.getPortalTimeoutSeconds());
+                        config.set("perks." + perkName + ".portal_usage_cooldown_seconds", settings.getPortalUsageCooldownSeconds());
+                        config.set("perks." + perkName + ".min_distance", settings.getPortalMinDistance());
+                        break;
+                }
+            }
+            
+            // Save passive perk settings
+            for (Map.Entry<String, PassivePerkSettings> entry : passivePerkSettings.entrySet()) {
+                String passiveName = entry.getKey();
+                PassivePerkSettings settings = entry.getValue();
+                
+                System.out.println("[PERK CONFIG] Saving passive perk: " + passiveName);
+                
+                switch (passiveName.toLowerCase()) {
+                    case "minigun":
+                        config.set("passives." + passiveName + ".trigger_arrows", settings.getTriggerArrows());
+                        config.set("passives." + passiveName + ".knockback_reduction", settings.getKnockbackReduction());
+                        config.set("passives." + passiveName + ".velocity_reduction", settings.getVelocityReduction());
+                        config.set("passives." + passiveName + ".duration_ticks", settings.getDurationTicks());
+                        config.set("passives." + passiveName + ".fire_interval_ticks", settings.getFireIntervalTicks());
+                        config.set("passives." + passiveName + ".arrows_to_fire", settings.getArrowsToFire());
+                        break;
+                    case "generator":
+                        config.set("passives." + passiveName + ".blocks_per_interval", settings.getGeneratorBlocksPerInterval());
+                        config.set("passives." + passiveName + ".generation_interval_ticks", settings.getGeneratorIntervalTicks());
+                        config.set("passives." + passiveName + ".extra_stack_size", settings.getGeneratorExtraStackSize());
+                        break;
+                    case "thief":
+                        config.set("passives." + passiveName + ".wool_steal_amount", settings.getThiefWoolStealAmount());
+                        config.set("passives." + passiveName + ".hits_to_steal", settings.getThiefHitsToSteal());
+                        config.set("passives." + passiveName + ".extra_stack_size", settings.getThiefExtraStackSize());
+                        break;
+                    case "stomper":
+                        config.set("passives." + passiveName + ".min_fall_height", settings.getStomperMinFallHeight());
+                        config.set("passives." + passiveName + ".shockwave_radius", settings.getStomperShockwaveRadius());
+                        config.set("passives." + passiveName + ".destroy_radius", settings.getStomperDestroyRadius());
+                        config.set("passives." + passiveName + ".knockback_strength", settings.getStomperKnockbackStrength());
+                        config.set("passives." + passiveName + ".knockback_y", settings.getStomperKnockbackY());
+                        break;
+                    case "aufzug":
+                        config.set("passives." + passiveName + ".trigger_pearls", settings.getAufzugTriggerPearls());
+                        config.set("passives." + passiveName + ".max_scan_height", settings.getAufzugMaxScanHeight());
+                        break;
                 }
             }
 
@@ -350,8 +551,10 @@ public class PerkConfig {
         private double projectileVelocity;
         
         // Freezer specific
-        private int freezeTimeSeconds = 3;
-        private int slownessStrength = 5;
+        private double playerFreezeDuration = 1.5;
+        private int groundFreezeDuration = 4;
+        private int groundFreezeRadius = 2;
+        private boolean disableGravity = true;
         
         // Grabber specific
         private int grabTimeoutSeconds = 4;
@@ -405,6 +608,30 @@ public class PerkConfig {
         private double doubleJumpHeight = 1.5;
         private double rocketJumpHeight = 2.0;
 
+        // Mine specific
+        private int maxMinesPerPlayer = 3;
+        private int mineDurationSeconds = 30;
+        private int mineExplosionRadius = 4;
+        private int mineFuseTicks = 10;
+        private double mineKnockbackMultiplier = 1.2;
+        private double mineKnockbackYVelocity = 0.6;
+        private int mineExplosionDelayTicks = 10;
+
+        // Blink specific
+        private int blinkMaxDistance = 5;
+
+        // Slime specific
+        private int slimeMaxHeight = 30;
+        private double slimeMinVelocity = 1.0;
+        private double slimeMaxVelocity = 2.0;
+        private int slimeReferenceY = 64;
+        private int slimePlatformDuration = 10;
+
+        // Portal specific
+        private int portalTimeoutSeconds = 5;
+        private int portalUsageCooldownSeconds = 1;
+        private int portalMinDistance = 3;
+
         public PerkSettings(int cooldown, int cooldownRecharger, int cost, double projectileVelocity) {
             this.cooldown = cooldown;
             this.cooldownRecharger = cooldownRecharger;
@@ -417,8 +644,10 @@ public class PerkConfig {
         public int getCooldownRecharger() { return cooldownRecharger; }
         public int getCost() { return cost; }
         public double getProjectileVelocity() { return projectileVelocity; }
-        public int getFreezeTimeSeconds() { return freezeTimeSeconds; }
-        public int getSlownessStrength() { return slownessStrength; }
+        public double getPlayerFreezeDuration() { return playerFreezeDuration; }
+        public int getGroundFreezeDuration() { return groundFreezeDuration; }
+        public int getGroundFreezeRadius() { return groundFreezeRadius; }
+        public boolean isDisableGravity() { return disableGravity; }
         public int getGrabTimeoutSeconds() { return grabTimeoutSeconds; }
         public int getHitTimeoutSeconds() { return hitTimeoutSeconds; }
         public int getExplosionRadius() { return explosionRadius; }
@@ -449,14 +678,32 @@ public class PerkConfig {
         public double getEnderpearlVelocity() { return enderpearlVelocity; }
         public double getDoubleJumpHeight() { return doubleJumpHeight; }
         public double getRocketJumpHeight() { return rocketJumpHeight; }
+        public int getMaxMinesPerPlayer() { return maxMinesPerPlayer; }
+        public int getMineDurationSeconds() { return mineDurationSeconds; }
+        public int getMineExplosionRadius() { return mineExplosionRadius; }
+        public int getMineFuseTicks() { return mineFuseTicks; }
+        public double getMineKnockbackMultiplier() { return mineKnockbackMultiplier; }
+        public double getMineKnockbackYVelocity() { return mineKnockbackYVelocity; }
+        public int getMineExplosionDelayTicks() { return mineExplosionDelayTicks; }
+        public int getBlinkMaxDistance() { return blinkMaxDistance; }
+        public int getSlimeMaxHeight() { return slimeMaxHeight; }
+        public double getSlimeMinVelocity() { return slimeMinVelocity; }
+        public double getSlimeMaxVelocity() { return slimeMaxVelocity; }
+        public int getSlimeReferenceY() { return slimeReferenceY; }
+        public int getSlimePlatformDuration() { return slimePlatformDuration; }
+        public int getPortalTimeoutSeconds() { return portalTimeoutSeconds; }
+        public int getPortalUsageCooldownSeconds() { return portalUsageCooldownSeconds; }
+        public int getPortalMinDistance() { return portalMinDistance; }
 
         // Setters
         public void setCooldown(int cooldown) { this.cooldown = cooldown; }
         public void setCooldownRecharger(int cooldownRecharger) { this.cooldownRecharger = cooldownRecharger; }
         public void setCost(int cost) { this.cost = cost; }
         public void setProjectileVelocity(double projectileVelocity) { this.projectileVelocity = projectileVelocity; }
-        public void setFreezeTimeSeconds(int freezeTimeSeconds) { this.freezeTimeSeconds = freezeTimeSeconds; }
-        public void setSlownessStrength(int slownessStrength) { this.slownessStrength = slownessStrength; }
+        public void setPlayerFreezeDuration(double playerFreezeDuration) { this.playerFreezeDuration = playerFreezeDuration; }
+        public void setGroundFreezeDuration(int groundFreezeDuration) { this.groundFreezeDuration = groundFreezeDuration; }
+        public void setGroundFreezeRadius(int groundFreezeRadius) { this.groundFreezeRadius = groundFreezeRadius; }
+        public void setDisableGravity(boolean disableGravity) { this.disableGravity = disableGravity; }
         public void setGrabTimeoutSeconds(int grabTimeoutSeconds) { this.grabTimeoutSeconds = grabTimeoutSeconds; }
         public void setHitTimeoutSeconds(int hitTimeoutSeconds) { this.hitTimeoutSeconds = hitTimeoutSeconds; }
         public void setExplosionRadius(int explosionRadius) { this.explosionRadius = explosionRadius; }
@@ -487,5 +734,104 @@ public class PerkConfig {
         public void setEnderpearlVelocity(double enderpearlVelocity) { this.enderpearlVelocity = enderpearlVelocity; }
         public void setDoubleJumpHeight(double doubleJumpHeight) { this.doubleJumpHeight = doubleJumpHeight; }
         public void setRocketJumpHeight(double rocketJumpHeight) { this.rocketJumpHeight = rocketJumpHeight; }
+        public void setMaxMinesPerPlayer(int maxMinesPerPlayer) { this.maxMinesPerPlayer = maxMinesPerPlayer; }
+        public void setMineDurationSeconds(int mineDurationSeconds) { this.mineDurationSeconds = mineDurationSeconds; }
+        public void setMineExplosionRadius(int mineExplosionRadius) { this.mineExplosionRadius = mineExplosionRadius; }
+        public void setMineFuseTicks(int mineFuseTicks) { this.mineFuseTicks = mineFuseTicks; }
+        public void setMineKnockbackMultiplier(double mineKnockbackMultiplier) { this.mineKnockbackMultiplier = mineKnockbackMultiplier; }
+        public void setMineKnockbackYVelocity(double mineKnockbackYVelocity) { this.mineKnockbackYVelocity = mineKnockbackYVelocity; }
+        public void setMineExplosionDelayTicks(int mineExplosionDelayTicks) { this.mineExplosionDelayTicks = mineExplosionDelayTicks; }
+        public void setBlinkMaxDistance(int blinkMaxDistance) { this.blinkMaxDistance = blinkMaxDistance; }
+        public void setSlimeMaxHeight(int slimeMaxHeight) { this.slimeMaxHeight = slimeMaxHeight; }
+        public void setSlimeMinVelocity(double slimeMinVelocity) { this.slimeMinVelocity = slimeMinVelocity; }
+        public void setSlimeMaxVelocity(double slimeMaxVelocity) { this.slimeMaxVelocity = slimeMaxVelocity; }
+        public void setSlimeReferenceY(int slimeReferenceY) { this.slimeReferenceY = slimeReferenceY; }
+        public void setSlimePlatformDuration(int slimePlatformDuration) { this.slimePlatformDuration = slimePlatformDuration; }
+        public void setPortalTimeoutSeconds(int portalTimeoutSeconds) { this.portalTimeoutSeconds = portalTimeoutSeconds; }
+        public void setPortalUsageCooldownSeconds(int portalUsageCooldownSeconds) { this.portalUsageCooldownSeconds = portalUsageCooldownSeconds; }
+        public void setPortalMinDistance(int portalMinDistance) { this.portalMinDistance = portalMinDistance; }
+    }
+    
+    public static class PassivePerkSettings {
+        // Minigun settings
+        private int triggerArrows = 4;
+        private double knockbackReduction = 0.3;
+        private double velocityReduction = 0.3;
+        private int durationTicks = 40;
+        private int fireIntervalTicks = 3;
+        private int arrowsToFire = 14;
+
+        // Generator settings
+        private int generatorBlocksPerInterval = 3;
+        private int generatorIntervalTicks = 20;
+        private int generatorExtraStackSize = 64;
+
+        // Thief settings
+        private int thiefWoolStealAmount = 7;
+        private int thiefHitsToSteal = 3;
+        private int thiefExtraStackSize = 64;
+
+        // Aufzug settings
+        private int aufzugTriggerPearls = 5;
+        private int aufzugMaxScanHeight = 50;
+
+        // Stomper settings
+        private int stomperMinFallHeight = 3;
+        private int stomperShockwaveRadius = 4;
+        private int stomperDestroyRadius = 2;
+        private double stomperKnockbackStrength = 1.5;
+        private double stomperKnockbackY = 0.5;
+
+        public PassivePerkSettings() {}
+
+        // Getters
+        public int getTriggerArrows() { return triggerArrows; }
+        public double getKnockbackReduction() { return knockbackReduction; }
+        public double getVelocityReduction() { return velocityReduction; }
+        public int getDurationTicks() { return durationTicks; }
+        public int getFireIntervalTicks() { return fireIntervalTicks; }
+        public int getArrowsToFire() { return arrowsToFire; }
+        public int getGeneratorBlocksPerInterval() { return generatorBlocksPerInterval; }
+        public int getGeneratorIntervalTicks() { return generatorIntervalTicks; }
+        public int getGeneratorExtraStackSize() { return generatorExtraStackSize; }
+        public int getThiefWoolStealAmount() { return thiefWoolStealAmount; }
+        public int getThiefHitsToSteal() { return thiefHitsToSteal; }
+        public int getThiefExtraStackSize() { return thiefExtraStackSize; }
+
+        // Setters
+        public void setTriggerArrows(int triggerArrows) { this.triggerArrows = triggerArrows; }
+        public void setKnockbackReduction(double knockbackReduction) { this.knockbackReduction = knockbackReduction; }
+        public void setVelocityReduction(double velocityReduction) { this.velocityReduction = velocityReduction; }
+        public void setDurationTicks(int durationTicks) { this.durationTicks = durationTicks; }
+        public void setFireIntervalTicks(int fireIntervalTicks) { this.fireIntervalTicks = fireIntervalTicks; }
+        public void setArrowsToFire(int arrowsToFire) { this.arrowsToFire = arrowsToFire; }
+        public void setGeneratorBlocksPerInterval(int generatorBlocksPerInterval) { this.generatorBlocksPerInterval = generatorBlocksPerInterval; }
+        public void setGeneratorIntervalTicks(int generatorIntervalTicks) { this.generatorIntervalTicks = generatorIntervalTicks; }
+        public void setGeneratorExtraStackSize(int generatorExtraStackSize) { this.generatorExtraStackSize = generatorExtraStackSize; }
+        public void setThiefWoolStealAmount(int v) { this.thiefWoolStealAmount = v; }
+        public void setThiefHitsToSteal(int v) { this.thiefHitsToSteal = v; }
+        public void setThiefExtraStackSize(int v) { this.thiefExtraStackSize = v; }
+
+        // Stomper getters
+        public int getStomperMinFallHeight() { return stomperMinFallHeight; }
+        public int getStomperShockwaveRadius() { return stomperShockwaveRadius; }
+        public int getStomperDestroyRadius() { return stomperDestroyRadius; }
+        public double getStomperKnockbackStrength() { return stomperKnockbackStrength; }
+        public double getStomperKnockbackY() { return stomperKnockbackY; }
+
+        // Stomper setters
+        public void setStomperMinFallHeight(int v) { this.stomperMinFallHeight = v; }
+        public void setStomperShockwaveRadius(int v) { this.stomperShockwaveRadius = v; }
+        public void setStomperDestroyRadius(int v) { this.stomperDestroyRadius = v; }
+        public void setStomperKnockbackStrength(double v) { this.stomperKnockbackStrength = v; }
+        public void setStomperKnockbackY(double v) { this.stomperKnockbackY = v; }
+
+        // Aufzug getters
+        public int getAufzugTriggerPearls() { return aufzugTriggerPearls; }
+        public int getAufzugMaxScanHeight() { return aufzugMaxScanHeight; }
+
+        // Aufzug setters
+        public void setAufzugTriggerPearls(int v) { this.aufzugTriggerPearls = v; }
+        public void setAufzugMaxScanHeight(int v) { this.aufzugMaxScanHeight = v; }
     }
 }

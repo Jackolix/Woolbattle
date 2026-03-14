@@ -23,3 +23,17 @@ commands:
   visualizewool:
   reloadperks:
   perkconfig:
+    description: Configure perk settings
+    permission: woolbattle.admin.config
+  gamesettings:
+    description: Configure game settings
+    permission: woolbattle.admin.gamesettings
+    aliases: [gameconfig, gsettings]
+
+permissions:
+  woolbattle.admin.config:
+    description: Access to perk configuration GUI
+    default: op
+  woolbattle.admin.gamesettings:
+    description: Access to game settings configuration GUI
+    default: op

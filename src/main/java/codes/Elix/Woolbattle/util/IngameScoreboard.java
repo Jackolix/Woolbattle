@@ -4,7 +4,10 @@
 package codes.Elix.Woolbattle.util;
 
 import codes.Elix.Woolbattle.game.HelpClasses.CustomPlayer;
+import codes.Elix.Woolbattle.game.HelpClasses.Perk;
 import codes.Elix.Woolbattle.game.LiveSystem;
+import codes.Elix.Woolbattle.game.PerkHelper;
+import codes.Elix.Woolbattle.gamestates.IngameState;
 import fr.mrmicky.fastboard.FastBoard;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -20,7 +23,7 @@ public class IngameScoreboard {
     public static String Colorname2 = "§bBlau";
     public static String Colorname3 = "§aGreen";
     public static String Colorname4 = "§eGelb";
-    private static final String MapName = "§3Custom";
+    public static String MapName = "§3Custom";
     private static final Map<Player, FastBoard> boards = new HashMap<>();
 
     public static void setup(Player player) {
@@ -45,10 +48,11 @@ public class IngameScoreboard {
         lines.add(" §7• " + team(player));
         lines.add("  ");
         lines.add("§8» §7Map");
-        lines.add(" §7• " + MapName);
+        lines.add(" §7• " + MapName.replace(".schem", ""));
+        lines.add(" ");
         lines.add("§8» §7Hit");
         String hit = "§4false";
-        if (CustomPlayer.getCustomPlayer(player).isHitted() == true)
+        if (CustomPlayer.getCustomPlayer(player).isHitted())
             hit = "§3true";
         lines.add(" §4• " + hit);
         lines.add(" ");
@@ -61,6 +65,12 @@ public class IngameScoreboard {
         if (LiveSystem.Teams >= 4)
             lines.add(" §7• §4❤ " + LiveSystem.Team.get("yellow").getLifes() + " §8- " + Colorname4);
 
+        lines.add("  ");
+        lines.add("§8» §7Passiv");
+        Perk perk = PerkHelper.getPerks(player);
+        String passiveName = perk != null ? passivePerkDisplayName(perk.getpassivePerk()) : "§8-";
+        lines.add(" §7• §3" + passiveName);
+
         board.updateLines(lines);
     }
     
@@ -71,13 +81,40 @@ public class IngameScoreboard {
         }
     }
 
+    private static String passivePerkDisplayName(String key) {
+        if (key == null) return "§8-";
+        return switch (key) {
+            case "aufzug" -> "Aufzug";
+            case "exploding_arrow" -> "Explodierender Pfeil";
+            case "ghost_arrow" -> "Geisterpfeil";
+            case "minigun" -> "Minigun";
+            case "recharger" -> "Recharger";
+            case "reflector" -> "Reflector";
+            case "rocket_jump" -> "Rocket Jump";
+            case "arrowrain" -> "Pfeilregen";
+            case "shockarrow" -> "Shock Arrow";
+            case "slowarrow" -> "Slow Arrow";
+            case "spider" -> "Spinne";
+            case "stomper" -> "Stomper";
+            case "slimeplattform" -> "SlimePlattform";
+            default -> key;
+        };
+    }
+
     public static String team(Player player) {
         String color = null;
         CustomPlayer customPlayer = CustomPlayer.getCustomPlayer(player);
         if (customPlayer != null)
             if (customPlayer.getTeam() != null)
                 color = customPlayer.getTeam().getName();
-        if (color == null) return "nicht ausgewählt";
+        
+        // Check if player is a spectator
+        if (color == null) {
+            if (IngameState.getSpectator().contains(player)) {
+                return ChatColor.GRAY + "Spectator";
+            }
+            return "nicht ausgewählt";
+        }
 
         switch (color) {
             case "red" -> {

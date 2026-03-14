@@ -3,15 +3,13 @@
 
 package codes.Elix.Woolbattle.countdowns;
 
+import codes.Elix.Woolbattle.config.GameConfig;
 import codes.Elix.Woolbattle.gamestates.GameState;
 import codes.Elix.Woolbattle.gamestates.GameStateManager;
 import codes.Elix.Woolbattle.gamestates.LobbyState;
 import codes.Elix.Woolbattle.items.MapVoting;
 import codes.Elix.Woolbattle.main.Woolbattle;
-import codes.Elix.Woolbattle.util.LobbyScoreboard;
-import codes.Elix.Woolbattle.util.LobbyTabList;
-import codes.Elix.Woolbattle.util.SchematicManager;
-import codes.Elix.Woolbattle.util.Worldloader;
+import codes.Elix.Woolbattle.util.*;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -29,8 +27,8 @@ public class LobbyCountdown extends Countdown{
     private boolean isRunning;
     public LobbyCountdown(GameStateManager gameStateManager) {
         this.gameStateManager = gameStateManager;
-        // seconds = COUNTDOWN_TIME;
-        seconds = Woolbattle.getPlugin().getConfig().getInt("LobbyCountdown");
+        // Use GameConfig for dynamic countdown configuration
+        seconds = GameConfig.getInstance().getLobbyCountdownSeconds();
     }
 
     @Override
@@ -57,6 +55,7 @@ public class LobbyCountdown extends Countdown{
                         
                         // Use config-based loading for the game map
                         SchematicManager.loadSchematicWithConfig(winningMap);
+                        IngameScoreboard.MapName = winningMap;
                         System.out.println("[Woolbattle] Loading map with config: " + winningMap);
                         Woolbattle.safewool();
                         gameStateManager.setGameState(GameState.INGAME_STATE);
@@ -83,7 +82,7 @@ public class LobbyCountdown extends Countdown{
         if (isRunning) {
             Bukkit.getScheduler().cancelTask(taskID);
             isRunning = false;
-            seconds = COUNTDOWN_TIME;
+            seconds = GameConfig.getInstance().getLobbyCountdownSeconds();
         }
     }
 
@@ -118,7 +117,7 @@ public class LobbyCountdown extends Countdown{
     public int getSeconds() {
         if (isRunning)
             return seconds;
-        return COUNTDOWN_TIME;
+        return GameConfig.getInstance().getLobbyCountdownSeconds();
     }
 
     public void setSeconds(int seconds) {

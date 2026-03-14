@@ -79,7 +79,7 @@ public class LobbyItems implements Listener {
     private void PerkInventory(Player player, String title) {
         Title.put(player, title);
         Inventory inventory = Bukkit.createInventory(null, 9*4, Items.convertLegacyText(title));
-        Items.create(inventory, Material.TRIPWIRE_HOOK, false, "§3Booster", "Boostet dich durch die Luft",12, 25, 0);
+        Items.create(inventory, Material.FIREWORK_ROCKET, false, "§3Booster", "Boostet dich durch die Luft",12, 25, 0);
         Items.create(inventory, Material.FISHING_ROD, false, "§3Enterhaken", "Ziehe dich mit einem Enterhaken über die Map!", 5, 16, 1);
         Items.create(inventory, Material.PACKED_ICE, false, "§3Freezer", "Friere deine Gegner ein!", 6, 6, 2);
         Items.create(inventory, Material.CLOCK, false, "§3Großvaters Uhr", "Teleportiert dich nach kurzer Zeit zu einem beliebigen Punk!",8, 14, 3);
@@ -98,6 +98,7 @@ public class LobbyItems implements Listener {
         Items.create(inventory, Material.RED_STAINED_GLASS_PANE, false, "§3Wandgenerator", "Baut eine Wand aus Wolle vor dir", 8, 10, 16);
         Items.create(inventory, Material.TNT, false, "§3WoolBombe", "Booste deine Gegner mit einem werfbaren TNT weg!", 8, 13, 17);
         Items.create(inventory, Material.CARROT_ON_A_STICK, false, "§3The Grabber", "Ziehe Gegner zu dir!", 8, 5, 18);
+        Items.create(inventory, Material.TRIPWIRE_HOOK, false, "§3Blink", "Teleportiert dich bis zu 5 Blöcke in deine Blickrichtung",5, 10, 19);
         Items.create(inventory, Material.DARK_OAK_DOOR, false, "§3Back", 35);
         checkSelectet(player, inventory);
     }
@@ -116,8 +117,11 @@ public class LobbyItems implements Listener {
         Items.createPassivePerk(inventory, Material.BLAZE_POWDER, false, "§3Schock Pfeil", "Blockiere die Perks deines Gegners!", "§6Preis: 10 Wolle", "§6Nach Pfeilen: 8", 8);
         Items.createPassivePerk(inventory, Material.ARROW, false, "§3SlowArrow", "Verlangsame den Gegner!", "§6Preis: 2 Wolle", "§6Nach Pfeilen: 3", 9);
         Items.createPassivePerk(inventory, Material.SPIDER_SPAWN_EGG,false, "§3Spinne", "Klettere wie eine Spinne an einer Wand hoch!", "§6Preis: 2 Wolle je Sekunde klettern", null, 10); //TODO Falscher Byte Code
-        Items.createPassivePerk(inventory, Material.DIAMOND_BOOTS, false, "§3Stomper", "Katapultiert alle Gegner in deiner Nähe nach einem Doppelsprung weg!", "§6Preis: 10 Wolle", "§6Nach Sprüngen: 2", 11);
-        Items.create(inventory, Material.GOLDEN_HOE,"§3SlimePlattform", 12);
+        Items.createPassivePerk(inventory, Material.DIAMOND_BOOTS, false, "§3Stomper", "Lande nach 3+ Blöcken Fall: Schockwelle zerstört Wolle & schleudert Gegner weg!", "§6Min. Fall: 3 Blöcke", "§6Radius: 4 Blöcke", 11);
+        Items.createPassivePerk(inventory, Material.DIAMOND_HOE, false, "§3Minigun", "Schießt automatisch Pfeile nach jedem 4. Schuss!", "§6Preis: 12 Wolle", "§6Nach Pfeilen: 4", 12);
+        Items.create(inventory, Material.GOLDEN_HOE,"§3SlimePlattform", 13);
+        Items.createPassivePerk(inventory, Material.SHEARS, false, "§3Thief", "Stiehl Wolle von Gegnern bei jedem 3. Treffer!", "§6+64 Wolle Kapazität", "§6Nach Treffern: 3", 14);
+        Items.createPassivePerk(inventory, Material.LOOM, false, "§3Fabricator", "Generiert automatisch Wolle über Zeit!", "§6+64 Wolle Kapazität", "§6Intervall: 1 Sekunde", 15);
         Items.create(inventory, Material.DARK_OAK_DOOR, false, "§3Back", 35);
         checkSelectet(player, inventory);
     }
@@ -272,16 +276,12 @@ public class LobbyItems implements Listener {
 
     @EventHandler()
     public void onGUIClick(InventoryClickEvent event) {
-        System.out.println("[WOOLBATTLE DEBUG] InventoryClickEvent triggered!");
         if (!(event.getWhoClicked() instanceof Player player)) {
-            System.out.println("[WOOLBATTLE DEBUG] Not a player click");
             return;
         }
         if (event.getCurrentItem() == null) {
-            System.out.println("[WOOLBATTLE DEBUG] No item clicked");
             return;
         }
-        System.out.println("[WOOLBATTLE DEBUG] Player: " + player.getName() + " clicked item: " + event.getCurrentItem().getType());
 
 
         FileConfiguration config = Woolbattle.getPlugin().getConfig();
@@ -310,7 +310,8 @@ public class LobbyItems implements Listener {
         if (event.getView().title().equals(Items.convertLegacyText("§3Erstes Perk:"))) {
             event.setCancelled(true);
             switch (clicked) {
-                case TRIPWIRE_HOOK -> PerkItems.select(player, "booster", ".1Perk");
+                case FIREWORK_ROCKET -> PerkItems.select(player, "booster", ".1Perk");
+                case TRIPWIRE_HOOK -> PerkItems.select(player, "blink", ".1Perk");
                 case FISHING_ROD -> PerkItems.select(player, "enterhaken", ".1Perk");
                 case PACKED_ICE -> PerkItems.select(player, "freezer", ".1Perk");
                 case CLOCK -> PerkItems.select(player, "großvatersuhr", ".1Perk");
@@ -341,7 +342,8 @@ public class LobbyItems implements Listener {
         if (event.getView().title().equals(Items.convertLegacyText("§3Zweites Perk:"))) {
             event.setCancelled(true);
             switch (clicked) {
-                case TRIPWIRE_HOOK -> PerkItems.select(player, "booster", ".2Perk");
+                case FIREWORK_ROCKET -> PerkItems.select(player, "booster", ".2Perk");
+                case TRIPWIRE_HOOK -> PerkItems.select(player, "blink", ".2Perk");
                 case FISHING_ROD -> PerkItems.select(player, "enterhaken", ".2Perk");
                 case PACKED_ICE -> PerkItems.select(player, "freezer", ".2Perk");
                 case CLOCK -> PerkItems.select(player, "großvatersuhr", ".2Perk");
@@ -403,11 +405,14 @@ public class LobbyItems implements Listener {
                 case CACTUS -> PerkItems.selectPassive(player, "reflector");
                 case RABBIT_FOOT -> PerkItems.selectPassive(player, "rocket_jump");
                 case GOLD_INGOT -> PerkItems.selectPassive(player, "portal");
-                case BLAZE_ROD -> PerkItems.selectPassive(player, "shockarrow");
+                case BLAZE_POWDER -> PerkItems.selectPassive(player, "shockarrow");
                 case ARROW -> PerkItems.selectPassive(player, "slowarrow");
                 case SPIDER_SPAWN_EGG -> PerkItems.selectPassive(player, "spider");
                 case DIAMOND_BOOTS -> PerkItems.selectPassive(player, "stomper");
+                case DIAMOND_HOE -> PerkItems.selectPassive(player, "minigun");
                 case GOLDEN_HOE -> PerkItems.selectPassive(player, "slimeplattform");
+                case SHEARS -> PerkItems.selectPassive(player, "thief");
+                case LOOM -> PerkItems.selectPassive(player, "generator");
                 case DARK_OAK_DOOR -> {
                     PerkVorInventory(player);
                     return;
@@ -446,11 +451,7 @@ public class LobbyItems implements Listener {
         // Handle Maps voting - check if title contains Maps
         if (title.contains("Maps")) {
             event.setCancelled(true);
-            System.out.println("[DEBUG] Maps inventory detected!");
-            Console.send("Maps inventory clicked by " + player.getName());
             if (event.getCurrentItem().getType() != Material.AIR) {
-                System.out.println("[DEBUG] Item type: " + event.getCurrentItem().getType());
-                Console.send("Item clicked: " + event.getCurrentItem().getType());
                 handleMapSelection(player, event.getCurrentItem());
             }
             return; // Exit early for maps
@@ -497,7 +498,7 @@ public class LobbyItems implements Listener {
                     Fperk = "booster";
                 }
                 switch (Fperk.toString()) {
-                    case "booster" -> Items.create(inventory, Material.TRIPWIRE_HOOK, true, "§3Booster", "Boostet dich durch die Luft", 12, 25, 0);
+                    case "booster" -> Items.create(inventory, Material.FIREWORK_ROCKET, true, "§3Booster", "Boostet dich durch die Luft", 12, 25, 0);
                     case "enterhaken" -> Items.create(inventory, Material.FISHING_ROD, true, "§3Enterhaken", "Ziehe dich mit einem Enterhaken über die Map!", 5, 16, 1);
                     case "freezer" -> Items.create(inventory, Material.PACKED_ICE, true, "§3Freezer", "Friere deine Gegner ein!", 6, 6, 2);
                     case "großvatersuhr" -> Items.create(inventory, Material.CLOCK, true, "§3Großvaters Uhr", "Teleportiert dich nach kurzer Zeit zu einem beliebigen Punk!", 8, 14, 3);
@@ -516,6 +517,7 @@ public class LobbyItems implements Listener {
                     case "wandgenerator" -> Items.create(inventory, Material.RED_STAINED_GLASS_PANE, true, "§3Wandgenerator", "Baut eine Wand aus Wolle vor dir", 8, 10, 16);
                     case "woolbombe" -> Items.create(inventory, Material.TNT, true, "§3WoolBombe", "Booste deine Gegner mit einem werfbaren TNT weg!", 8, 13, 17);
                     case "grabber" -> Items.create(inventory, Material.CARROT_ON_A_STICK, true, "§3The Grabber", "Ziehe Gegner zu dir!", 8, 5, 18);
+                    case "blink" -> Items.create(inventory, Material.TRIPWIRE_HOOK, true, "§3Blink", "Teleportiert dich bis zu 5 Blöcke in deine Blickrichtung", 5, 10, 19);
                     default -> Console.send("[NO_FIRST_PERK]: " + player.getName());
                 }
             }
@@ -526,7 +528,7 @@ public class LobbyItems implements Listener {
                     Sperk = "enterhaken";
                 }
                 switch (Objects.requireNonNull(Sperk).toString()) {
-                    case "booster" -> Items.create(inventory, Material.TRIPWIRE_HOOK, true, "§3Booster", "Boostet dich durch die Luft", 12, 25, 0);
+                    case "booster" -> Items.create(inventory, Material.FIREWORK_ROCKET, true, "§3Booster", "Boostet dich durch die Luft", 12, 25, 0);
                     case "enterhaken" -> Items.create(inventory, Material.FISHING_ROD, true, "§3Enterhaken", "Ziehe dich mit einem Enterhaken über die Map!", 5, 16, 1);
                     case "freezer" -> Items.create(inventory, Material.PACKED_ICE, true, "§3Freezer", "Friere deine Gegner ein!", 6, 6, 2);
                     case "großvatersuhr" -> Items.create(inventory, Material.CLOCK, true, "§3Großvaters Uhr", "Teleportiert dich nach kurzer Zeit zu einem beliebigen Punk!", 8, 14, 3);
@@ -545,6 +547,7 @@ public class LobbyItems implements Listener {
                     case "wandgenerator" -> Items.create(inventory, Material.RED_STAINED_GLASS_PANE, true, "§3Wandgenerator", "Baut eine Wand aus Wolle vor dir", 8, 10, 16);
                     case "woolbombe" -> Items.create(inventory, Material.TNT, true, "§3WoolBombe", "Booste deine Gegner mit einem werfbaren TNT weg!", 8, 13, 17);
                     case "grabber" -> Items.create(inventory, Material.CARROT_ON_A_STICK, true, "§3The Grabber", "Ziehe Gegner zu dir!", 8, 5, 18);
+                    case "blink" -> Items.create(inventory, Material.TRIPWIRE_HOOK, true, "§3Blink", "Teleportiert dich bis zu 5 Blöcke in deine Blickrichtung", 5, 10, 19);
                     default -> Console.send("[NO_SECOND_PERK]: " + player.getName());
                 }
             }
@@ -565,11 +568,14 @@ public class LobbyItems implements Listener {
                     case "reflector" -> Items.createPassivePerk(inventory, Material.CACTUS, true, "§3Reflector", "Gibt das dir zugefügte Knockback zu 30% an deinen Gegner zurück!", "§6Preis: 15 Wolle", "§6Cooldown: 13", 5);
                     case "rocket_jump" -> Items.createPassivePerk(inventory, Material.RABBIT_FOOT, true, "§3Rocket Jump", "Lässt dich einen höheren Doppelsprung machen!", "§6Preis: 14 Wolle", null, 6);
                     case "portal" -> Items.createPassivePerk(inventory, Material.GOLD_INGOT, true, "§3IDK", "", "§6Preis: 8 Wolle", "§6Cooldown: 2", 7);
-                    case "shockarrow" -> Items.create(inventory, Material.RED_STAINED_GLASS, true, "§3Rettungskapsel", "Umhüllt dich mit Blöcken", 15, 30, 8);
+                    case "shockarrow" -> Items.create(inventory, Material.BLAZE_POWDER, true, "§3Schock Pfeil", "Blockiere die Perks deines Gegners!", 10, 8, 8);
                     case "slowarrow" -> Items.createPassivePerk(inventory, Material.ARROW, true, "§3SlowArrow", "Verlangsame den Gegener!", "§6Preis: 2 Wolle", "§6Nach Pfeilen: 3", 9);
                     case "spider" -> Items.createPassivePerk(inventory, Material.SPIDER_SPAWN_EGG, true, "§3Spinne", "Klettere wie eine Spinne an einer Wand hoch!", "§6Preis: 2 Wolle je Sekunde klettern", null, 10);
-                    case "stomper" -> Items.createPassivePerk(inventory, Material.DIAMOND_BOOTS, true, "§3Stomper", "Katapultiert alle Gegner in deiner Nähe nach einem Doppelsprung weg!", "§6Preis: 10 Wolle", "§6Nach Sprüngen: 2", 11);
-                    case "slimeplattform" -> Items.create(inventory, Material.GOLDEN_HOE, true, "§3SlimePlattform", 12);
+                    case "stomper" -> Items.createPassivePerk(inventory, Material.DIAMOND_BOOTS, true, "§3Stomper", "Lande nach 3+ Blöcken Fall: Schockwelle zerstört Wolle & schleudert Gegner weg!", "§6Min. Fall: 3 Blöcke", "§6Radius: 4 Blöcke", 11);
+                    case "minigun" -> Items.createPassivePerk(inventory, Material.DIAMOND_HOE, true, "§3Minigun", "Schießt automatisch Pfeile nach jedem 4. Schuss!", "§6Preis: 12 Wolle", "§6Nach Pfeilen: 4", 12);
+                    case "slimeplattform" -> Items.create(inventory, Material.GOLDEN_HOE, true, "§3SlimePlattform", 13);
+                    case "thief" -> Items.createPassivePerk(inventory, Material.SHEARS, true, "§3Thief", "Stiehl Wolle von Gegnern bei jedem 3. Treffer!", "§6+64 Wolle Kapazität", "§6Nach Treffern: 3", 14);
+                    case "generator" -> Items.createPassivePerk(inventory, Material.LOOM, true, "§3Fabricator", "Generiert automatisch Wolle über Zeit!", "§6+64 Wolle Kapazität", "§6Intervall: 1 Sekunde", 15);
                     default -> Console.send("[NO_PASSIVE_PERK]: " + player.getName());
                 }
             }
@@ -689,15 +695,18 @@ public class LobbyItems implements Listener {
         passivePerks.add("§3Geisterpfeil");
         passivePerks.add("§3IDK");
         passivePerks.add("§3Pfeilregen");
+        passivePerks.add("§3Minigun");
         passivePerks.add("§3Recharger");
         passivePerks.add("§3Reflector");
         passivePerks.add("§3Rocket Jump");
         passivePerks.add("§3IDK1");
-        passivePerks.add("§3Rettungskapsel");
+        passivePerks.add("§3Schock Pfeil");
         passivePerks.add("§3SlowArrow");
         passivePerks.add("§3Spinne");
         passivePerks.add("§3Stomper");
         passivePerks.add("§3SlimePlattform");
+        passivePerks.add("§3Thief");
+        passivePerks.add("§3Fabricator");
     }
 
     /**

@@ -128,9 +128,25 @@ public class GameConfig {
     public boolean isPvpEnabled() {
         return config.getBoolean("combat.pvp_enabled", true);
     }
-    
+
     public void setPvpEnabled(boolean enabled) {
         config.set("combat.pvp_enabled", enabled);
+    }
+
+    public int getBowComboRequired() {
+        return config.getInt("combat.bow_combo_required", 5);
+    }
+
+    public void setBowComboRequired(int count) {
+        config.set("combat.bow_combo_required", count);
+    }
+
+    public int getBowComboWindowSeconds() {
+        return config.getInt("combat.bow_combo_window_seconds", 5);
+    }
+
+    public void setBowComboWindowSeconds(int seconds) {
+        config.set("combat.bow_combo_window_seconds", seconds);
     }
     
     // ============================================

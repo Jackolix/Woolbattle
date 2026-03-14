@@ -3,7 +3,6 @@ package codes.Elix.Woolbattle.gui;
 import codes.Elix.Woolbattle.config.PerkConfig;
 import codes.Elix.Woolbattle.game.DoubleJump;
 import codes.Elix.Woolbattle.game.EnderPearl;
-import codes.Elix.Woolbattle.items.Items;
 import codes.Elix.Woolbattle.main.Woolbattle;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -25,10 +24,18 @@ import org.bukkit.persistence.PersistentDataType;
 import java.util.*;
 
 public class PerkConfigGUI implements Listener {
-    
+
     private static final Map<Player, String> waitingForInput = new HashMap<>();
     private static final Map<Player, ConfigContext> configContext = new HashMap<>();
     private static final NamespacedKey SETTING_KEY = new NamespacedKey(Woolbattle.getPlugin(), "setting_key");
+
+    // Settings that can have negative values (e.g., Y-levels can be negative in Minecraft)
+    private static final Set<String> ALLOWS_NEGATIVE = Set.of(
+        "slime_reference_y"
+        // Add more settings here as needed, e.g.:
+        // "spawn_y_offset",
+        // "platform_y_offset"
+    );
     
     private static class ConfigContext {
         String perkName;
@@ -69,6 +76,7 @@ public class PerkConfigGUI implements Listener {
         addPerkConfigItem(inventory, 28, Material.ENDER_PEARL, "EnderPearl", "Configure enderpearl settings");
         addPerkConfigItem(inventory, 29, Material.FEATHER, "DoubleJump", "Configure double jump settings");
         addPerkConfigItem(inventory, 30, Material.DIAMOND_HOE, "Minigun", "Configure minigun passive perk");
+        addPerkConfigItem(inventory, 31, Material.WHITE_WOOL, "Generator", "Configure generator passive perk");
 
         // Control buttons
         addControlButton(inventory, 45, Material.EMERALD_BLOCK, 
@@ -131,7 +139,7 @@ public class PerkConfigGUI implements Listener {
     
     public static void openPerkConfigGUI(Player player, String perkName) {
         // Handle passive perks separately
-        if (perkName.equalsIgnoreCase("minigun")) {
+        if (perkName.equalsIgnoreCase("minigun") || perkName.equalsIgnoreCase("generator")) {
             openPassivePerkConfigGUI(player, perkName);
             return;
         }
@@ -153,8 +161,10 @@ public class PerkConfigGUI implements Listener {
         // Perk-specific settings
         switch (perkName.toLowerCase()) {
             case "freezer":
-                addConfigSetting(inventory, 19, Material.ICE, "Freeze Time (seconds)", String.valueOf(settings.getFreezeTimeSeconds()), "freeze_time_seconds");
-                addConfigSetting(inventory, 20, Material.COBWEB, "Slowness Strength", String.valueOf(settings.getSlownessStrength()), "slowness_strength");
+                addConfigSetting(inventory, 19, Material.ICE, "Player Freeze Duration", String.valueOf(settings.getPlayerFreezeDuration()), "player_freeze_duration");
+                addConfigSetting(inventory, 20, Material.PACKED_ICE, "Ground Freeze Duration", String.valueOf(settings.getGroundFreezeDuration()), "ground_freeze_duration");
+                addConfigSetting(inventory, 21, Material.SNOW_BLOCK, "Ground Freeze Radius", String.valueOf(settings.getGroundFreezeRadius()), "ground_freeze_radius");
+                addConfigSetting(inventory, 22, Material.FEATHER, "Disable Gravity", String.valueOf(settings.isDisableGravity()), "disable_gravity");
                 break;
             case "grabber":
                 addConfigSetting(inventory, 19, Material.FISHING_ROD, "Grab Timeout (seconds)", String.valueOf(settings.getGrabTimeoutSeconds()), "grab_timeout_seconds");
@@ -271,6 +281,13 @@ public class PerkConfigGUI implements Listener {
             addConfigSetting(inventory, 14, Material.REDSTONE, "Fire Interval (ticks)", String.valueOf(settings.getFireIntervalTicks()), "fire_interval_ticks");
             addConfigSetting(inventory, 15, Material.SPECTRAL_ARROW, "Arrows To Fire", String.valueOf(settings.getArrowsToFire()), "arrows_to_fire");
         }
+
+        // Generator-specific settings
+        if (passiveName.equalsIgnoreCase("generator")) {
+            addConfigSetting(inventory, 10, Material.WHITE_WOOL, "Blocks Per Interval", String.valueOf(settings.getGeneratorBlocksPerInterval()), "generator_blocks_per_interval");
+            addConfigSetting(inventory, 11, Material.CLOCK, "Interval (ticks)", String.valueOf(settings.getGeneratorIntervalTicks()), "generator_interval_ticks");
+            addConfigSetting(inventory, 12, Material.CHEST, "Extra Stack Size", String.valueOf(settings.getGeneratorExtraStackSize()), "generator_extra_stack_size");
+        }
         
         // Control buttons
         addControlButton(inventory, 45, Material.GREEN_WOOL, 
@@ -386,6 +403,7 @@ public class PerkConfigGUI implements Listener {
             case TRIPWIRE_HOOK -> openPerkConfigGUI(player, "Blink");
             case SLIME_BALL -> openPerkConfigGUI(player, "Slime");
             case DIAMOND_HOE -> openPerkConfigGUI(player, "Minigun");
+            case WHITE_WOOL -> openPerkConfigGUI(player, "Generator");
             default -> System.out.println("[PERK CONFIG GUI] No handler for material: " + type);
         }
     }
@@ -453,7 +471,7 @@ public class PerkConfigGUI implements Listener {
             System.out.println("[PERK CONFIG GUI] Perk: " + perkName + ", Setting: " + settingKey + ", Change: " + change);
             
             // Handle passive perks
-            if (perkName.equalsIgnoreCase("minigun")) {
+            if (perkName.equalsIgnoreCase("minigun") || perkName.equalsIgnoreCase("generator")) {
                 modifyPassivePerkSetting(player, perkName, settingKey, change);
                 return;
             }
@@ -463,9 +481,15 @@ public class PerkConfigGUI implements Listener {
             
             double currentValue = getCurrentSettingValue(settings, settingKey);
             System.out.println("[PERK CONFIG GUI] Current value: " + currentValue);
-            
-            double newValue = Math.max(0, currentValue + change);
-            
+
+            // Allow negative values for settings in ALLOWS_NEGATIVE set
+            double newValue;
+            if (ALLOWS_NEGATIVE.contains(settingKey)) {
+                newValue = currentValue + change;
+            } else {
+                newValue = Math.max(0, currentValue + change);
+            }
+
             // For double values, ensure reasonable precision
             if (settingKey.contains("velocity") || settingKey.contains("multiplier") || settingKey.contains("reduction") ||
                 settingKey.equals("slime_min_velocity") || settingKey.equals("slime_max_velocity")) {
@@ -533,6 +557,9 @@ public class PerkConfigGUI implements Listener {
             case "duration_ticks" -> settings.getDurationTicks();
             case "fire_interval_ticks" -> settings.getFireIntervalTicks();
             case "arrows_to_fire" -> settings.getArrowsToFire();
+            case "generator_blocks_per_interval" -> settings.getGeneratorBlocksPerInterval();
+            case "generator_interval_ticks" -> settings.getGeneratorIntervalTicks();
+            case "generator_extra_stack_size" -> settings.getGeneratorExtraStackSize();
             default -> 0;
         };
     }
@@ -545,6 +572,9 @@ public class PerkConfigGUI implements Listener {
             case "duration_ticks" -> settings.setDurationTicks((int) value);
             case "fire_interval_ticks" -> settings.setFireIntervalTicks((int) value);
             case "arrows_to_fire" -> settings.setArrowsToFire((int) value);
+            case "generator_blocks_per_interval" -> settings.setGeneratorBlocksPerInterval((int) value);
+            case "generator_interval_ticks" -> settings.setGeneratorIntervalTicks((int) value);
+            case "generator_extra_stack_size" -> settings.setGeneratorExtraStackSize((int) value);
         }
     }
     
@@ -554,8 +584,10 @@ public class PerkConfigGUI implements Listener {
             case "cooldown_recharger" -> settings.getCooldownRecharger();
             case "cost" -> settings.getCost();
             case "projectile_velocity" -> settings.getProjectileVelocity();
-            case "freeze_time_seconds" -> settings.getFreezeTimeSeconds();
-            case "slowness_strength" -> settings.getSlownessStrength();
+            case "player_freeze_duration" -> settings.getPlayerFreezeDuration();
+            case "ground_freeze_duration" -> settings.getGroundFreezeDuration();
+            case "ground_freeze_radius" -> settings.getGroundFreezeRadius();
+            case "disable_gravity" -> settings.isDisableGravity() ? 1 : 0;
             case "grab_timeout_seconds" -> settings.getGrabTimeoutSeconds();
             case "hit_timeout_seconds" -> settings.getHitTimeoutSeconds();
             case "explosion_radius" -> settings.getExplosionRadius();
@@ -616,8 +648,10 @@ public class PerkConfigGUI implements Listener {
                 settings.setCost((int)value);
             }
             case "projectile_velocity" -> settings.setProjectileVelocity(value);
-            case "freeze_time_seconds" -> settings.setFreezeTimeSeconds((int)value);
-            case "slowness_strength" -> settings.setSlownessStrength((int)value);
+            case "player_freeze_duration" -> settings.setPlayerFreezeDuration(value);
+            case "ground_freeze_duration" -> settings.setGroundFreezeDuration((int)value);
+            case "ground_freeze_radius" -> settings.setGroundFreezeRadius((int)value);
+            case "disable_gravity" -> settings.setDisableGravity(value >= 1);
             case "grab_timeout_seconds" -> settings.setGrabTimeoutSeconds((int)value);
             case "hit_timeout_seconds" -> settings.setHitTimeoutSeconds((int)value);
             case "explosion_radius" -> settings.setExplosionRadius((int)value);
@@ -683,15 +717,16 @@ public class PerkConfigGUI implements Listener {
             
             try {
                 double value = Double.parseDouble(input);
-                
-                if (value < 0) {
+
+                // Check if negative values are allowed for this setting
+                if (value < 0 && !ALLOWS_NEGATIVE.contains(settingKey)) {
                     player.sendMessage(Component.text("Value must be positive!", NamedTextColor.RED));
                     Bukkit.getScheduler().runTask(Woolbattle.getPlugin(), () -> openPerkConfigGUI(player, context.perkName));
                     return;
                 }
-                
+
                 // Handle passive perks
-                if (context.perkName.equalsIgnoreCase("minigun")) {
+                if (context.perkName.equalsIgnoreCase("minigun") || context.perkName.equalsIgnoreCase("generator")) {
                     PerkConfig.PassivePerkSettings settings = PerkConfig.getInstance().getPassivePerkSettings(context.perkName.toLowerCase());
                     
                     // Cap reduction values at 1.0 (100%)

@@ -3,14 +3,16 @@
 # Changes take effect after server reload or using /woolbattle reload command
 
 perks:
-  # Freezer Perk - Shoots ice projectile that slows enemies
+  # Freezer Perk - Throws ice projectile that freezes enemies and ground
   freezer:
     cooldown: 5                    # Cooldown in seconds
     cooldown_recharger: 3          # Cooldown with recharger passive
     cost: 5                        # Wool cost to use perk
-    freeze_time_seconds: 3         # How long the slowness effect lasts
-    slowness_strength: 5           # Slowness effect strength (0-255)
+    player_freeze_duration: 1.5    # How long players are frozen (seconds)
+    ground_freeze_duration: 4      # How long ground blocks stay frozen (seconds)
+    ground_freeze_radius: 2        # Radius of frozen ground effect (blocks)
     projectile_velocity: 1.6       # Speed of the ice projectile
+    disable_gravity: true          # Whether frozen players are affected by gravity
     
   # Grabber Perk - Hook and pull enemies towards you
   grabber:
@@ -152,6 +154,31 @@ perks:
 
 # Passive Perks Configuration
 passives:
+  # WoolGenerator Passive Perk - Auto-generates wool over time and allows one extra stack
+  generator:
+    blocks_per_interval: 3         # Wool blocks generated per interval
+    generation_interval_ticks: 20  # Ticks between each generation (20 = 1 second)
+    extra_stack_size: 64           # Extra wool capacity bonus
+
+  # Thief Passive Perk - Steals wool every Nth hit (bow or shears), +1 extra stack capacity
+  thief:
+    wool_steal_amount: 7           # Wool stolen per trigger
+    hits_to_steal: 3               # Hits required before steal triggers (per victim)
+    extra_stack_size: 64           # Extra wool capacity bonus
+
+  # Stomper Passive Perk - Triggers shockwave on landing after a 3+ block fall
+  stomper:
+    min_fall_height: 3           # Minimum fall distance to trigger (blocks)
+    shockwave_radius: 4          # Full radius for enemy knockback (blocks)
+    destroy_radius: 2            # Inner radius for block destruction
+    knockback_strength: 1.5      # Horizontal knockback force
+    knockback_y: 0.5             # Upward knockback component
+
+  # Aufzug Passive Perk - Charge elevator by throwing N pearls, then teleport to top of structure
+  aufzug:
+    trigger_pearls: 5        # Pearls needed to charge elevator
+    max_scan_height: 50      # Max blocks to scan upward for structure top
+
   # Minigun Passive Perk - Auto-fires arrows after every Nth shot
   minigun:
     trigger_arrows: 4              # Number of arrows before minigun activates

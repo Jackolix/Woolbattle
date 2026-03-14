@@ -3,7 +3,6 @@ package codes.Elix.Woolbattle.gui;
 import codes.Elix.Woolbattle.config.GameConfig;
 import codes.Elix.Woolbattle.game.LiveSystem;
 import codes.Elix.Woolbattle.gamestates.LobbyState;
-import codes.Elix.Woolbattle.items.Items;
 import codes.Elix.Woolbattle.main.Woolbattle;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -22,7 +21,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * GUI for configuring game settings in-game.
@@ -198,9 +200,17 @@ public class GameSettingsGUI implements Listener {
             config.isFireDamageEnabled(), "combat.fire_damage_enabled", 
             "Enable fire damage");
         
-        addToggleSetting(inventory, 14, Material.DIAMOND_SWORD, "PvP Enabled", 
-            config.isPvpEnabled(), "combat.pvp_enabled", 
+        addToggleSetting(inventory, 14, Material.DIAMOND_SWORD, "PvP Enabled",
+            config.isPvpEnabled(), "combat.pvp_enabled",
             "Enable player vs player");
+
+        addNumberSetting(inventory, 15, Material.BOW, "Bow Combo Required",
+            config.getBowComboRequired(), "combat.bow_combo_required",
+            "Hits in a row to trigger combo explosion");
+
+        addNumberSetting(inventory, 16, Material.CLOCK, "Bow Combo Window (sec)",
+            config.getBowComboWindowSeconds(), "combat.bow_combo_window_seconds",
+            "Time window between combo hits");
     }
     
     private static void addGameFlowSettings(Inventory inventory, GameConfig config) {

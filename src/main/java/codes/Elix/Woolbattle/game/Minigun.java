@@ -21,7 +21,8 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Objects;
 
 public class Minigun implements Listener {
     // Arrow counter for triggering minigun (every 4 arrows)

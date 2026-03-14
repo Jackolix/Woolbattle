@@ -117,9 +117,11 @@ public class LobbyItems implements Listener {
         Items.createPassivePerk(inventory, Material.BLAZE_POWDER, false, "§3Schock Pfeil", "Blockiere die Perks deines Gegners!", "§6Preis: 10 Wolle", "§6Nach Pfeilen: 8", 8);
         Items.createPassivePerk(inventory, Material.ARROW, false, "§3SlowArrow", "Verlangsame den Gegner!", "§6Preis: 2 Wolle", "§6Nach Pfeilen: 3", 9);
         Items.createPassivePerk(inventory, Material.SPIDER_SPAWN_EGG,false, "§3Spinne", "Klettere wie eine Spinne an einer Wand hoch!", "§6Preis: 2 Wolle je Sekunde klettern", null, 10); //TODO Falscher Byte Code
-        Items.createPassivePerk(inventory, Material.DIAMOND_BOOTS, false, "§3Stomper", "Katapultiert alle Gegner in deiner Nähe nach einem Doppelsprung weg!", "§6Preis: 10 Wolle", "§6Nach Sprüngen: 2", 11);
+        Items.createPassivePerk(inventory, Material.DIAMOND_BOOTS, false, "§3Stomper", "Lande nach 3+ Blöcken Fall: Schockwelle zerstört Wolle & schleudert Gegner weg!", "§6Min. Fall: 3 Blöcke", "§6Radius: 4 Blöcke", 11);
         Items.createPassivePerk(inventory, Material.DIAMOND_HOE, false, "§3Minigun", "Schießt automatisch Pfeile nach jedem 4. Schuss!", "§6Preis: 12 Wolle", "§6Nach Pfeilen: 4", 12);
         Items.create(inventory, Material.GOLDEN_HOE,"§3SlimePlattform", 13);
+        Items.createPassivePerk(inventory, Material.SHEARS, false, "§3Thief", "Stiehl Wolle von Gegnern bei jedem 3. Treffer!", "§6+64 Wolle Kapazität", "§6Nach Treffern: 3", 14);
+        Items.createPassivePerk(inventory, Material.LOOM, false, "§3Fabricator", "Generiert automatisch Wolle über Zeit!", "§6+64 Wolle Kapazität", "§6Intervall: 1 Sekunde", 15);
         Items.create(inventory, Material.DARK_OAK_DOOR, false, "§3Back", 35);
         checkSelectet(player, inventory);
     }
@@ -409,6 +411,8 @@ public class LobbyItems implements Listener {
                 case DIAMOND_BOOTS -> PerkItems.selectPassive(player, "stomper");
                 case DIAMOND_HOE -> PerkItems.selectPassive(player, "minigun");
                 case GOLDEN_HOE -> PerkItems.selectPassive(player, "slimeplattform");
+                case SHEARS -> PerkItems.selectPassive(player, "thief");
+                case LOOM -> PerkItems.selectPassive(player, "generator");
                 case DARK_OAK_DOOR -> {
                     PerkVorInventory(player);
                     return;
@@ -567,9 +571,11 @@ public class LobbyItems implements Listener {
                     case "shockarrow" -> Items.create(inventory, Material.BLAZE_POWDER, true, "§3Schock Pfeil", "Blockiere die Perks deines Gegners!", 10, 8, 8);
                     case "slowarrow" -> Items.createPassivePerk(inventory, Material.ARROW, true, "§3SlowArrow", "Verlangsame den Gegener!", "§6Preis: 2 Wolle", "§6Nach Pfeilen: 3", 9);
                     case "spider" -> Items.createPassivePerk(inventory, Material.SPIDER_SPAWN_EGG, true, "§3Spinne", "Klettere wie eine Spinne an einer Wand hoch!", "§6Preis: 2 Wolle je Sekunde klettern", null, 10);
-                    case "stomper" -> Items.createPassivePerk(inventory, Material.DIAMOND_BOOTS, true, "§3Stomper", "Katapultiert alle Gegner in deiner Nähe nach einem Doppelsprung weg!", "§6Preis: 10 Wolle", "§6Nach Sprüngen: 2", 11);
+                    case "stomper" -> Items.createPassivePerk(inventory, Material.DIAMOND_BOOTS, true, "§3Stomper", "Lande nach 3+ Blöcken Fall: Schockwelle zerstört Wolle & schleudert Gegner weg!", "§6Min. Fall: 3 Blöcke", "§6Radius: 4 Blöcke", 11);
                     case "minigun" -> Items.createPassivePerk(inventory, Material.DIAMOND_HOE, true, "§3Minigun", "Schießt automatisch Pfeile nach jedem 4. Schuss!", "§6Preis: 12 Wolle", "§6Nach Pfeilen: 4", 12);
                     case "slimeplattform" -> Items.create(inventory, Material.GOLDEN_HOE, true, "§3SlimePlattform", 13);
+                    case "thief" -> Items.createPassivePerk(inventory, Material.SHEARS, true, "§3Thief", "Stiehl Wolle von Gegnern bei jedem 3. Treffer!", "§6+64 Wolle Kapazität", "§6Nach Treffern: 3", 14);
+                    case "generator" -> Items.createPassivePerk(inventory, Material.LOOM, true, "§3Fabricator", "Generiert automatisch Wolle über Zeit!", "§6+64 Wolle Kapazität", "§6Intervall: 1 Sekunde", 15);
                     default -> Console.send("[NO_PASSIVE_PERK]: " + player.getName());
                 }
             }
@@ -699,6 +705,8 @@ public class LobbyItems implements Listener {
         passivePerks.add("§3Spinne");
         passivePerks.add("§3Stomper");
         passivePerks.add("§3SlimePlattform");
+        passivePerks.add("§3Thief");
+        passivePerks.add("§3Fabricator");
     }
 
     /**

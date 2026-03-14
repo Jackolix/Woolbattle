@@ -6,7 +6,6 @@ package codes.Elix.Woolbattle.items;
 import codes.Elix.Woolbattle.game.HelpClasses.Perk;
 import codes.Elix.Woolbattle.game.PerkHelper;
 import codes.Elix.Woolbattle.main.Woolbattle;
-import codes.Elix.Woolbattle.util.Console;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -30,7 +29,6 @@ public class PerkItems {
 
         Integer Fperkslot = perk.getfirstPerkSlot();
         Integer Sperkslot = perk.getsecondPerkSlot();
-        int Pperkslot = 8;
 
         Perk oldPerk = new Perk(perk.getfirstPerk(), perk.getsecondPerk(), perk.getpassivePerk(), perk.hasParticles(), perk.getfirstPerkSlot(), perk.getsecondPerkSlot());
 
@@ -108,25 +106,6 @@ public class PerkItems {
             case "wandgenerator" -> Items.create(player.getInventory(), Material.RED_STAINED_GLASS_PANE, "§3Wandgenerator", Sperkslot);
             case "woolbombe" -> Items.create(player.getInventory(), Material.TNT, "§3WoolBombe", Sperkslot);
             case "grabber" -> Items.create(player.getInventory(), Material.CARROT_ON_A_STICK, "§3The Grabber", Sperkslot);
-        }
-
-        switch (Objects.requireNonNull(Pperk != null ? Pperk.toString() : null)) {
-            case "aufzug" -> Items.createPassivePerk(player.getInventory(),  Material.LADDER, "§3Aufzug", Pperkslot);
-            case "exploding_arrow" -> Items.createPassivePerk(player.getInventory(), Material.TNT, "§3Explodierender Pfeil", Pperkslot);
-            case "ghost_arrow" -> Items.createPassivePerk(player.getInventory(), Material.SPECTRAL_ARROW, "§3Geisterpfeil", Pperkslot);
-            case "IDK" -> Items.createPassivePerk(player.getInventory(), Material.FISHING_ROD, "§3IDK", Pperkslot);
-            case "arrowrain" -> Items.createPassivePerk(player.getInventory(), Material.DISPENSER, "§3Pfeilregen", Pperkslot);
-            case "minigun" -> Items.createPassivePerk(player.getInventory(), Material.DIAMOND_HOE, "§3Minigun", Pperkslot);
-            case "recharger" -> Items.createPassivePerk(player.getInventory(), Material.IRON_CHESTPLATE, "§3Recharger", Pperkslot);
-            case "reflector" -> Items.createPassivePerk(player.getInventory(), Material.CACTUS, "§3Reflector", Pperkslot);
-            case "rocket_jump" -> Items.createPassivePerk(player.getInventory(), Material.RABBIT_FOOT, "§3Rocket Jump", Pperkslot);
-            case "portal" -> Items.createPassivePerk(player.getInventory(), Material.GOLD_INGOT, "§3IDK1", Pperkslot);
-            case "shockarrow" -> Items.createPassivePerk(player.getInventory(), Material.RED_STAINED_GLASS, "§3Rettungskapsel", Pperkslot);
-            case "slowarrow" -> Items.createPassivePerk(player.getInventory(), Material.ARROW, "§3SlowArrow", Pperkslot);
-            case "spider" -> Items.createPassivePerk(player.getInventory(), Material.SPIDER_SPAWN_EGG, "§3Spinne", Pperkslot);
-            case "stomper" -> Items.createPassivePerk(player.getInventory(), Material.DIAMOND_BOOTS, "§3Stomper", Pperkslot);
-            case "slimeplattform" -> Items.createPassivePerk(player.getInventory(), Material.GOLDEN_HOE, "§3SlimePlattform", Pperkslot);
-            default -> Console.send("[NO_PASSIVE_PERK]: " + player.getName());
         }
 
     }

@@ -3,14 +3,17 @@
 
 package codes.Elix.Woolbattle.game;
 
+import codes.Elix.Woolbattle.config.GameConfig;
 import codes.Elix.Woolbattle.game.HelpClasses.CustomPlayer;
 import codes.Elix.Woolbattle.items.Items;
 import codes.Elix.Woolbattle.main.Woolbattle;
-import codes.Elix.Woolbattle.util.Console;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,13 +26,19 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
 
 public class BowShoot implements Listener {
 
     public static ArrayList<Projectile> arrows = new ArrayList<>();
     public static HashMap<Player, Integer> bomb = new HashMap<>();
     public static HashMap<Player, Integer> ghostArrow = new HashMap<>();
+    // Key: shooter, Value: [Player target, int hitCount, long lastHitMillis]
+    public static HashMap<Player, Object[]> hitCombo = new HashMap<>();
     private static BukkitRunnable globalParticleTask = null;
 
 
@@ -327,6 +336,74 @@ public class BowShoot implements Listener {
         }
     }
 
+    @EventHandler
+    public void onBowHitCombo(EntityDamageByEntityEvent event) {
+        if (!(event.getDamager() instanceof Arrow arrow)) return;
+        if (!(event.getEntity() instanceof Player victim)) return;
+        if (!(arrow.getShooter() instanceof Player shooter)) return;
+
+        codes.Elix.Woolbattle.game.HelpClasses.Team shooterTeam = CustomPlayer.getCustomPlayer(shooter).getTeam();
+        if (shooterTeam != null && shooterTeam.getMembers().contains(victim)) return;
+
+        long now = System.currentTimeMillis();
+
+        if (hitCombo.containsKey(shooter)) {
+            Object[] combo = hitCombo.get(shooter);
+            Player prevTarget = (Player) combo[0];
+            int count = (int) combo[1];
+            long lastHit = (long) combo[2];
+
+            long comboWindowMs = GameConfig.getInstance().getBowComboWindowSeconds() * 1000L;
+            if (!prevTarget.equals(victim) || (now - lastHit) > comboWindowMs) {
+                hitCombo.put(shooter, new Object[]{victim, 1, now});
+                return;
+            }
+
+            count++;
+            if (count >= GameConfig.getInstance().getBowComboRequired()) {
+                hitCombo.remove(shooter);
+                triggerComboExplosion(shooter, victim);
+            } else {
+                hitCombo.put(shooter, new Object[]{victim, count, now});
+            }
+        } else {
+            hitCombo.put(shooter, new Object[]{victim, 1, now});
+        }
+    }
+
+    private void triggerComboExplosion(Player shooter, Player victim) {
+        Location loc = victim.getLocation();
+        World world = loc.getWorld();
+
+        world.spawnParticle(Particle.EXPLOSION, loc, 5, 0.3, 0.3, 0.3, 0);
+        world.spawnParticle(Particle.LARGE_SMOKE, loc, 20, 0.5, 0.5, 0.5, 0.05);
+        world.playSound(loc, Sound.ENTITY_GENERIC_EXPLODE, 1.0f, 1.2f);
+
+        double radius = 3.0;
+        List<Block> toBreak = new ArrayList<>();
+        for (Block block : new ArrayList<>(Woolbattle.blocks)) {
+            if (block.getLocation().distance(loc) <= radius) {
+                toBreak.add(block);
+            }
+        }
+        for (Block block : toBreak) {
+            world.spawnParticle(Particle.BLOCK_CRUMBLE, block.getLocation().add(0.5, 0.5, 0.5),
+                10, 0.3, 0.3, 0.3, 0, block.getBlockData());
+            block.setType(Material.AIR);
+            Woolbattle.blocks.remove(block);
+        }
+
+        for (Entity entity : loc.getNearbyEntities(5, 5, 5)) {
+            if (!(entity instanceof Player nearby)) continue;
+            Vector dir = nearby.getLocation().toVector().subtract(loc.toVector());
+            if (dir.lengthSquared() < 0.01) dir = new Vector(0, 1, 0);
+            dir.normalize().multiply(1.5).setY(0.4);
+            nearby.setVelocity(dir);
+        }
+
+        shooter.sendMessage("§6§lCOMBO! §eYou triggered an explosion on §c" + victim.getName());
+    }
+
     public void check(Player player) {
         Bukkit.getScheduler().scheduleSyncDelayedTask(Woolbattle.getPlugin(), () -> {
             if (Items.amount(player, Items.getWoolColor(player)) == 0) {
@@ -339,7 +416,9 @@ public class BowShoot implements Listener {
     public static void enable() {
         bomb.clear();
         ghostArrow.clear();
+        hitCombo.clear();
         Minigun.enable();
+        WoolGenerator.enable();
         for (Player player : Bukkit.getOnlinePlayers()) {
             codes.Elix.Woolbattle.game.HelpClasses.Team team = CustomPlayer.getCustomPlayer(player).getTeam();
             if (team == null || Objects.equals(team.getName(), "spectator")) continue;
@@ -354,7 +433,10 @@ public class BowShoot implements Listener {
         arrows.clear();
         bomb.clear();
         ghostArrow.clear();
+        hitCombo.clear();
         Minigun.cleanup();
+        Thief.cleanup();
+        WoolGenerator.cleanup();
         if(globalParticleTask != null && !globalParticleTask.isCancelled()){
             globalParticleTask.cancel();
             globalParticleTask = null;

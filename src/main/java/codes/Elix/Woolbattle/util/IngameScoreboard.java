@@ -4,7 +4,9 @@
 package codes.Elix.Woolbattle.util;
 
 import codes.Elix.Woolbattle.game.HelpClasses.CustomPlayer;
+import codes.Elix.Woolbattle.game.HelpClasses.Perk;
 import codes.Elix.Woolbattle.game.LiveSystem;
+import codes.Elix.Woolbattle.game.PerkHelper;
 import codes.Elix.Woolbattle.gamestates.IngameState;
 import fr.mrmicky.fastboard.FastBoard;
 import org.bukkit.ChatColor;
@@ -63,6 +65,12 @@ public class IngameScoreboard {
         if (LiveSystem.Teams >= 4)
             lines.add(" §7• §4❤ " + LiveSystem.Team.get("yellow").getLifes() + " §8- " + Colorname4);
 
+        lines.add("  ");
+        lines.add("§8» §7Passiv");
+        Perk perk = PerkHelper.getPerks(player);
+        String passiveName = perk != null ? passivePerkDisplayName(perk.getpassivePerk()) : "§8-";
+        lines.add(" §7• §3" + passiveName);
+
         board.updateLines(lines);
     }
     
@@ -71,6 +79,26 @@ public class IngameScoreboard {
         if (board != null) {
             board.delete();
         }
+    }
+
+    private static String passivePerkDisplayName(String key) {
+        if (key == null) return "§8-";
+        return switch (key) {
+            case "aufzug" -> "Aufzug";
+            case "exploding_arrow" -> "Explodierender Pfeil";
+            case "ghost_arrow" -> "Geisterpfeil";
+            case "minigun" -> "Minigun";
+            case "recharger" -> "Recharger";
+            case "reflector" -> "Reflector";
+            case "rocket_jump" -> "Rocket Jump";
+            case "arrowrain" -> "Pfeilregen";
+            case "shockarrow" -> "Shock Arrow";
+            case "slowarrow" -> "Slow Arrow";
+            case "spider" -> "Spinne";
+            case "stomper" -> "Stomper";
+            case "slimeplattform" -> "SlimePlattform";
+            default -> key;
+        };
     }
 
     public static String team(Player player) {

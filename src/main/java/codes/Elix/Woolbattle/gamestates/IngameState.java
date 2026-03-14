@@ -7,6 +7,7 @@ import codes.Elix.Woolbattle.config.GameConfig;
 import codes.Elix.Woolbattle.game.BowShoot;
 import codes.Elix.Woolbattle.game.DoubleJump;
 import codes.Elix.Woolbattle.game.EnderPearl;
+import codes.Elix.Woolbattle.game.Stomper;
 import codes.Elix.Woolbattle.game.HelpClasses.CustomPlayer;
 import codes.Elix.Woolbattle.game.HelpClasses.Team;
 import codes.Elix.Woolbattle.game.LiveSystem;
@@ -71,6 +72,7 @@ public class IngameState extends GameState {
         grabber.enable();
         slime.enable();
         portal.enable();
+        Stomper.enable();
 
         for (Player player : Items.perks.keySet())
             if (!player.isOnline())

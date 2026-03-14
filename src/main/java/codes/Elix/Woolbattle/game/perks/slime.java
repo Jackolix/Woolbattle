@@ -16,11 +16,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 
 public class slime implements Listener {
@@ -88,26 +84,27 @@ public class slime implements Listener {
     }
 
     /**
-     * Calculate the upward velocity based on player's Y position.
-     * The lower the player is, the stronger the boost.
+     * Calculate the upward velocity using logarithmic formula to reach target height.
+     * Based on physics: Flight height = 5 * 2^(Velocity - 1)
+     * Solving for Velocity: Velocity = log_2((referenceY - currentY) / 5) + 1
      */
     private static double calculateVelocity(Player player, PerkConfig.PerkSettings settings) {
         double currentY = player.getLocation().getY();
         double minVelocity = settings.getSlimeMinVelocity();
         double maxVelocity = settings.getSlimeMaxVelocity();
         int referenceY = settings.getSlimeReferenceY();
-        
-        // If player is at or below reference Y, give max velocity
-        if (currentY <= referenceY) {
-            return maxVelocity;
+
+        // If player is at or above reference Y, give min velocity
+        if (currentY >= referenceY) {
+            return minVelocity;
         }
-        
-        // Calculate velocity that decreases as player gets higher
-        double heightDifference = currentY - referenceY;
-        double velocityRange = maxVelocity - minVelocity;
-        double velocityReduction = (heightDifference / 10.0) * 0.1 * velocityRange;
-        double calculatedVelocity = maxVelocity - velocityReduction;
-        
+
+        // Calculate velocity using logarithmic formula
+        // Flight height = 5 * 2^(Velocity - 1)
+        // Velocity = log_2((referenceY - currentY) / 5) + 1
+        double heightDifference = referenceY - currentY;
+        double calculatedVelocity = Math.log(heightDifference / 5.0) / Math.log(2.0) + 1.0;
+
         // Clamp between min and max velocity
         return Math.max(minVelocity, Math.min(maxVelocity, calculatedVelocity));
     }
